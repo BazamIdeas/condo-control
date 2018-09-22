@@ -1,0 +1,9 @@
+GASE.exe
+lastupdate.tmp
+conf
+conf/*
+conf/app.conf
+swagger
+swagger.zip
+GASE.exe~
+/assets
