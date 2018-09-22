@@ -64,8 +64,7 @@ func (c *ImagesController) Post() {
 	var r = c.Ctx.Request
 
 	stringsInts := &map[string]string{
-		"portfolio": r.FormValue("portfolio[id]"),
-		"priority":  r.FormValue("priority"),
+		"workers": r.FormValue("workers[id]"),
 	}
 
 	intValues, err := stringIsValidInt(stringsInts)
@@ -76,7 +75,7 @@ func (c *ImagesController) Post() {
 	}
 
 	foreignsModels := map[string]int{
-		"Portfolios": intValues["portfolio"],
+		"Workers": intValues["workers"],
 	}
 
 	resume := c.doForeignModelsValidation(foreignsModels)
@@ -85,19 +84,9 @@ func (c *ImagesController) Post() {
 		return
 	}
 
-	v := &models.Images{
-		Priority:  int8(intValues["priority"]),
-		Portfolio: &models.Portfolios{ID: intValues["portfolio"]},
-	}
+	//TODO:
 
-	portfolio, err := models.GetPortfoliosByID(v.Portfolio.ID)
-
-	if err != nil {
-		c.BadRequestDontExists("Portfolio dont exists")
-		return
-	}
-
-	portfolio.Images = []*models.Images{}
+	v := &models.Images{}
 
 	if !c.Ctx.Input.IsUpload() {
 		err := errors.New("Not image file found on request")
@@ -112,7 +101,7 @@ func (c *ImagesController) Post() {
 		return
 	}
 
-	v, err = addNewImage(fileHeader, v.Portfolio)
+	v, err = addNewImage(fileHeader, v.Worker)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -279,7 +268,7 @@ func (c *ImagesController) Put() {
 	}
 
 	foreignsModels := map[string]int{
-		"Portfolios": v.Portfolio.ID,
+		"Workers": v.Worker.ID,
 	}
 
 	resume := c.doForeignModelsValidation(foreignsModels)

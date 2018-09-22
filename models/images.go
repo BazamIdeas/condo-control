@@ -15,17 +15,14 @@ import (
 
 //Images Model
 type Images struct {
-	ID        int         `orm:"column(id);pk" json:"id"`
-	Priority  int8        `orm:"column(priority)" json:"priority,omitempty"`
-	Name      string      `orm:"column(name);size(255)" json:"name,omitempty" valid:"Required"`
-	Slug      string      `orm:"column(slug);size(255)" json:"slug,omitempty" valid:"AlphaDash"`
-	UUID      string      `orm:"column(uuid);size(255)" json:"uuid,omitempty" valid:"Required"`
-	Mimetype  string      `orm:"column(mimetype)" json:"mime_type,omitempty" valid:"Required"`
-	URL       string      `orm:"-" json:"url,omitempty"`
-	Portfolio *Portfolios `orm:"column(portfolios_id);rel(fk)" json:"portfolio,omitempty"`
-	CreatedAt time.Time   `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
-	UpdatedAt time.Time   `orm:"column(updated_at);type(datetime);null" json:"-"`
-	DeletedAt time.Time   `orm:"column(deleted_at);type(datetime);null" json:"-"`
+	ID        int       `orm:"column(id);pk" json:"id"`
+	UUID      string    `orm:"column(uuid);size(255)" json:"uuid,omitempty" valid:"Required"`
+	Mimetype  string    `orm:"column(mimetype)" json:"mime_type,omitempty" valid:"Required"`
+	URL       string    `orm:"-" json:"url,omitempty"`
+	Worker    *Workers  `orm:"rel(fk)" json:"workers"`
+	CreatedAt time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
+	UpdatedAt time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
+	DeletedAt time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
 }
 
 //TableName define Name
@@ -37,7 +34,7 @@ func (t *Images) TableName() string {
 func AddImages(m *Images, fh *multipart.FileHeader, folderPath string) (id int64, err error) {
 	o := orm.NewOrm()
 
-	m.Slug = GenerateSlug(m.TableName(), m.Name)
+	//m.Slug = GenerateSlug(m.TableName(), m.Name)
 
 	UUID, err := uuid.NewV4()
 

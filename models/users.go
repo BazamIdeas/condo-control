@@ -1,5 +1,6 @@
 package models
 
+/*
 import (
 	"errors"
 
@@ -192,3 +193,4 @@ func AddDefaultDataUsers() (id *bson.ObjectId, err error) {
 
 	return &u.ID, nil
 }
+*/

@@ -225,19 +225,16 @@ func stringIsValidInt(stringIDs *map[string]string) (IDs map[string]int, err err
 func checkOrCreateImagesFolder(imageFolderDir string) (err error) {
 
 	if _, err := os.Stat(imageFolderDir); os.IsNotExist(err) {
-
 		os.MkdirAll(imageFolderDir, 644)
-
 	}
-
 	return
 
 }
 
-func addNewImage(fh *multipart.FileHeader, v *models.Portfolios) (i *models.Images, err error) {
+func addNewImage(fh *multipart.FileHeader, v *models.Workers) (i *models.Images, err error) {
 
-	if v.ID == 0 || v.Name == "" {
-		err = errors.New("Parent Portfolio ID or Name is empty")
+	if v.ID == 0 {
+		err = errors.New("Parent Worker ID is empty")
 		return
 	}
 
@@ -249,7 +246,7 @@ func addNewImage(fh *multipart.FileHeader, v *models.Portfolios) (i *models.Imag
 		return
 	}
 
-	i = &models.Images{Name: v.Name, Mimetype: fileType, Portfolio: v}
+	i = &models.Images{Mimetype: fileType, Worker: v}
 
 	_, err = models.AddImages(i, fh, imageFolderDir)
 
@@ -259,14 +256,9 @@ func addNewImage(fh *multipart.FileHeader, v *models.Portfolios) (i *models.Imag
 
 func generateImageURL(v *models.Images) (err error) {
 
-	if v.Slug == "" {
-		err = errors.New("Parent Portfolio ID or Slug is empty")
-		return
-	}
-
 	c := new(ImagesController)
 
-	v.URL = c.URLFor("ImagesController.ServeImageBySlug", ":slug", v.Slug)
+	v.URL = c.URLFor("ImagesController.ServeImageBySlug", ":uuid", v.UUID)
 
 	return
 
