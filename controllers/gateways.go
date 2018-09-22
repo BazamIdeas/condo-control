@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"GASE/controllers/services/payments"
-	"GASE/models"
+	"condo-control/controllers/services/payments"
+	"condo-control/models"
 	"encoding/json"
 	"errors"
 	"strconv"

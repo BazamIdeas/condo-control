@@ -4,8 +4,8 @@
 package routers
 
 import (
-	"GASE/controllers"
-	"GASE/middlewares"
+	"condo-control/controllers"
+	"condo-control/middlewares"
 
 	"github.com/astaxie/beego"
 )

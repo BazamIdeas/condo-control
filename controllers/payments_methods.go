@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"GASE/models"
+	"condo-control/models"
 	"encoding/json"
 	"errors"
 

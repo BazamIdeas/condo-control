@@ -7,7 +7,7 @@ import (
 
 func init() {
 
-	beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -15,7 +15,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -23,7 +23,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -31,7 +31,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -39,7 +39,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -47,7 +47,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"],
 		beego.ControllerComments{
 			Method: "RestoreFromTrash",
 			Router: `/:id/restore`,
@@ -55,7 +55,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ActivitiesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ActivitiesController"],
 		beego.ControllerComments{
 			Method: "GetAllFromTrash",
 			Router: `/trashed`,
@@ -63,7 +63,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:BriefsController"] = append(beego.GlobalControllerRouter["GASE/controllers:BriefsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:BriefsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:BriefsController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -71,7 +71,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:BriefsController"] = append(beego.GlobalControllerRouter["GASE/controllers:BriefsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:BriefsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:BriefsController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -79,7 +79,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:BriefsController"] = append(beego.GlobalControllerRouter["GASE/controllers:BriefsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:BriefsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:BriefsController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/:id`,
@@ -87,7 +87,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:BriefsController"] = append(beego.GlobalControllerRouter["GASE/controllers:BriefsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:BriefsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:BriefsController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -95,7 +95,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:BriefsController"] = append(beego.GlobalControllerRouter["GASE/controllers:BriefsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:BriefsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:BriefsController"],
 		beego.ControllerComments{
 			Method: "GetOneByCookie",
 			Router: `/:service/:cookie`,
@@ -103,7 +103,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CartsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CartsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CartsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CartsController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -111,7 +111,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CartsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CartsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CartsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CartsController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -119,7 +119,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CartsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CartsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CartsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CartsController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -127,7 +127,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CartsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CartsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CartsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CartsController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -135,7 +135,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CartsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CartsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CartsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CartsController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -143,7 +143,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CartsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CartsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CartsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CartsController"],
 		beego.ControllerComments{
 			Method: "GetOneByCookie",
 			Router: `/cookie`,
@@ -151,7 +151,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CartsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CartsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CartsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CartsController"],
 		beego.ControllerComments{
 			Method: "AddOrDeleteServices",
 			Router: `/services`,
@@ -159,7 +159,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ClientsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ClientsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ClientsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ClientsController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -167,7 +167,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ClientsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ClientsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ClientsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ClientsController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -175,7 +175,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ClientsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ClientsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ClientsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ClientsController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -183,7 +183,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ClientsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ClientsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ClientsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ClientsController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -191,7 +191,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ClientsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ClientsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ClientsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ClientsController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -199,7 +199,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ClientsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ClientsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ClientsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ClientsController"],
 		beego.ControllerComments{
 			Method: "ChangePasswordRequest",
 			Router: `/change-password/:email`,
@@ -207,7 +207,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ClientsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ClientsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ClientsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ClientsController"],
 		beego.ControllerComments{
 			Method: "ChangePassword",
 			Router: `/change-password/:token`,
@@ -215,7 +215,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ClientsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ClientsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ClientsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ClientsController"],
 		beego.ControllerComments{
 			Method: "GetOneByEmail",
 			Router: `/email/:email`,
@@ -223,7 +223,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ClientsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ClientsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ClientsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ClientsController"],
 		beego.ControllerComments{
 			Method: "Login",
 			Router: `/login`,
@@ -231,7 +231,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CountriesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CountriesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CountriesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CountriesController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -239,7 +239,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CountriesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CountriesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CountriesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CountriesController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -247,7 +247,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CountriesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CountriesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CountriesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CountriesController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -255,7 +255,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CountriesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CountriesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CountriesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CountriesController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -263,7 +263,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CountriesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CountriesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CountriesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CountriesController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -271,7 +271,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CountriesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CountriesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CountriesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CountriesController"],
 		beego.ControllerComments{
 			Method: "GetOneByIso",
 			Router: `/iso/:iso`,
@@ -279,7 +279,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CouponsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CouponsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CouponsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CouponsController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -287,7 +287,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CouponsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CouponsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CouponsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CouponsController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -295,7 +295,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CouponsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CouponsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CouponsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CouponsController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -303,7 +303,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CouponsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CouponsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CouponsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CouponsController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -311,7 +311,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CouponsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CouponsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CouponsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CouponsController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -319,7 +319,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CouponsController"] = append(beego.GlobalControllerRouter["GASE/controllers:CouponsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CouponsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CouponsController"],
 		beego.ControllerComments{
 			Method: "GetOneByCode",
 			Router: `/value/:code`,
@@ -327,7 +327,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CurrenciesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CurrenciesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CurrenciesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CurrenciesController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -335,7 +335,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CurrenciesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CurrenciesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CurrenciesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CurrenciesController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -343,7 +343,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CurrenciesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CurrenciesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CurrenciesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CurrenciesController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -351,7 +351,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CurrenciesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CurrenciesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CurrenciesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CurrenciesController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -359,7 +359,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:CurrenciesController"] = append(beego.GlobalControllerRouter["GASE/controllers:CurrenciesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:CurrenciesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CurrenciesController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -367,7 +367,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["GASE/controllers:GatewaysController"],
+	beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -375,7 +375,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["GASE/controllers:GatewaysController"],
+	beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -383,7 +383,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["GASE/controllers:GatewaysController"],
+	beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -391,7 +391,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["GASE/controllers:GatewaysController"],
+	beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -399,7 +399,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["GASE/controllers:GatewaysController"],
+	beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -407,7 +407,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["GASE/controllers:GatewaysController"],
+	beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"],
 		beego.ControllerComments{
 			Method: "AddNewsCurrencies",
 			Router: `/:id/currencies`,
@@ -415,7 +415,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["GASE/controllers:GatewaysController"],
+	beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"] = append(beego.GlobalControllerRouter["condo-control/controllers:GatewaysController"],
 		beego.ControllerComments{
 			Method: "DeleteCurrencies",
 			Router: `/:id/currencies`,
@@ -423,7 +423,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ImagesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ImagesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -431,7 +431,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ImagesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ImagesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -439,7 +439,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ImagesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ImagesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -447,7 +447,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ImagesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ImagesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -455,7 +455,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ImagesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ImagesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -463,7 +463,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ImagesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ImagesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
 		beego.ControllerComments{
 			Method: "ServeImageBySlug",
 			Router: `/slug/:slug`,
@@ -471,7 +471,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:LocationsController"] = append(beego.GlobalControllerRouter["GASE/controllers:LocationsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:LocationsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:LocationsController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -479,7 +479,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:LocationsController"] = append(beego.GlobalControllerRouter["GASE/controllers:LocationsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:LocationsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:LocationsController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -487,7 +487,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:LocationsController"] = append(beego.GlobalControllerRouter["GASE/controllers:LocationsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:LocationsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:LocationsController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -495,7 +495,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:LocationsController"] = append(beego.GlobalControllerRouter["GASE/controllers:LocationsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:LocationsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:LocationsController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -503,7 +503,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:LocationsController"] = append(beego.GlobalControllerRouter["GASE/controllers:LocationsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:LocationsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:LocationsController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -511,7 +511,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:OrdersController"] = append(beego.GlobalControllerRouter["GASE/controllers:OrdersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:OrdersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OrdersController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -519,7 +519,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:OrdersController"] = append(beego.GlobalControllerRouter["GASE/controllers:OrdersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:OrdersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OrdersController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -527,7 +527,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:OrdersController"] = append(beego.GlobalControllerRouter["GASE/controllers:OrdersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:OrdersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OrdersController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -535,7 +535,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:OrdersController"] = append(beego.GlobalControllerRouter["GASE/controllers:OrdersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:OrdersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OrdersController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -543,7 +543,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:OrdersController"] = append(beego.GlobalControllerRouter["GASE/controllers:OrdersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:OrdersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OrdersController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -551,7 +551,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -559,7 +559,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -567,7 +567,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -575,7 +575,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -583,7 +583,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -591,7 +591,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["GASE/controllers:PaymentsMethodsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PaymentsMethodsController"],
 		beego.ControllerComments{
 			Method: "GetOneByIsoAndGateway",
 			Router: `/:iso/:gateway`,
@@ -599,7 +599,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -607,7 +607,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -615,7 +615,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -623,7 +623,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -631,7 +631,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -639,7 +639,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"],
 		beego.ControllerComments{
 			Method: "GetByCustomSearch",
 			Router: `/custom-search`,
@@ -647,7 +647,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["GASE/controllers:PortfoliosController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PortfoliosController"],
 		beego.ControllerComments{
 			Method: "GetPortfoliosByCountry",
 			Router: `/iso`,
@@ -655,7 +655,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PricesController"] = append(beego.GlobalControllerRouter["GASE/controllers:PricesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PricesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PricesController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -663,7 +663,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PricesController"] = append(beego.GlobalControllerRouter["GASE/controllers:PricesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PricesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PricesController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -671,7 +671,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PricesController"] = append(beego.GlobalControllerRouter["GASE/controllers:PricesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PricesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PricesController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -679,7 +679,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PricesController"] = append(beego.GlobalControllerRouter["GASE/controllers:PricesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PricesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PricesController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -687,7 +687,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:PricesController"] = append(beego.GlobalControllerRouter["GASE/controllers:PricesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:PricesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PricesController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -695,7 +695,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:SectorsController"] = append(beego.GlobalControllerRouter["GASE/controllers:SectorsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:SectorsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:SectorsController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -703,7 +703,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:SectorsController"] = append(beego.GlobalControllerRouter["GASE/controllers:SectorsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:SectorsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:SectorsController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -711,7 +711,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:SectorsController"] = append(beego.GlobalControllerRouter["GASE/controllers:SectorsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:SectorsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:SectorsController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -719,7 +719,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:SectorsController"] = append(beego.GlobalControllerRouter["GASE/controllers:SectorsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:SectorsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:SectorsController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -727,7 +727,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:SectorsController"] = append(beego.GlobalControllerRouter["GASE/controllers:SectorsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:SectorsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:SectorsController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -735,7 +735,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -743,7 +743,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -751,7 +751,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -759,7 +759,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -767,7 +767,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -775,7 +775,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServiceFormsController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServiceFormsController"],
 		beego.ControllerComments{
 			Method: "GetOneByService",
 			Router: `/service/:slug`,
@@ -783,7 +783,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServicesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServicesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServicesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServicesController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -791,7 +791,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServicesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServicesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServicesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServicesController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/`,
@@ -799,7 +799,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServicesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServicesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServicesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServicesController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -807,7 +807,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServicesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServicesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServicesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServicesController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -815,7 +815,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServicesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServicesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServicesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServicesController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -823,7 +823,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ServicesController"] = append(beego.GlobalControllerRouter["GASE/controllers:ServicesController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ServicesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ServicesController"],
 		beego.ControllerComments{
 			Method: "GetPricesServiceByCountry",
 			Router: `/:id/prices`,
@@ -831,7 +831,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:UsersController"] = append(beego.GlobalControllerRouter["GASE/controllers:UsersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:UsersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:UsersController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -839,7 +839,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:UsersController"] = append(beego.GlobalControllerRouter["GASE/controllers:UsersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:UsersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:UsersController"],
 		beego.ControllerComments{
 			Method: "GetOne",
 			Router: `/:id`,
@@ -847,7 +847,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:UsersController"] = append(beego.GlobalControllerRouter["GASE/controllers:UsersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:UsersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:UsersController"],
 		beego.ControllerComments{
 			Method: "GetAll",
 			Router: `/:id`,
@@ -855,7 +855,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:UsersController"] = append(beego.GlobalControllerRouter["GASE/controllers:UsersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:UsersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:UsersController"],
 		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
@@ -863,7 +863,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:UsersController"] = append(beego.GlobalControllerRouter["GASE/controllers:UsersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:UsersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:UsersController"],
 		beego.ControllerComments{
 			Method: "Delete",
 			Router: `/:id`,
@@ -871,7 +871,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:UsersController"] = append(beego.GlobalControllerRouter["GASE/controllers:UsersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:UsersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:UsersController"],
 		beego.ControllerComments{
 			Method: "ChangePassword",
 			Router: `/change-password`,
@@ -879,7 +879,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:UsersController"] = append(beego.GlobalControllerRouter["GASE/controllers:UsersController"],
+	beego.GlobalControllerRouter["condo-control/controllers:UsersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:UsersController"],
 		beego.ControllerComments{
 			Method: "Login",
 			Router: `/login`,
@@ -887,7 +887,7 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["GASE/controllers:ViewController"] = append(beego.GlobalControllerRouter["GASE/controllers:ViewController"],
+	beego.GlobalControllerRouter["condo-control/controllers:ViewController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ViewController"],
 		beego.ControllerComments{
 			Method: "Main",
 			Router: `/`,

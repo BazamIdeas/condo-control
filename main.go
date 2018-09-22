@@ -1,9 +1,9 @@
 package main
 
 import (
-	_ "GASE/routers"
+	_ "condo-control/routers"
 
-	_ "GASE/tasks"
+	_ "condo-control/tasks"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"

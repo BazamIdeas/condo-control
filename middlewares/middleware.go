@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"GASE/controllers"
+	"condo-control/controllers"
 	"encoding/json"
 
 	"github.com/astaxie/beego/context"

@@ -1,7 +1,7 @@
 package mails
 
 import (
-	"GASE/models"
+	"condo-control/models"
 	"bytes"
 	"errors"
 	"fmt"

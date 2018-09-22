@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"GASE/controllers/services/mails"
-	"GASE/models"
+	"condo-control/controllers/services/mails"
+	"condo-control/models"
 	"encoding/json"
 	"errors"
 	"fmt"
