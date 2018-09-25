@@ -3,8 +3,6 @@ package main
 import (
 	_ "condo-control/routers"
 
-	_ "condo-control/tasks"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
 )
@@ -24,10 +22,6 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin"},
 		AllowCredentials: true,
 	}))
-
-	beego.BConfig.WebConfig.ViewsPath = "public"
-
-	beego.SetStaticPath("/assets", "public/assets/")
 
 	beego.Run()
 }

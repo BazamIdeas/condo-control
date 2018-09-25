@@ -5,30 +5,63 @@ package routers
 
 import (
 	"condo-control/controllers"
-	"condo-control/middlewares"
+	//"condo-control/middlewares"
 
 	"github.com/astaxie/beego"
 )
 
 func init() {
 
-	middlewares.LoadFilters()
+	//middlewares.LoadFilters()
 
-	views := beego.NewNamespace("/admin",
-		beego.NSInclude(
-			&controllers.ViewController{},
+	mainNS := beego.NewNamespace("/v1",
+
+		beego.NSNamespace("/assistances",
+			beego.NSInclude(
+				&controllers.AssistancesController{},
+			),
 		),
-	)
-
-	ns := beego.NewNamespace("/v1",
-
 		beego.NSNamespace("/condos",
 			beego.NSInclude(
 				&controllers.CondosController{},
 			),
 		),
+		beego.NSNamespace("/holidays",
+			beego.NSInclude(
+				&controllers.HolidaysController{},
+			),
+		),
+		beego.NSNamespace("/points",
+			beego.NSInclude(
+				&controllers.PointsController{},
+			),
+		),
+		beego.NSNamespace("/supervisors",
+			beego.NSInclude(
+				&controllers.SupervisorsController{},
+			),
+		),
+		beego.NSNamespace("/verifications",
+			beego.NSInclude(
+				&controllers.VerificationsController{},
+			),
+		),
+		beego.NSNamespace("/watchers",
+			beego.NSInclude(
+				&controllers.WatchersController{},
+			),
+		),
+		beego.NSNamespace("/workers",
+			beego.NSInclude(
+				&controllers.WorkersController{},
+			),
+		),
+		beego.NSNamespace("/zones",
+			beego.NSInclude(
+				&controllers.ZonesController{},
+			),
+		),
 	)
 
-	beego.AddNamespace(ns)
-	beego.AddNamespace(views)
+	beego.AddNamespace(mainNS)
 }

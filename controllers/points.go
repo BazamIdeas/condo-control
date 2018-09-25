@@ -10,13 +10,13 @@ import (
 	"github.com/astaxie/beego/validation"
 )
 
-// WatchersController operations for Watchers
-type WatchersController struct {
+// PointsController operations for Points
+type PointsController struct {
 	BaseController
 }
 
 //URLMapping ...
-func (c *WatchersController) URLMapping() {
+func (c *PointsController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
@@ -26,10 +26,10 @@ func (c *WatchersController) URLMapping() {
 
 // Post ...
 // @Title Post
-// @Description create Watchers
+// @Description create Points
 // @router / [post]
-func (c *WatchersController) Post() {
-	var v models.Watchers
+func (c *PointsController) Post() {
+	var v models.Points
 
 	// Validate empty body
 
@@ -61,7 +61,7 @@ func (c *WatchersController) Post() {
 			return
 		} */
 
-	_, err = models.AddWatchers(&v)
+	_, err = models.AddPoints(&v)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -76,9 +76,9 @@ func (c *WatchersController) Post() {
 
 // GetOne ...
 // @Title Get One
-// @Description get Watchers by id
+// @Description get Points by id
 // @router /:id [get]
-func (c *WatchersController) GetOne() {
+func (c *PointsController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 
@@ -87,7 +87,7 @@ func (c *WatchersController) GetOne() {
 		return
 	}
 
-	v, err := models.GetWatchersByID(id)
+	v, err := models.GetPointsByID(id)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -99,9 +99,9 @@ func (c *WatchersController) GetOne() {
 
 // GetAll ...
 // @Title Get All
-// @Description get Watchers
+// @Description get Points
 // @router / [get]
-func (c *WatchersController) GetAll() {
+func (c *PointsController) GetAll() {
 	var fields []string
 	var sortby []string
 	var order []string
@@ -143,7 +143,7 @@ func (c *WatchersController) GetAll() {
 		}
 	}
 
-	l, err := models.GetAllWatchers(query, fields, sortby, order, offset, limit)
+	l, err := models.GetAllPoints(query, fields, sortby, order, offset, limit)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -156,9 +156,9 @@ func (c *WatchersController) GetAll() {
 
 // Put ...
 // @Title Put
-// @Description update the Watchers
+// @Description update the Points
 // @router /:id [put]
-func (c *WatchersController) Put() {
+func (c *PointsController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 
@@ -167,7 +167,7 @@ func (c *WatchersController) Put() {
 		return
 	}
 
-	v := models.Watchers{ID: id}
+	v := models.Points{ID: id}
 
 	// Validate empty body
 
@@ -199,7 +199,7 @@ func (c *WatchersController) Put() {
 		return
 	} */
 
-	err = models.UpdateWatchersByID(&v)
+	err = models.UpdatePointsByID(&v)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -216,9 +216,9 @@ func (c *WatchersController) Put() {
 
 // Delete ...
 // @Title Delete
-// @Description delete the Watchers
+// @Description delete the Points
 // @router /:id [delete]
-func (c *WatchersController) Delete() {
+func (c *PointsController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 
@@ -233,7 +233,7 @@ func (c *WatchersController) Delete() {
 		trash = true
 	}
 
-	err = models.DeleteWatchers(id, trash)
+	err = models.DeletePoints(id, trash)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -252,9 +252,9 @@ func (c *WatchersController) Delete() {
 // @Title Get All From Trash
 // @Description Get All From Trash
 // @router /trashed [patch]
-func (c *WatchersController) GetAllFromTrash() {
+func (c *PointsController) GetAllFromTrash() {
 
-	v, err := models.GetWatchersFromTrash()
+	v, err := models.GetPointsFromTrash()
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -270,7 +270,7 @@ func (c *WatchersController) GetAllFromTrash() {
 // @Title Restore From Trash
 // @Description Restore From Trash
 // @router /:id/restore [put]
-func (c *WatchersController) RestoreFromTrash() {
+func (c *PointsController) RestoreFromTrash() {
 
 	idStr := c.Ctx.Input.Param(":id")
 
@@ -281,7 +281,7 @@ func (c *WatchersController) RestoreFromTrash() {
 		return
 	}
 
-	v := &models.Watchers{ID: id}
+	v := &models.Points{ID: id}
 
 	err = models.RestoreFromTrash(v.TableName(), v.ID)
 

@@ -36,7 +36,7 @@ func init() {
 	orm.RegisterDriver("mysql", orm.DRMySQL)
 	orm.RegisterDataBase("default", "mysql", mysqlConnData.user+":"+mysqlConnData.pass+"@/"+mysqlConnData.dbName+"?charset=utf8")
 
-	orm.RegisterModel()
+	orm.RegisterModel(new(Assistances), new(Condos), new(Holidays), new(Points), new(Supervisors), new(Verifications), new(Watchers), new(Workers), new(Zones))
 
 }
 

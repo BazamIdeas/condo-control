@@ -10,13 +10,11 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-//Watchers Model
-type Watchers struct {
+//Points Model
+type Points struct {
 	ID            int              `orm:"column(id);pk" json:"id"`
-	Email         string           `orm:"column(email);size(255)" json:"email,omitempty" valid:"Required"`
-	Password      string           `orm:"column(password);" json:"password,omitempty" valid:"Required"`
-	Phone         string           `orm:"column(phone);" json:"phone,omitempty" valid:"Required"`
-	Worker        *Workers         `orm:"rel(fk);column(workers_id)" json:"worker,omitempty"`
+	Name          string           `orm:"column(name);size(255)" json:"name,omitempty" valid:"Required"`
+	Zone          *Zones           `orm:"rel(fk);column(zones_id)" json:"zones"`
 	Verifications []*Verifications `orm:"reverse(many);" json:"verifications,omitempty"`
 	CreatedAt     time.Time        `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt     time.Time        `orm:"column(updated_at);type(datetime);null" json:"-"`
@@ -24,11 +22,11 @@ type Watchers struct {
 }
 
 //TableName =
-func (t *Watchers) TableName() string {
-	return "watchers"
+func (t *Points) TableName() string {
+	return "points"
 }
 
-func (t *Watchers) loadRelations() {
+func (t *Points) loadRelations() {
 
 	o := orm.NewOrm()
 
@@ -42,19 +40,19 @@ func (t *Watchers) loadRelations() {
 
 }
 
-// AddWatchers insert a new Watchers into database and returns
+// AddPoints insert a new Points into database and returns
 // last inserted Id on success.
-func AddWatchers(m *Watchers) (id int64, err error) {
+func AddPoints(m *Points) (id int64, err error) {
 	o := orm.NewOrm()
 	//m.Slug = GenerateSlug(m.TableName(), m.Name)
 	id, err = o.Insert(m)
 	return
 }
 
-// GetWatchersByID retrieves Watchers by Id. Returns error if
+// GetPointsByID retrieves Points by Id. Returns error if
 // Id doesn't exist
-func GetWatchersByID(id int) (v *Watchers, err error) {
-	v = &Watchers{ID: id}
+func GetPointsByID(id int) (v *Points, err error) {
+	v = &Points{ID: id}
 
 	err = searchFK(v.TableName(), v.ID).One(v)
 
@@ -67,12 +65,12 @@ func GetWatchersByID(id int) (v *Watchers, err error) {
 	return
 }
 
-// GetAllWatchers retrieves all Watchers matches certain condition. Returns empty list if
+// GetAllPoints retrieves all Points matches certain condition. Returns empty list if
 // no records exist
-func GetAllWatchers(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllPoints(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(Watchers))
+	qs := o.QueryTable(new(Points))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -122,7 +120,7 @@ func GetAllWatchers(query map[string]string, fields []string, sortby []string, o
 		}
 	}
 
-	var l []Watchers
+	var l []Points
 	qs = qs.OrderBy(sortFields...)
 	if _, err = qs.Limit(limit, offset).Filter("deleted_at__isnull", true).RelatedSel().All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -147,11 +145,11 @@ func GetAllWatchers(query map[string]string, fields []string, sortby []string, o
 	return nil, err
 }
 
-// UpdateWatchersByID updates Watchers by Id and returns error if
+// UpdatePointsByID updates Points by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateWatchersByID(m *Watchers) (err error) {
+func UpdatePointsByID(m *Points) (err error) {
 	o := orm.NewOrm()
-	v := Watchers{ID: m.ID}
+	v := Points{ID: m.ID}
 	// ascertain id exists in the database
 	err = o.Read(&v)
 	if err != nil {
@@ -171,11 +169,11 @@ func UpdateWatchersByID(m *Watchers) (err error) {
 	return
 }
 
-// DeleteWatchers deletes Watchers by Id and returns error if
+// DeletePoints deletes Points by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteWatchers(id int, trash bool) (err error) {
+func DeletePoints(id int, trash bool) (err error) {
 	o := orm.NewOrm()
-	v := Watchers{ID: id}
+	v := Points{ID: id}
 	// ascertain id exists in the database
 	err = o.Read(&v)
 
@@ -197,20 +195,20 @@ func DeleteWatchers(id int, trash bool) (err error) {
 	return
 }
 
-//GetWatchersFromTrash return Watchers soft Deleted
-func GetWatchersFromTrash() (watchers []*Watchers, err error) {
+//GetPointsFromTrash return Points soft Deleted
+func GetPointsFromTrash() (points []*Points, err error) {
 
 	o := orm.NewOrm()
 
-	var v []*Watchers
+	var v []*Points
 
-	_, err = o.QueryTable("watchers").Filter("deleted_at__isnull", false).All(&v)
+	_, err = o.QueryTable("points").Filter("deleted_at__isnull", false).All(&v)
 
 	if err != nil {
 		return
 	}
 
-	watchers = v
+	points = v
 
 	return
 
