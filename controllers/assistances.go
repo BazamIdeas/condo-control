@@ -6,8 +6,10 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego/validation"
+	"github.com/vjeantet/jodaTime"
 )
 
 // AssistancesController operations for Assistances
@@ -29,10 +31,14 @@ func (c *AssistancesController) URLMapping() {
 // @Description create Assistances
 // @router / [post]
 func (c *AssistancesController) Post() {
+
 	var v models.Assistances
 
-	// Validate empty body
+	token := c.Ctx.Input.Header("Authorization")
 
+	decodedToken, _ := VerifyToken(token, "Watcher")
+
+	// Validate empty body
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
 	if err != nil {
@@ -41,7 +47,6 @@ func (c *AssistancesController) Post() {
 	}
 
 	// Validate context body
-
 	valid := validation.Validation{}
 
 	b, _ := valid.Valid(&v)
@@ -51,22 +56,65 @@ func (c *AssistancesController) Post() {
 		return
 	}
 
-	//TODO:
-	// Validate foreings keys
-	/*
-		exists := models.ValidateExists("Sectors", v.Sector.ID)
+	now := time.Now()
 
-		if !exists {
-			c.BadRequestDontExists("Sector")
-			return
-		} */
+	date, err := jodaTime.Parse("Y-M-d HH:mm:ss", v.Date)
 
-	_, err = models.AddAssistances(&v)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if !date.Before(now) {
+		err = errors.New("Verification date is a future Date")
+		c.BadRequest(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByID(v.Worker.ID)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
+
+	condoID, _ := strconv.Atoi(decodedToken.CondoID)
+
+	if worker.Condo.ID != condoID {
+		err = errors.New("Worker dont belong to Watcher's Condo")
+		c.BadRequest(err)
+		return
+	}
+
+	dur := now.Sub(date)
+
+	if dur.Hours() > 6 {
+		err = errors.New("Verification date is too old")
+		c.BadRequest(err)
+		return
+	}
+
+	// Validate foreings keys
+	/* foreignsModels := map[string]int{
+		"Watchers": v.Watcher.ID,
+		"Workers":  v.Worker.ID,
+	}
+
+	resume := c.doForeignModelsValidation(foreignsModels)
+
+	if !resume {
+		return
+	}
+	*/
+
+	tokenAssistance, err := GenerateGeneralToken(decodedToken.UserID, decodedToken.CondoID, nil, &v)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	v.Token = tokenAssistance
 
 	c.Ctx.Output.SetStatus(201)
 	c.Data["json"] = v

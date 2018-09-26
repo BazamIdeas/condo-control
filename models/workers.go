@@ -15,7 +15,7 @@ type Workers struct {
 	ID          int            `orm:"column(id);pk" json:"id"`
 	FirstName   string         `orm:"column(first_name);size(255)" json:"first_name,omitempty" valid:"Required"`
 	LastName    string         `orm:"column(last_name);" json:"last_name,omitempty" valid:"Required"`
-	Condo       *Condos        `orm:"rel(fk);column(condos_id)" json:"condos"`
+	Condo       *Condos        `orm:"rel(fk);column(condos_id)" json:"condos,omitempty"`
 	Assistances []*Assistances `orm:"reverse(many)" json:"assistances,omitempty"`
 	CreatedAt   time.Time      `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt   time.Time      `orm:"column(updated_at);type(datetime);null" json:"-"`
@@ -47,6 +47,13 @@ func AddWorkers(m *Workers) (id int64, err error) {
 	o := orm.NewOrm()
 	//m.Slug = GenerateSlug(m.TableName(), m.Name)
 	id, err = o.Insert(m)
+
+	if err != nil {
+		return
+	}
+
+	m.ID = int(id)
+
 	return
 }
 
@@ -204,6 +211,26 @@ func GetWorkersFromTrash() (workers []*Workers, err error) {
 	var v []*Workers
 
 	_, err = o.QueryTable("workers").Filter("deleted_at__isnull", false).All(&v)
+
+	if err != nil {
+		return
+	}
+
+	workers = v
+
+	return
+
+}
+
+func GetWorkersByCondosID(condosID int) (workers []*Workers, err error) {
+
+	//condos, err := GetCondosByID(condosID)
+
+	o := orm.NewOrm()
+
+	v := []*Workers{}
+
+	_, err = o.QueryTable("workers").Filter("deleted_at__isnull", true).Filter("condos_id", condosID).RelatedSel().All(&v)
 
 	if err != nil {
 		return

@@ -14,11 +14,11 @@ import (
 type Condos struct {
 	ID                int         `orm:"column(id);pk" json:"id"`
 	Name              string      `orm:"column(name);size(255)" json:"name,omitempty" valid:"Required"`
-	UsersLimit        int         `orm:"column(user_limit);size(255)" json:"user_limit" valid:"Required"`
-	ZoneLimit         int         `orm:"column(zone_limit);size(255)" json:"zone_limit" valid:"Required"`
-	HourValue         float32     `orm:"colum(hour_value);size(20)" json:"hour_value" valid:"Required"`
-	ExtraHourIncrease float32     `orm:"colum(extra_hour_increase);size(20)" json:"extra_hour_increase" valid:"Required"`
-	WorkingHours      int         `orm:"column(working_hours)" json:"working_hours" valid:"Required"`
+	UserLimit         int         `orm:"column(user_limit);size(255)" json:"user_limit,omitempty" valid:"Required"`
+	ZoneLimit         int         `orm:"column(zone_limit);size(255)" json:"zone_limit,omitempty" valid:"Required"`
+	HourValue         float32     `orm:"colum(hour_value);size(20)" json:"hour_value,omitempty" valid:"Required"`
+	ExtraHourIncrease float32     `orm:"colum(extra_hour_increase);size(20)" json:"extra_hour_increase,omitempty" valid:"Required"`
+	WorkingHours      int         `orm:"column(working_hours)" json:"working_hours,omitempty" valid:"Required"`
 	Zones             []*Zones    `orm:"reverse(many)" json:"zone,omitempty"`
 	Workers           []*Workers  `orm:"reverse(many)" json:"workers,omitempty"`
 	Holidays          []*Holidays `orm:"reverse(many)" json:"holidays,omitempty"`
@@ -208,7 +208,7 @@ func GetCondosFromTrash() (condos []*Condos, err error) {
 
 	var v []*Condos
 
-	_, err = o.QueryTable("condos").Filter("deleted_at__isnull", false).All(&v)
+	_, err = o.QueryTable("condos").Filter("deleted_at__isnull", false).RelatedSel().All(&v)
 
 	if err != nil {
 		return

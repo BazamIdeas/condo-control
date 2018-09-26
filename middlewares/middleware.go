@@ -9,15 +9,13 @@ import (
 
 var (
 	//ControllersNames ...
-	ControllersNames = []string{
-		"portfolios", "activities", "carts", "clients", "countries", "coupons", "currencies", "gateways", "images", "locations", "orders", "prices", "sectors", "services", "briefs", "users",
-	}
+	ControllersNames = []string{}
 )
 
 //DenyAccess =
-func DenyAccess(ctx *context.Context, err error) {
+func DenyAccess(ctx *context.Context, err error, statusCode int) {
 
-	ctx.Output.SetStatus(401)
+	ctx.Output.SetStatus(statusCode)
 	ctx.Output.Header("Content-Type", "application/json")
 
 	message := controllers.MessageResponse{
@@ -29,114 +27,23 @@ func DenyAccess(ctx *context.Context, err error) {
 
 	res, _ := json.Marshal(message)
 
-	ctx.Output.Body([]byte(string(res)))
-	return
+	ctx.Output.Body(res)
 }
 
 //GetURLMapping =
 func GetURLMapping(route string) (validation map[string][]string) {
 
-	carts := map[string][]string{
-		";GET":            {"Admin"},
-		"/:id;GET,DELETE": {"Admin"},
+	zones := map[string][]string{
+		"/self;GET": {"Watcher", "Supervisor"},
 	}
 
-	clients := map[string][]string{
-		";GET":              {"Admin"},
-		"/email/:email;GET": {"Admin", "Client"},
-		//"/:id;GET,PUT,DELETE": {"Client"},
-	}
-
-	countries := map[string][]string{
-		"/:id;GET,PUT,DELETE": {"Admin"},
-	}
-
-	coupons := map[string][]string{
-		";GET":                {"Admin"},
-		"/:id;GET,PUT,DELETE": {"Admin"},
-	}
-
-	currencies := map[string][]string{
-		"/:id;PUT,DELETE": {"Admin"},
-	}
-
-	gateways := map[string][]string{
-		"/:id;PUT,DELETE": {"Admin"},
-	}
-
-	images := map[string][]string{
-		";GET":                {"Admin"},
-		"/:id;GET,PUT,DELETE": {"Admin"},
-	}
-
-	locations := map[string][]string{
-		"/:id;PUT,DELETE": {"Admin"},
-	}
-
-	orders := map[string][]string{
-		";GET":            {"Admin"},
-		"/:id;PUT,DELETE": {"Client", "Admin"},
-	}
-
-	prices := map[string][]string{
-		";GET":                {"Admin"},
-		"/:id;GET,PUT,DELETE": {"Admin"},
-	}
-
-	sectors := map[string][]string{
-		"/:id;PUT,DELETE": {"Admin"},
-	}
-
-	services := map[string][]string{
-		"/:id;PUT,DELETE": {"Admin"},
-	}
-
-	briefs := map[string][]string{
-		"/:id;PUT,DELETE": {"Admin"},
-	}
-
-	activities := map[string][]string{
-		"/:id;PUT,DELETE": {"Admin"},
-	}
-
-	users := map[string][]string{
-		";GET":                {"Admin"},
-		"/:id;GET,PUT,DELETE": {"Admin"},
-	}
-
-	portfolios := map[string][]string{
-		"/:id;PUT,DELETE": {"Admin"},
-	}
-
-	payments := map[string][]string{
-		";GET":                {"Admin"},
-		"/:id;GET,PUT,DELETE": {"Admin"},
-	}
-
-	forms := map[string][]string{
-		";GET":                {"Admin"},
-		"/:id;GET,PUT,DELETE": {"Admin"},
+	verifications := map[string][]string{
+		"/verifications/zones;POST": {"Watcher"},
 	}
 
 	validations := map[string]map[string][]string{
-		"carts":            carts,
-		"clients":          clients,
-		"countries":        countries,
-		"coupons":          coupons,
-		"currencies":       currencies,
-		"gateways":         gateways,
-		"images":           images,
-		"locations":        locations,
-		"orders":           orders,
-		"prices":           prices,
-		"sectors":          sectors,
-		"services":         services,
-		"briefs":           briefs,
-		"users":            users,
-		"portfolios":       portfolios,
-		"payments-methods": payments,
-		"forms":            forms,
-		"activities":       activities,
+		"zones":         zones,
+		"verifications": verifications,
 	}
 
 	return validations[route]

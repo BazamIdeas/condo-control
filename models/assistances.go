@@ -12,9 +12,11 @@ import (
 
 //Assistances Model
 type Assistances struct {
-	ID        int       `orm:"column(id);pk" json:"id"`
-	Worker    *Workers  `orm:"rel(fk);column(workers_id)" json:"worker"`
-	Watcher   *Watchers `orm:"rel(fk);column(watchers_id)" json:"watcher"`
+	ID        int       `orm:"column(id);pk" json:"id,omitempty"`
+	Date      string    `orm:"column(date);type(datetime);" json:"date,omitempty"`
+	Worker    *Workers  `orm:"rel(fk);column(workers_id)" json:"workers,omitempty"`
+	Watcher   *Watchers `orm:"rel(fk);column(watchers_id)" json:"watchers,omitempty"`
+	Token     string    `orm:"-" json:"token,omitempty"`
 	CreatedAt time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
 	DeletedAt time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`

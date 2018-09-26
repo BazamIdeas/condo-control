@@ -22,6 +22,7 @@ func (c *ZonesController) URLMapping() {
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
+	c.Mapping("GetSelf", c.GetSelf)
 }
 
 // Post ...
@@ -94,6 +95,35 @@ func (c *ZonesController) GetOne() {
 	}
 
 	c.Data["json"] = v
+	c.ServeJSON()
+}
+
+// GetSelf ...
+// @Title Get Self
+// @Description Get Self
+// @router /self [get]
+func (c *ZonesController) GetSelf() {
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, _ := VerifyTokenByAllUserTypes(token)
+
+	//token already exists
+
+	id, err := strconv.Atoi(decodedToken.CondoID)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	v, err := models.GetCondosByID(id)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = v.Zones
 	c.ServeJSON()
 }
 

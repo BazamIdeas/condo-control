@@ -12,10 +12,10 @@ import (
 
 //Verifications Model
 type Verifications struct {
-	ID        int       `orm:"column(id);pk" json:"id"`
-	Date      time.Time `orm:"column(date);type(datetime);null;auto_now_add" json:"date"`
-	Watcher   *Watchers `orm:"rel(fk);column(watchers_id)" json:"watchers"`
-	Point     *Points   `orm:"rel(fk);column(points_id)" json:"point"`
+	ID        int       `orm:"column(id);pk" json:"id,omitempty"`
+	Date      string    `orm:"column(date);type(datetime);" json:"date,omitempty"`
+	Watcher   *Watchers `orm:"rel(fk);column(watchers_id)" json:"watchers,omitempty"`
+	Point     *Points   `orm:"rel(fk);column(points_id)" json:"point,omitempty"`
 	CreatedAt time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
 	DeletedAt time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`

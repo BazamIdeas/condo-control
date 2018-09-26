@@ -15,7 +15,8 @@ type Supervisors struct {
 	ID        int       `orm:"column(id);pk" json:"id"`
 	Email     string    `orm:"column(email);size(255)" json:"email,omitempty" valid:"Required,Email"`
 	Password  string    `orm:"column(password);" json:"password,omitempty" valid:"Required"`
-	Phone     string    `orm:"column(phone);" json:"phone,omitempty" valid:"Required"`
+	Phone     string    `orm:"column(phone);null" json:"phone,omitempty" valid:"Required"`
+	Token     string    `orm:"-" json:"token,omitempty"`
 	Worker    *Workers  `orm:"rel(fk);column(workers_id)" json:"worker,omitempty"`
 	CreatedAt time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
@@ -64,6 +65,24 @@ func GetSupervisorsByID(id int) (v *Supervisors, err error) {
 	v.loadRelations()
 
 	return
+}
+
+// LoginSupervisors login a Supervisors, returns
+// if Exists.
+func LoginSupervisors(m *Supervisors) (id int, err error) {
+	o := orm.NewOrm()
+
+	m.Password = GetMD5Hash(m.Password)
+
+	err = o.QueryTable(m.TableName()).Filter("deleted_at__isnull", true).Filter("email", m.Email).Filter("password", m.Password).RelatedSel().One(m)
+
+	if err != nil {
+		return 0, err
+	}
+
+	m.Password = ""
+
+	return m.ID, err
 }
 
 // GetAllSupervisors retrieves all Supervisors matches certain condition. Returns empty list if

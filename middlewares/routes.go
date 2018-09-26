@@ -42,7 +42,7 @@ func MiddlewareNew(userTypes []string) func(ctx *context.Context) {
 		// Deny Access if the token is empty
 		if token == "" {
 			err := errors.New("Token vacio")
-			DenyAccess(ctx, err)
+			DenyAccess(ctx, err, 401)
 			return
 		}
 
@@ -67,7 +67,7 @@ func MiddlewareNew(userTypes []string) func(ctx *context.Context) {
 
 		if denyAccess {
 			err := errors.New("Usuario Invalido")
-			DenyAccess(ctx, err)
+			DenyAccess(ctx, err, 403)
 		}
 	}
 }
@@ -86,7 +86,7 @@ func Middleware(controller string, pattern string, userTypes []string) func(ctx 
 		}
 
 		excludeUrls := []string{
-			"login", "carts", "change-password", "custom-search",
+			"login", "change-password",
 		}
 
 		verifyToken := true
@@ -96,20 +96,6 @@ func Middleware(controller string, pattern string, userTypes []string) func(ctx 
 			if strings.Contains(ctx.Input.URL(), excludeURL) {
 
 				verifyToken = false
-
-				//If is a optional method like carts
-				switch ctx.Input.Method() {
-				case "DELETE":
-					if excludeURL == "carts" {
-						verifyToken = true
-						break
-					}
-				case "GET":
-					if excludeURL == "carts" {
-						verifyToken = true
-						break
-					}
-				}
 				break
 			}
 		}
@@ -130,9 +116,8 @@ func Middleware(controller string, pattern string, userTypes []string) func(ctx 
 				_, err := controllers.VerifyToken(token, "Admin")
 
 				if err != nil {
-					beego.Debug("No valido")
 					err := errors.New("Usuario Invalido")
-					DenyAccess(ctx, err)
+					DenyAccess(ctx, err, 403)
 				}
 			}
 		}
@@ -142,10 +127,6 @@ func Middleware(controller string, pattern string, userTypes []string) func(ctx 
 		}
 
 		urlMapping := GetURLMapping(controller)
-
-		beego.Debug("Url: ", controller, "| Match: ", pattern)
-		beego.Debug("Allowed users: ", userTypes)
-		beego.Debug("Method: ", ctx.Input.Method())
 
 		denyAccess := true
 
@@ -161,12 +142,10 @@ func Middleware(controller string, pattern string, userTypes []string) func(ctx 
 			}
 		}
 
-		beego.Debug("Allowed users: ", userTypes)
-
 		// Deny Access if the token is empty
 		if token == "" {
 			err := errors.New("Token Invalido")
-			DenyAccess(ctx, err)
+			DenyAccess(ctx, err, 403)
 			return
 		}
 
@@ -189,7 +168,7 @@ func Middleware(controller string, pattern string, userTypes []string) func(ctx 
 
 		if denyAccess {
 			err := errors.New("Usuario Invalido")
-			DenyAccess(ctx, err)
+			DenyAccess(ctx, err, 403)
 		}
 	}
 }

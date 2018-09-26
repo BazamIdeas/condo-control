@@ -16,6 +16,7 @@ type Watchers struct {
 	Email         string           `orm:"column(email);size(255)" json:"email,omitempty" valid:"Required"`
 	Password      string           `orm:"column(password);" json:"password,omitempty" valid:"Required"`
 	Phone         string           `orm:"column(phone);" json:"phone,omitempty" valid:"Required"`
+	Token         string           `orm:"-" json:"token,omitempty"`
 	Worker        *Workers         `orm:"rel(fk);column(workers_id)" json:"worker,omitempty"`
 	Verifications []*Verifications `orm:"reverse(many);" json:"verifications,omitempty"`
 	CreatedAt     time.Time        `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
@@ -45,9 +46,19 @@ func (t *Watchers) loadRelations() {
 // AddWatchers insert a new Watchers into database and returns
 // last inserted Id on success.
 func AddWatchers(m *Watchers) (id int64, err error) {
+
 	o := orm.NewOrm()
-	//m.Slug = GenerateSlug(m.TableName(), m.Name)
+
+	m.Password = GetMD5Hash(m.Password)
+
 	id, err = o.Insert(m)
+
+	if err != nil {
+		return
+	}
+	m.ID = int(id)
+	m.Password = ""
+
 	return
 }
 
@@ -65,6 +76,24 @@ func GetWatchersByID(id int) (v *Watchers, err error) {
 	v.loadRelations()
 
 	return
+}
+
+// LoginWatchers login a Watchers, returns
+// if Exists.
+func LoginWatchers(m *Watchers) (id int, err error) {
+	o := orm.NewOrm()
+
+	m.Password = GetMD5Hash(m.Password)
+
+	err = o.QueryTable(m.TableName()).Filter("deleted_at__isnull", true).Filter("email", m.Email).Filter("password", m.Password).RelatedSel().One(m)
+
+	if err != nil {
+		return 0, err
+	}
+
+	m.Password = ""
+
+	return m.ID, err
 }
 
 // GetAllWatchers retrieves all Watchers matches certain condition. Returns empty list if
@@ -147,6 +176,13 @@ func GetAllWatchers(query map[string]string, fields []string, sortby []string, o
 	return nil, err
 }
 
+/*
+func GetAllByCondosID (condosID int) (watchers []*Watchers, err error){
+
+	GetCondosByID()
+
+} */
+
 // UpdateWatchersByID updates Watchers by Id and returns error if
 // the record to be updated doesn't exist
 func UpdateWatchersByID(m *Watchers) (err error) {
@@ -211,6 +247,32 @@ func GetWatchersFromTrash() (watchers []*Watchers, err error) {
 	}
 
 	watchers = v
+
+	return
+
+}
+
+func GetWatchersByCondosID(condosID int) (watchers []*Watchers, err error) {
+
+	//condos, err := GetCondosByID(condosID)
+
+	o := orm.NewOrm()
+
+	v := []*Watchers{}
+
+	_, err = o.QueryTable("watchers").Filter("deleted_at__isnull", true).RelatedSel().All(&v)
+
+	if err != nil {
+		return
+	}
+
+	for _, watcher := range v {
+
+		if watcher.Worker.Condo.ID != condosID {
+			continue
+		}
+		watchers = append(watchers, watcher)
+	}
 
 	return
 

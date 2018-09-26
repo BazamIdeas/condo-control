@@ -14,7 +14,7 @@ import (
 type Points struct {
 	ID            int              `orm:"column(id);pk" json:"id"`
 	Name          string           `orm:"column(name);size(255)" json:"name,omitempty" valid:"Required"`
-	Zone          *Zones           `orm:"rel(fk);column(zones_id)" json:"zones"`
+	Zone          *Zones           `orm:"rel(fk);column(zones_id)" json:"zones,omitempty"`
 	Verifications []*Verifications `orm:"reverse(many);" json:"verifications,omitempty"`
 	CreatedAt     time.Time        `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt     time.Time        `orm:"column(updated_at);type(datetime);null" json:"-"`

@@ -6,8 +6,10 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego/validation"
+	"github.com/vjeantet/jodaTime"
 )
 
 // VerificationsController operations for Verifications
@@ -22,6 +24,7 @@ func (c *VerificationsController) URLMapping() {
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
+	c.Mapping("NewRoute", c.NewRoute)
 }
 
 // Post ...
@@ -293,4 +296,129 @@ func (c *VerificationsController) RestoreFromTrash() {
 	c.Data["json"] = v
 	c.ServeJSON()
 
+}
+
+// NewRoute ...
+// @Title New Route
+// @Description New Route
+// @router /zones/:id [post]
+func (c *VerificationsController) NewRoute() {
+
+	idStr := c.Ctx.Input.Param(":id")
+
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	v := models.Zones{ID: id}
+
+	// Validate empty body
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	z, err := models.GetZonesByID(v.ID)
+
+	if err != nil {
+		c.BadRequestDontExists("Zones")
+		return
+	}
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, _ := VerifyToken(token, "Watcher")
+
+	/* if err != nil {
+		c.BadRequest(err)
+		return
+	} */
+
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if z.Condo.ID != condoID {
+		err = errors.New("Zone dont belong to Watcher's Condo")
+		c.BadRequest(err)
+		return
+	}
+
+	now := time.Now()
+
+	if v.Points == nil {
+
+		err = errors.New("Empty Points")
+		c.BadRequest(err)
+		return
+	}
+
+	for _, point := range v.Points {
+
+		p, err := models.GetPointsByID(point.ID)
+
+		if err != nil {
+			c.BadRequestDontExists("Points")
+			return
+		}
+
+		if p.Zone.ID != v.ID {
+			err = errors.New("Point Zone is wrong")
+			c.BadRequest(err)
+			return
+		}
+
+		if point.Verifications == nil {
+
+			err = errors.New("Empty Verifications")
+			c.BadRequest(err)
+			return
+		}
+
+		for _, verification := range point.Verifications {
+
+			date, err := jodaTime.Parse("Y-M-d HH:mm:ss", verification.Date)
+
+			if err != nil {
+				c.BadRequest(err)
+				return
+			}
+
+			if !date.Before(now) {
+				err = errors.New("Verification date is a future Date")
+				c.BadRequest(err)
+				return
+			}
+
+			dur := now.Sub(date)
+
+			if dur.Hours() > 6 {
+				err = errors.New("Verification date is too old")
+				c.BadRequest(err)
+				return
+			}
+
+		}
+
+	}
+
+	routeToken, err := GenerateGeneralToken(decodedToken.UserID, decodedToken.CondoID, v.Points, nil)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	v.Token = routeToken
+
+	c.Data["json"] = v
+	c.ServeJSON()
 }

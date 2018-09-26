@@ -294,3 +294,55 @@ func (c *SupervisorsController) RestoreFromTrash() {
 	c.ServeJSON()
 
 }
+
+// Login ...
+// @Title Login
+// @Description Login
+// @router /login [post]
+func (c *SupervisorsController) Login() {
+
+	v := models.Supervisors{}
+
+	// Validate empty body
+
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	// Validate context body
+
+	valid := validation.Validation{}
+
+	valid.Required(v.Email, "email")
+	valid.Required(v.Password, "password")
+
+	if valid.HasErrors() {
+		c.BadRequestErrors(valid.Errors, v.TableName())
+		return
+	}
+
+	id, err := models.LoginSupervisors(&v)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	SupervisorID := strconv.Itoa(id)
+
+	v.Token, err = c.GenerateToken("Supervisor", SupervisorID, "1")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	c.Ctx.Output.SetStatus(200)
+	c.Data["json"] = v
+
+	c.ServeJSON()
+
+}

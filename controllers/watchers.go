@@ -22,6 +22,9 @@ func (c *WatchersController) URLMapping() {
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
+	c.Mapping("Login", c.Login)
+	c.Mapping("GetSelf", c.GetSelf)
+
 }
 
 // Post ...
@@ -29,11 +32,44 @@ func (c *WatchersController) URLMapping() {
 // @Description create Watchers
 // @router / [post]
 func (c *WatchersController) Post() {
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyToken(token, "Supervisor")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condos, err := models.GetCondosByID(condoID)
+	if err != nil {
+		c.BadRequestDontExists("Condos")
+		return
+	}
+
+	condosWorkersCount := len(condos.Workers) + 1
+
+	if condosWorkersCount > condos.UserLimit {
+		c.Ctx.Output.SetStatus(409)
+		c.Data["json"] = MessageResponse{
+			Code:    409,
+			Message: "Condo's user limit reached",
+		}
+		c.ServeJSON()
+		return
+	}
+
 	var v models.Watchers
 
 	// Validate empty body
-
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
 	if err != nil {
 		c.BadRequest(err)
@@ -41,29 +77,31 @@ func (c *WatchersController) Post() {
 	}
 
 	// Validate context body
-
 	valid := validation.Validation{}
 
 	b, _ := valid.Valid(&v)
-
 	if !b {
 		c.BadRequestErrors(valid.Errors, v.TableName())
 		return
 	}
 
-	//TODO:
-	// Validate foreings keys
-	/*
-		exists := models.ValidateExists("Sectors", v.Sector.ID)
+	if v.Worker == nil {
+		err = errors.New("Worker info is empty")
+		c.BadRequest(err)
+		return
+	}
 
-		if !exists {
-			c.BadRequestDontExists("Sector")
-			return
-		} */
+	v.Worker.Condo = &models.Condos{ID: condoID}
+
+	_, err = models.AddWorkers(v.Worker)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
 
 	_, err = models.AddWatchers(&v)
-
 	if err != nil {
+
 		c.ServeErrorJSON(err)
 		return
 	}
@@ -170,7 +208,6 @@ func (c *WatchersController) Put() {
 	v := models.Watchers{ID: id}
 
 	// Validate empty body
-
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
 	if err != nil {
@@ -179,7 +216,6 @@ func (c *WatchersController) Put() {
 	}
 
 	// Validate context body
-
 	valid := validation.Validation{}
 
 	b, _ := valid.Valid(&v)
@@ -293,4 +329,85 @@ func (c *WatchersController) RestoreFromTrash() {
 	c.Data["json"] = v
 	c.ServeJSON()
 
+}
+
+// Login ...
+// @Title Login
+// @Description Login
+// @router /login [post]
+func (c *WatchersController) Login() {
+
+	v := models.Watchers{}
+
+	// Validate empty body
+
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	// Validate context body
+
+	valid := validation.Validation{}
+
+	valid.Required(v.Email, "email")
+	valid.Required(v.Password, "password")
+
+	if valid.HasErrors() {
+		c.BadRequestErrors(valid.Errors, v.TableName())
+		return
+	}
+
+	id, err := models.LoginWatchers(&v)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	WatcherID := strconv.Itoa(id)
+
+	v.Token, err = c.GenerateToken("Watcher", WatcherID, "1")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	c.Ctx.Output.SetStatus(200)
+	c.Data["json"] = v
+
+	c.ServeJSON()
+
+}
+
+// GetSelf ...
+// @Title Get Self
+// @Description Get Self
+// @router /self [get]
+func (c *WatchersController) GetSelf() {
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, _ := VerifyToken(token, "Supervisor")
+
+	//Disclamer, token already verified
+
+	id, err := strconv.Atoi(decodedToken.CondoID)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	v, err := models.GetWatchersByCondosID(id)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = v
+	c.ServeJSON()
 }
