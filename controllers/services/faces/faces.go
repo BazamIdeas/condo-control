@@ -14,8 +14,8 @@ import (
 )
 
 var (
-	azureKey     = "2f7a595f244644ef8aee6b569686e8e6"
-	azureBaseURL = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0"
+	azureKey     = "xxxxx"
+	azureBaseURL = "xxxxx"
 )
 
 //CreateFaceFile create a image File
