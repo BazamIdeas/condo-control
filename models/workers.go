@@ -3,23 +3,54 @@ package models
 import (
 	"errors"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/vjeantet/jodaTime"
 )
+
+type dayAssistances struct {
+	Entry            *Assistances `json:"entry,omitempty"`
+	Break            *Assistances `json:"break,omitempty"`
+	FinishBreak      *Assistances `json:"finish_break,omitempty"`
+	Exit             *Assistances `json:"exit,omitempty"`
+	Day              string       `json:"day,omitempty"`
+	TotalWorkedHours float32      `json:"total_worked_hours,omitempty"`
+	ExtraWorkedHours float32      `json:"extra_worked_hours,omitempty"`
+	BaseValue        float32      `json:"base_value,omitempty"`
+	ExtraValue       float32      `json:"extra_value,omitempty"`
+	TotalValue       float32      `json:"total_value,omitempty"`
+}
+
+type monthDaysAssistances map[string]*dayAssistances
+
+type monthDetail struct {
+	Days             *monthDaysAssistances `json:"days,omitempty"`
+	TotalWorkedHours float32               `json:"total_worked_hours,omitempty"`
+	ExtraWorkedHours float32               `json:"extra_worked_hours,omitempty"`
+	ExtraValue       float32               `json:"extra_value,omitempty"`
+	BaseValue        float32               `json:"base_value,omitempty"`
+	TotalValue       float32               `json:"total_value,omitempty"`
+}
 
 //Workers Model
 type Workers struct {
-	ID          int            `orm:"column(id);pk" json:"id"`
-	FirstName   string         `orm:"column(first_name);size(255)" json:"first_name,omitempty" valid:"Required"`
-	LastName    string         `orm:"column(last_name);" json:"last_name,omitempty" valid:"Required"`
-	Condo       *Condos        `orm:"rel(fk);column(condos_id)" json:"condos,omitempty"`
-	Assistances []*Assistances `orm:"reverse(many)" json:"assistances,omitempty"`
-	CreatedAt   time.Time      `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
-	UpdatedAt   time.Time      `orm:"column(updated_at);type(datetime);null" json:"-"`
-	DeletedAt   time.Time      `orm:"column(deleted_at);type(datetime);null" json:"-"`
+	ID               int                     `orm:"column(id);pk" json:"id"`
+	FirstName        string                  `orm:"column(first_name);size(255)" json:"first_name,omitempty" valid:"Required"`
+	LastName         string                  `orm:"column(last_name);" json:"last_name,omitempty" valid:"Required"`
+	Condo            *Condos                 `orm:"rel(fk);column(condos_id)" json:"condos,omitempty"`
+	Assistances      []*Assistances          `orm:"reverse(many)" json:"assistances,omitempty"`
+	ImageUUID        string                  `orm:"column(image_uuid)" json:"image_uuid"`
+	ImageMime        string                  `orm:"column(image_mime)" json:"-"`
+	FaceID           string                  `orm:"column(face_id)" json:"-"`
+	TodayAssistances map[string]*Assistances `orm:"-" json:"today_assistances,omitempty"`
+	MonthData        *monthDetail            `orm:"-" json:"month_data,omitempty"`
+	CreatedAt        time.Time               `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
+	UpdatedAt        time.Time               `orm:"column(updated_at);type(datetime);null" json:"-"`
+	DeletedAt        time.Time               `orm:"column(deleted_at);type(datetime);null" json:"-"`
 }
 
 //TableName =
@@ -222,6 +253,7 @@ func GetWorkersFromTrash() (workers []*Workers, err error) {
 
 }
 
+//GetWorkersByCondosID ...
 func GetWorkersByCondosID(condosID int) (workers []*Workers, err error) {
 
 	//condos, err := GetCondosByID(condosID)
@@ -236,8 +268,186 @@ func GetWorkersByCondosID(condosID int) (workers []*Workers, err error) {
 		return
 	}
 
+	for _, worker := range v {
+		worker.GetTodayAssistances()
+	}
+
 	workers = v
 
 	return
 
+}
+
+//GetTodayAssistances ...
+func (t *Workers) GetTodayAssistances() (err error) {
+
+	o := orm.NewOrm()
+	todayDate := time.Now().Local().Format("2006-01-02")
+	todayAssistances := []*Assistances{}
+
+	qs := o.QueryTable("assistances").Filter("workers_id", t.ID)
+	qs = qs.Filter("date__gte", todayDate+" 00:00:00").Filter("date__lte", todayDate+" 23:59:59")
+
+	_, err = qs.All(&todayAssistances)
+
+	if err != nil {
+
+		return
+	}
+
+	mapAssistances := map[string]*Assistances{}
+
+	if err != nil {
+		t.TodayAssistances = mapAssistances
+	}
+
+	for _, todayAssistance := range todayAssistances {
+		mapAssistances[todayAssistance.Type] = todayAssistance
+	}
+
+	t.TodayAssistances = mapAssistances
+
+	return
+
+}
+
+func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error) {
+
+	qb, err := orm.NewQueryBuilder("mysql")
+	if err != nil {
+		return
+	}
+
+	monthTarget := time.Date(year, month, 1, 1, 1, 1, 1, time.UTC)
+	monthTargetString := jodaTime.Format("Y-M-d", monthTarget)
+
+	//Construct query object
+	qb.Select("assistances.id", "assistances.type", "assistances.date", "DAY(assistances.date) AS day").From("assistances").Where("assistances.workers_id = ?").And("YEAR(assistances.date) = YEAR(?)").And("MONTH(assistances.date) = MONTH(?)").OrderBy("assistances.date").Asc()
+
+	sql := qb.String()
+
+	o := orm.NewOrm()
+
+	var paramMaps []orm.Params
+
+	_, err = o.Raw(sql).SetArgs(t.ID, monthTargetString, monthTargetString).Values(&paramMaps)
+
+	if err != nil {
+		return
+	}
+
+	monthData := monthDaysAssistances{}
+
+	for _, paramMap := range paramMaps {
+
+		if dayData, ok := monthData[paramMap["day"].(string)]; ok {
+
+			//dayData := &dayAssistances{Day: paramMap["day"].(string)}
+			assistanceID, _ := strconv.Atoi(paramMap["id"].(string))
+			assistance := &Assistances{ID: assistanceID, Date: paramMap["date"].(string), Type: paramMap["type"].(string)}
+			dayData.assignTypes(assistance)
+			continue
+		}
+
+		dayData := &dayAssistances{Day: paramMap["day"].(string)}
+		assistanceID, _ := strconv.Atoi(paramMap["id"].(string))
+		assistance := &Assistances{ID: assistanceID, Date: paramMap["date"].(string), Type: paramMap["type"].(string)}
+
+		dayData.assignTypes(assistance)
+
+		monthData[paramMap["day"].(string)] = dayData
+	}
+
+	monthDetail := &monthDetail{}
+
+	for day, dayData := range monthData {
+
+		if dayData.Entry == nil || dayData.Exit == nil {
+			delete(monthData, day)
+			continue
+		}
+
+		if (dayData.Break != nil && dayData.FinishBreak == nil) || (dayData.Break == nil && dayData.FinishBreak != nil) {
+			delete(monthData, day)
+			continue
+		}
+
+		entryDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.Entry.Date)
+		exitDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.Exit.Date)
+
+		workedDuration := exitDate.Sub(entryDate)
+
+		workedHours := workedDuration.Hours()
+
+		if dayData.Break != nil && dayData.FinishBreak != nil {
+			breakDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.Break.Date)
+			finishBreakDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.FinishBreak.Date)
+
+			breakDuration := finishBreakDate.Sub(breakDate)
+			breakHours := breakDuration.Hours()
+
+			workedHours = workedHours - breakHours
+		}
+
+		dayData.TotalWorkedHours = float32(workedHours)
+
+		if t.Condo == nil {
+			continue
+		}
+
+		extraHours := dayData.TotalWorkedHours - float32(t.Condo.WorkingHours)
+
+		var extraHoursValue float32
+
+		if extraHours > 0 {
+
+			dayData.ExtraWorkedHours = extraHours
+			extraHourIncreased := t.Condo.HourValue + (t.Condo.HourValue * (t.Condo.ExtraHourIncrease / 100))
+
+			extraHoursValue = extraHours * extraHourIncreased
+
+			dayData.ExtraValue = extraHoursValue
+		} else {
+			dayData.ExtraValue = 0
+		}
+
+		monthDetail.ExtraWorkedHours += dayData.ExtraWorkedHours
+		monthDetail.ExtraValue += dayData.ExtraValue
+
+		if dayData.ExtraValue == 0 {
+			dayData.BaseValue = dayData.TotalWorkedHours * t.Condo.HourValue
+		} else {
+			dayData.BaseValue = (dayData.TotalWorkedHours - dayData.ExtraWorkedHours) * t.Condo.HourValue
+		}
+
+		dayData.TotalValue = dayData.BaseValue + dayData.ExtraValue
+
+		monthDetail.BaseValue += dayData.BaseValue
+		monthDetail.TotalValue += dayData.TotalValue
+
+	}
+
+	monthDetail.Days = &monthData
+
+	t.MonthData = monthDetail
+
+	return
+}
+
+func (d *dayAssistances) assignTypes(assistance *Assistances) {
+	switch assistance.Type {
+
+	case "entry":
+		d.Entry = assistance
+		break
+	case "break":
+		d.Break = assistance
+		break
+	case "finish-break":
+		d.FinishBreak = assistance
+		break
+	case "exit":
+		d.Exit = assistance
+		break
+	}
 }

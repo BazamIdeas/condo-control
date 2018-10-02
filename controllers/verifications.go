@@ -24,6 +24,7 @@ func (c *VerificationsController) URLMapping() {
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
+	c.Mapping("NewRouteExecute", c.NewRouteExecute)
 	c.Mapping("NewRoute", c.NewRoute)
 }
 
@@ -301,7 +302,7 @@ func (c *VerificationsController) RestoreFromTrash() {
 // NewRoute ...
 // @Title New Route
 // @Description New Route
-// @router /zones/:id [post]
+// @router /zones/:id/route [post]
 func (c *VerificationsController) NewRoute() {
 
 	idStr := c.Ctx.Input.Param(":id")
@@ -371,7 +372,7 @@ func (c *VerificationsController) NewRoute() {
 		}
 
 		if p.Zone.ID != v.ID {
-			err = errors.New("Point Zone is wrong")
+			err = errors.New("Point's Zone is wrong")
 			c.BadRequest(err)
 			return
 		}
@@ -406,6 +407,8 @@ func (c *VerificationsController) NewRoute() {
 				return
 			}
 
+			//verification.Point = p
+
 		}
 
 	}
@@ -421,4 +424,60 @@ func (c *VerificationsController) NewRoute() {
 
 	c.Data["json"] = v
 	c.ServeJSON()
+}
+
+// NewRouteExecute ...
+// @Title New Route Execute
+// @Description New Route Execute
+// @router /route/:token [post]
+func (c *VerificationsController) NewRouteExecute() {
+
+	authToken := c.Ctx.Input.Header("Authorization")
+
+	decAuthToken, _ := VerifyToken(authToken, "Watcher")
+
+	routeToken := c.Ctx.Input.Param(":token")
+
+	decRouteToken, err := VerifyGeneralToken(routeToken)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if decRouteToken.CondoID != decAuthToken.CondoID {
+		err = errors.New("Zone's Condo and Watcher's Condo Don't match")
+		c.BadRequest(err)
+		return
+	}
+
+	//TODO: VERIFICATION FACE
+
+	watcherID, _ := strconv.Atoi(decAuthToken.UserID)
+
+	watcher := &models.Watchers{ID: watcherID}
+
+	verifications := []*models.Verifications{}
+
+	points := decRouteToken.Points
+
+	for _, point := range points {
+		for _, verification := range point.Verifications {
+			p := &models.Points{ID: point.ID}
+			verification.Point = p
+			verification.Watcher = watcher
+			verifications = append(verifications, verification)
+		}
+	}
+
+	err = models.AddManyVerifications(verifications)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = verifications
+	c.ServeJSON()
+
 }

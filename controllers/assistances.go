@@ -24,6 +24,7 @@ func (c *AssistancesController) URLMapping() {
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
+	c.Mapping("NewAssistanceExecute", c.NewAssistanceExecute)
 }
 
 // Post ...
@@ -32,11 +33,11 @@ func (c *AssistancesController) URLMapping() {
 // @router / [post]
 func (c *AssistancesController) Post() {
 
-	var v models.Assistances
-
 	token := c.Ctx.Input.Header("Authorization")
 
 	decodedToken, _ := VerifyToken(token, "Watcher")
+
+	var v models.Assistances
 
 	// Validate empty body
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
@@ -71,6 +72,14 @@ func (c *AssistancesController) Post() {
 		return
 	}
 
+	dur := now.Sub(date)
+
+	if dur.Hours() > 6 {
+		err = errors.New("Verification date is too old")
+		c.BadRequest(err)
+		return
+	}
+
 	worker, err := models.GetWorkersByID(v.Worker.ID)
 
 	if err != nil {
@@ -86,27 +95,6 @@ func (c *AssistancesController) Post() {
 		return
 	}
 
-	dur := now.Sub(date)
-
-	if dur.Hours() > 6 {
-		err = errors.New("Verification date is too old")
-		c.BadRequest(err)
-		return
-	}
-
-	// Validate foreings keys
-	/* foreignsModels := map[string]int{
-		"Watchers": v.Watcher.ID,
-		"Workers":  v.Worker.ID,
-	}
-
-	resume := c.doForeignModelsValidation(foreignsModels)
-
-	if !resume {
-		return
-	}
-	*/
-
 	tokenAssistance, err := GenerateGeneralToken(decodedToken.UserID, decodedToken.CondoID, nil, &v)
 
 	if err != nil {
@@ -116,10 +104,80 @@ func (c *AssistancesController) Post() {
 
 	v.Token = tokenAssistance
 
-	c.Ctx.Output.SetStatus(201)
+	c.Ctx.Output.SetStatus(200)
 	c.Data["json"] = v
 
 	c.ServeJSON()
+}
+
+// NewAssistanceExecute ...
+// @Title New Assistance Execute
+// @Description New Assistance Execute
+// @router /:token [post]
+func (c *AssistancesController) NewAssistanceExecute() {
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Watcher")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	routeToken := c.Ctx.Input.Param(":token")
+	decAssistanceToken, err := VerifyGeneralToken(routeToken)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if decAssistanceToken.CondoID != decAuthToken.CondoID {
+		err = errors.New("Worker's Condo and Watcher's Condo Don't match")
+		c.BadRequest(err)
+		return
+	}
+
+	_, faceFh, err := c.GetFile("faces")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	worker := decAssistanceToken.Assistance.Worker
+
+	_, ok, err := VerifyWorkerIdentity(worker.ID, faceFh)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if !ok {
+		err = errors.New("Identity Verification Failed")
+		c.BadRequest(err)
+		return
+	}
+
+	watcherID, _ := strconv.Atoi(decAuthToken.UserID)
+	watcher := &models.Watchers{ID: watcherID}
+
+	assistance := decAssistanceToken.Assistance
+	assistance.Watcher = watcher
+
+	//TODO: VALIDAR ESTADOS PREVIOS
+
+	_, err = models.AddAssistances(assistance)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = assistance
+	c.ServeJSON()
+
 }
 
 // GetOne ...

@@ -252,6 +252,7 @@ func GetWatchersFromTrash() (watchers []*Watchers, err error) {
 
 }
 
+//GetWatchersByCondosID ...
 func GetWatchersByCondosID(condosID int) (watchers []*Watchers, err error) {
 
 	//condos, err := GetCondosByID(condosID)

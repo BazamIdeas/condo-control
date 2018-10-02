@@ -68,6 +68,10 @@ func GetCondosByID(id int) (v *Condos, err error) {
 
 	v.loadRelations()
 
+	for _, zone := range v.Zones {
+		zone.loadRelations()
+	}
+
 	return
 }
 

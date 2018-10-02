@@ -148,6 +148,7 @@ func (c *BaseController) ServeErrorJSON(err error) {
 			Message:       "No results",
 			Code:          8,
 			PrettyMessage: "No se encontraron resultados",
+			Error:         err.Error(),
 		}
 	}
 

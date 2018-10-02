@@ -1,13 +1,17 @@
 package controllers
 
 import (
+	"condo-control/controllers/services/faces"
 	"condo-control/models"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"mime/multipart"
 	"strconv"
 	"strings"
 
 	"github.com/astaxie/beego/validation"
+	"github.com/vjeantet/jodaTime"
 )
 
 //WorkersController ...
@@ -30,39 +34,56 @@ func (c *WorkersController) URLMapping() {
 // @Description create Workers
 // @router / [post]
 func (c *WorkersController) Post() {
-	var v models.Workers
 
-	// Validate empty body
+	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
 
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if err != nil {
+		c.Ctx.Output.SetStatus(413)
+		c.ServeJSON()
+		return
+	}
+
+	var r = c.Ctx.Request
+
+	var (
+		firstName = r.FormValue("first_name")
+		lastName  = r.FormValue("last_name")
+	)
+
+	v := &models.Workers{FirstName: firstName, LastName: lastName}
+
+	if !c.Ctx.Input.IsUpload() {
+		err := errors.New("Not image file found on request")
+		c.BadRequest(err)
+		return
+	}
+
+	/* file, fileHeader, err := c.GetFile("faces")
 
 	if err != nil {
 		c.BadRequest(err)
 		return
 	}
 
-	// Validate context body
+
+	//TODO: VALIDATE IMAGE
+
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	} */
 
 	valid := validation.Validation{}
 
-	b, _ := valid.Valid(&v)
+	b, _ := valid.Valid(v)
 
 	if !b {
 		c.BadRequestErrors(valid.Errors, v.TableName())
 		return
 	}
 
-	//TODO:
-	// Validate foreings keys
-	/*
-		exists := models.ValidateExists("Sectors", v.Sector.ID)
-
-		if !exists {
-			c.BadRequestDontExists("Sector")
-			return
-		} */
-
-	_, err = models.AddWorkers(&v)
+	_, err = models.AddWorkers(v)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -323,4 +344,117 @@ func (c *WorkersController) GetSelf() {
 
 	c.Data["json"] = v
 	c.ServeJSON()
+}
+
+//GetAssistancesDataByMonth ..
+// @Title Get Assistances Data By Month
+// @Description Get Assistances Data By Month
+// @router /:id/data/:year/:month [get]
+func (c *WorkersController) GetAssistancesDataByMonth() {
+
+	yearString := c.Ctx.Input.Param(":year")
+	monthSring := c.Ctx.Input.Param(":month")
+
+	date, err := jodaTime.Parse("Y-M", yearString+"-"+monthSring)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	year, month, _ := date.Date()
+
+	fmt.Println(year)
+	fmt.Println(month)
+	idStr := c.Ctx.Input.Param(":id")
+
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Supervisor")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByID(id)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	if worker.Condo.ID != condoID {
+		err = errors.New("Worker's Condo and Supervisor's Condo Don't match")
+		c.BadRequest(err)
+		return
+	}
+
+	// worker.MonthAssistances =  map[string]map[string]*models.Assistances{}
+
+	err = worker.GetMonthAssistancesData(year, month)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	v := worker
+
+	c.Data["json"] = v
+	c.ServeJSON()
+}
+
+//GetAssistancesDataByYear ..
+// @Title Get Assistances Data By Year
+// @Description Get Assistances Data By Year
+// @router /:id/data/:year/ [get]
+func (c *WorkersController) GetAssistancesDataByYear() {
+
+	v := ""
+
+	c.Data["json"] = v
+	c.ServeJSON()
+}
+
+//VerifyWorkerIdentity ...
+func VerifyWorkerIdentity(workerID int, newFaceFh *multipart.FileHeader) (worker *models.Workers, ok bool, err error) {
+
+	worker, err = models.GetWorkersByID(workerID)
+
+	if err != nil {
+		return
+	}
+
+	oldImageUUID := worker.ImageUUID
+
+	newImageUUID, err := faces.CreateFaceFile(newFaceFh)
+
+	if err != nil {
+		return
+	}
+
+	defer faces.DeleteFaceFile(newImageUUID)
+
+	newFaceID, err := faces.CreateFaceID(newImageUUID)
+	if err != nil {
+		return
+	}
+
+	oldFaceID, err := faces.CreateFaceID(oldImageUUID)
+	if err != nil {
+		return
+	}
+
+	ok, err = faces.CompareFacesIDs(oldFaceID, newFaceID)
+
+	return
 }

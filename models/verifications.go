@@ -213,3 +213,14 @@ func GetVerificationsFromTrash() (verifications []*Verifications, err error) {
 	return
 
 }
+
+//AddManyVerifications ...
+func AddManyVerifications(verifications []*Verifications) (err error) {
+
+	o := orm.NewOrm()
+
+	_, err = o.InsertMulti(200, &verifications)
+
+	return
+
+}

@@ -112,7 +112,7 @@ func (c *BaseController) GenerateToken(userType string, userID string, condoID s
 	return
 }
 
-//GenerateTokenRoute ..
+//GenerateGeneralToken ..
 func GenerateGeneralToken(userID string, condoID string, points []*models.Points, assistance *models.Assistances) (token string, err error) {
 
 	now := time.Now()
@@ -137,17 +137,16 @@ func GenerateGeneralToken(userID string, condoID string, points []*models.Points
 	return
 }
 
-//VerifyTokenRoute ...
-func VerifyGeneralToken(tokenString string) (decodedToken *JwtToken, err error) {
+//VerifyGeneralToken ...
+func VerifyGeneralToken(tokenString string) (decodedToken *JwtTokenRoute, err error) {
 
 	if tokenString == "" {
 		return nil, errors.New("Empty token")
 	}
 
-	tokenString = strings.TrimLeft(tokenString, "Bearer")
-	tokenString = strings.TrimLeft(tokenString, " ")
+	//tokenString = strings.TrimLeft(tokenString, "Bearer ")
 
-	token, err := jwt.ParseWithClaims(tokenString, &JwtToken{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &JwtTokenRoute{}, func(token *jwt.Token) (interface{}, error) {
 		return hmacSecret, nil
 	})
 
@@ -155,7 +154,7 @@ func VerifyGeneralToken(tokenString string) (decodedToken *JwtToken, err error) 
 		return nil, err
 	}
 
-	claims, ok := token.Claims.(*JwtToken)
+	claims, ok := token.Claims.(*JwtTokenRoute)
 
 	if !ok || !token.Valid {
 		return nil, err
