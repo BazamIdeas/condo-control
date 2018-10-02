@@ -5,7 +5,6 @@ import (
 	"condo-control/models"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"mime/multipart"
 	"strconv"
 	"strings"
@@ -364,8 +363,6 @@ func (c *WorkersController) GetAssistancesDataByMonth() {
 
 	year, month, _ := date.Date()
 
-	fmt.Println(year)
-	fmt.Println(month)
 	idStr := c.Ctx.Input.Param(":id")
 
 	id, err := strconv.Atoi(idStr)
@@ -419,7 +416,59 @@ func (c *WorkersController) GetAssistancesDataByMonth() {
 // @router /:id/data/:year/ [get]
 func (c *WorkersController) GetAssistancesDataByYear() {
 
-	v := ""
+	yearString := c.Ctx.Input.Param(":year")
+
+	date, err := jodaTime.Parse("Y", yearString)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	year, _, _ := date.Date()
+
+	idStr := c.Ctx.Input.Param(":id")
+
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Supervisor")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByID(id)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	if worker.Condo.ID != condoID {
+		err = errors.New("Worker's Condo and Supervisor's Condo Don't match")
+		c.BadRequest(err)
+		return
+	}
+
+	// worker.MonthAssistances =  map[string]map[string]*models.Assistances{}
+
+	err = worker.GetYearAssistancesData(year)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	v := worker
 
 	c.Data["json"] = v
 	c.ServeJSON()

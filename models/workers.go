@@ -36,6 +36,8 @@ type monthDetail struct {
 	TotalValue       float32               `json:"total_value,omitempty"`
 }
 
+type yearDetail map[int]*monthDetail
+
 //Workers Model
 type Workers struct {
 	ID               int                     `orm:"column(id);pk" json:"id"`
@@ -48,6 +50,7 @@ type Workers struct {
 	FaceID           string                  `orm:"column(face_id)" json:"-"`
 	TodayAssistances map[string]*Assistances `orm:"-" json:"today_assistances,omitempty"`
 	MonthData        *monthDetail            `orm:"-" json:"month_data,omitempty"`
+	YearData         *yearDetail             `orm:"-" json:"year_data,omitempty"`
 	CreatedAt        time.Time               `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt        time.Time               `orm:"column(updated_at);type(datetime);null" json:"-"`
 	DeletedAt        time.Time               `orm:"column(deleted_at);type(datetime);null" json:"-"`
@@ -311,6 +314,7 @@ func (t *Workers) GetTodayAssistances() (err error) {
 
 }
 
+//GetMonthAssistancesData ...
 func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error) {
 
 	qb, err := orm.NewQueryBuilder("mysql")
@@ -450,4 +454,42 @@ func (d *dayAssistances) assignTypes(assistance *Assistances) {
 		d.Exit = assistance
 		break
 	}
+}
+
+var fullYear = []time.Month{
+	time.January,
+	time.February,
+	time.March,
+	time.April,
+	time.May,
+	time.June,
+	time.July,
+	time.August,
+	time.September,
+	time.October,
+	time.November,
+	time.December,
+}
+
+//GetYearAssistancesData ...
+func (t *Workers) GetYearAssistancesData(year int) (err error) {
+
+	yearData := yearDetail{}
+
+	for _, singleMonth := range fullYear {
+		errMonth := t.GetMonthAssistancesData(year, singleMonth)
+		if errMonth != nil && errMonth != orm.ErrNoRows {
+			err = errMonth
+			return
+		}
+
+		monthData := *t.MonthData
+		yearData[int(singleMonth)] = &monthData
+		t.MonthData = nil
+	}
+
+	t.YearData = &yearData
+
+	return
+
 }
