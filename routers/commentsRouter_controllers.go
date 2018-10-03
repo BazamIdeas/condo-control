@@ -505,14 +505,6 @@ func init() {
 
 	beego.GlobalControllerRouter["condo-control/controllers:WorkersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:WorkersController"],
 		beego.ControllerComments{
-			Method: "GetFaceByUUID",
-			Router: `/:id/face`,
-			AllowHTTPMethods: []string{"get"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["condo-control/controllers:WorkersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:WorkersController"],
-		beego.ControllerComments{
 			Method: "AddImage",
 			Router: `/:id/face`,
 			AllowHTTPMethods: []string{"post"},
@@ -524,6 +516,14 @@ func init() {
 			Method: "RestoreFromTrash",
 			Router: `/:id/restore`,
 			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:WorkersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:WorkersController"],
+		beego.ControllerComments{
+			Method: "GetFaceByUUID",
+			Router: `/face/:uuid`,
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 

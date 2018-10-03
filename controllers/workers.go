@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"mime/multipart"
-	"net/http"
 	"strconv"
 	"strings"
 
@@ -619,14 +618,12 @@ func (c *WorkersController) GetFaceByUUID() {
 		return
 	}
 
-	imageBytes, err := faces.GetFaceFile(uuid)
+	imageBytes, mimeType, err := faces.GetFaceFile(uuid)
 	if err != nil {
 		c.Ctx.Output.SetStatus(404)
 		c.Ctx.Output.Body([]byte{})
 		return
 	}
-
-	mimeType := http.DetectContentType(fileBytes)
 
 	c.Ctx.Output.Header("Content-Type", mimeType)
 	c.Ctx.Output.Body(imageBytes)

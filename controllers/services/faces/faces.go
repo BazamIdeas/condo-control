@@ -81,11 +81,17 @@ func CreateFaceFile(fh *multipart.FileHeader) (imageUUID string, mimeType string
 	return
 }
 
-func GetFaceFile(imageUUID string) (imageBytes []byte, err error) {
+func GetFaceFile(imageUUID string) (imageBytes []byte, mimeType string, err error) {
 
 	imageURL := imageFolderDir + "/" + imageUUID
 
 	imageBytes, err = ioutil.ReadFile(imageURL)
+
+	if err != nil {
+		return
+	}
+
+	mimeType = http.DetectContentType(imageBytes)
 
 	return
 
