@@ -26,6 +26,7 @@ func (c *WorkersController) URLMapping() {
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("GetSelf", c.GetSelf)
+	c.Mapping("AddImage", c.AddImage)
 }
 
 // Post ...
@@ -34,56 +35,61 @@ func (c *WorkersController) URLMapping() {
 // @router / [post]
 func (c *WorkersController) Post() {
 
-	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyToken(token, "Watcher")
 
 	if err != nil {
-		c.Ctx.Output.SetStatus(413)
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condos, err := models.GetCondosByID(condoID)
+	if err != nil {
+		c.BadRequestDontExists("Condos")
+		return
+	}
+
+	condosWorkersCount := len(condos.Workers) + 1
+
+	if condosWorkersCount > condos.UserLimit {
+		c.Ctx.Output.SetStatus(409)
+		c.Data["json"] = MessageResponse{
+			Code:    409,
+			Message: "Condo's user limit reached",
+		}
 		c.ServeJSON()
 		return
 	}
 
-	var r = c.Ctx.Request
+	var v models.Workers
 
-	var (
-		firstName = r.FormValue("first_name")
-		lastName  = r.FormValue("last_name")
-	)
-
-	v := &models.Workers{FirstName: firstName, LastName: lastName}
-
-	if !c.Ctx.Input.IsUpload() {
-		err := errors.New("Not image file found on request")
-		c.BadRequest(err)
-		return
-	}
-
-	/* file, fileHeader, err := c.GetFile("faces")
+	// Validate empty body
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
 	if err != nil {
 		c.BadRequest(err)
 		return
 	}
 
-
-	//TODO: VALIDATE IMAGE
-
-	fileBytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		c.BadRequest(err)
-		return
-	} */
-
+	// Validate context body
 	valid := validation.Validation{}
 
-	b, _ := valid.Valid(v)
-
+	b, _ := valid.Valid(&v)
 	if !b {
 		c.BadRequestErrors(valid.Errors, v.TableName())
 		return
 	}
 
-	_, err = models.AddWorkers(v)
+	v.Condo = &models.Condos{ID: condoID}
 
+	_, err = models.AddWorkers(&v)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -93,6 +99,7 @@ func (c *WorkersController) Post() {
 	c.Data["json"] = v
 
 	c.ServeJSON()
+
 }
 
 // GetOne ...
@@ -328,14 +335,14 @@ func (c *WorkersController) GetSelf() {
 
 	//Disclamer, token already verified
 
-	id, err := strconv.Atoi(decodedToken.CondoID)
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
 
 	if err != nil {
 		c.BadRequest(err)
 		return
 	}
 
-	v, err := models.GetWorkersByCondosID(id)
+	v, err := models.GetWorkersByCondosID(condoID)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -483,17 +490,19 @@ func VerifyWorkerIdentity(workerID int, newFaceFh *multipart.FileHeader) (worker
 		return
 	}
 
+	oldImageUUID := worker.ImageUUID
+	if oldImageUUID == "" {
+		err = errors.New("Worker lack registered Face")
+		return
+	}
+
 	/////TODO:
 	//////TEST MODE /////
 	ok = true
-
 	return
-
 	///////END TEST MODE
 
-	oldImageUUID := worker.ImageUUID
-
-	newImageUUID, err := faces.CreateFaceFile(newFaceFh)
+	newImageUUID, _, err := faces.CreateFaceFile(newFaceFh)
 
 	if err != nil {
 		return
@@ -514,4 +523,127 @@ func VerifyWorkerIdentity(workerID int, newFaceFh *multipart.FileHeader) (worker
 	ok, err = faces.CompareFacesIDs(oldFaceID, newFaceID)
 
 	return
+}
+
+// AddImage ...
+// @Title Add Image
+// @Description Add Image
+// @router /:id/face [post]
+func (c *WorkersController) AddImage() {
+
+	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
+
+	if err != nil {
+		c.Ctx.Output.SetStatus(413)
+		c.ServeJSON()
+		return
+	}
+
+	if !c.Ctx.Input.IsUpload() {
+		err := errors.New("Not image file found on request")
+		c.BadRequest(err)
+		return
+	}
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, _ := VerifyToken(token, "Watcher")
+
+	//Disclamer, token already verified
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	idStr := c.Ctx.Input.Param(":id")
+
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByID(id)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	if worker.Condo.ID != condoID {
+		err = errors.New("Worker's Condo and Watcher's Condo Don't match")
+		c.BadRequest(err)
+		return
+	}
+
+	_, faceFh, err := c.GetFile("faces")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	newImageUUID, mimeType, err := faces.CreateFaceFile(faceFh)
+	if err != nil {
+		return
+	}
+
+	worker.ImageUUID = newImageUUID
+	worker.ImageMime = mimeType
+
+	err = models.UpdateWorkersByID(worker)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = worker
+	c.ServeJSON()
+}
+
+// GetFaceByUUID ...
+// @Title Get Face By UUID
+// @Description Get Face By UUID
+// @router /:id/face [get]
+func (c *WorkersController) GetFaceByUUID() {
+
+	idStr := c.Ctx.Input.Param(":id")
+
+	if idStr == "" {
+		c.Ctx.Output.SetStatus(404)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	workerID, err := strconv.Atoi(idStr)
+	if err != nil {
+		return
+	}
+
+	v, err := models.GetWorkersByID(workerID)
+	if err != nil {
+		c.Ctx.Output.SetStatus(404)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	if v.ImageUUID == "" {
+		c.Ctx.Output.SetStatus(404)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	imageBytes, err := faces.GetFaceFile(v.ImageUUID)
+	if err != nil {
+		c.Ctx.Output.SetStatus(404)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	c.Ctx.Output.Header("Content-Type", v.ImageMime)
+	c.Ctx.Output.Body(imageBytes)
+
 }

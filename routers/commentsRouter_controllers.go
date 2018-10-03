@@ -183,54 +183,6 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
-	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
-		beego.ControllerComments{
-			Method: "Post",
-			Router: `/`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
-		beego.ControllerComments{
-			Method: "GetAll",
-			Router: `/`,
-			AllowHTTPMethods: []string{"get"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
-		beego.ControllerComments{
-			Method: "GetOne",
-			Router: `/:id`,
-			AllowHTTPMethods: []string{"get"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
-		beego.ControllerComments{
-			Method: "Put",
-			Router: `/:id`,
-			AllowHTTPMethods: []string{"put"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
-		beego.ControllerComments{
-			Method: "Delete",
-			Router: `/:id`,
-			AllowHTTPMethods: []string{"delete"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["condo-control/controllers:ImagesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ImagesController"],
-		beego.ControllerComments{
-			Method: "ServeImageBySlug",
-			Router: `/slug/:slug`,
-			AllowHTTPMethods: []string{"get"},
-			MethodParams: param.Make(),
-			Params: nil})
-
 	beego.GlobalControllerRouter["condo-control/controllers:PointsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:PointsController"],
 		beego.ControllerComments{
 			Method: "Post",
@@ -548,6 +500,22 @@ func init() {
 			Method: "GetAssistancesDataByMonth",
 			Router: `/:id/data/:year/:month`,
 			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:WorkersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:WorkersController"],
+		beego.ControllerComments{
+			Method: "GetFaceByUUID",
+			Router: `/:id/face`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:WorkersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:WorkersController"],
+		beego.ControllerComments{
+			Method: "AddImage",
+			Router: `/:id/face`,
+			AllowHTTPMethods: []string{"post"},
 			MethodParams: param.Make(),
 			Params: nil})
 

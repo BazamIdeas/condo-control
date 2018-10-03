@@ -116,6 +116,20 @@ func (c *AssistancesController) Post() {
 // @router /:token [post]
 func (c *AssistancesController) NewAssistanceExecute() {
 
+	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
+
+	if err != nil {
+		c.Ctx.Output.SetStatus(413)
+		c.ServeJSON()
+		return
+	}
+
+	if !c.Ctx.Input.IsUpload() {
+		err := errors.New("Not image file found on request")
+		c.BadRequest(err)
+		return
+	}
+
 	authToken := c.Ctx.Input.Header("Authorization")
 	decAuthToken, err := VerifyToken(authToken, "Watcher")
 

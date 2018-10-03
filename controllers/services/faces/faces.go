@@ -8,8 +8,10 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
+	"github.com/astaxie/beego"
 	"github.com/gofrs/uuid"
 )
 
@@ -18,8 +20,26 @@ var (
 	azureBaseURL = "xxxxx"
 )
 
+var (
+	rootDir, _      = filepath.Abs(beego.AppConfig.String("assets::jumps"))
+	imageFolderPath = beego.AppConfig.String("assets::imageFolderPath")
+	imageFolderDir  = rootDir + "/" + imageFolderPath
+)
+
+func init() {
+
+	checkOrCreateImagesFolder(imageFolderDir)
+}
+
+func checkOrCreateImagesFolder(imageFolderDir string) (err error) {
+	if _, err := os.Stat(imageFolderDir); os.IsNotExist(err) {
+		os.MkdirAll(imageFolderDir, 644)
+	}
+	return
+}
+
 //CreateFaceFile create a image File
-func CreateFaceFile(fh *multipart.FileHeader) (imageUUID string, err error) {
+func CreateFaceFile(fh *multipart.FileHeader) (imageUUID string, mimeType string, err error) {
 
 	file, err := fh.Open()
 
@@ -34,7 +54,7 @@ func CreateFaceFile(fh *multipart.FileHeader) (imageUUID string, err error) {
 		return
 	}
 
-	mimeType := http.DetectContentType(fileBytes)
+	mimeType = http.DetectContentType(fileBytes)
 
 	if mimeType != "image/png" && mimeType != "image/jpeg" {
 		err = errors.New("Bad mime-type")
@@ -49,7 +69,7 @@ func CreateFaceFile(fh *multipart.FileHeader) (imageUUID string, err error) {
 
 	fileName := UUID.String()
 
-	err = ioutil.WriteFile(fileName, fileBytes, 0644)
+	err = ioutil.WriteFile(imageFolderDir+"/"+fileName, fileBytes, 0644)
 
 	if err != nil {
 		return
@@ -58,6 +78,16 @@ func CreateFaceFile(fh *multipart.FileHeader) (imageUUID string, err error) {
 	imageUUID = fileName
 
 	return
+}
+
+func GetFaceFile(imageUUID string) (imageBytes []byte, err error) {
+
+	imageURL := imageFolderDir + "/" + imageUUID
+
+	imageBytes, err = ioutil.ReadFile(imageURL)
+
+	return
+
 }
 
 //DeleteFaceFile ...

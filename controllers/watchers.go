@@ -394,9 +394,7 @@ func (c *WatchersController) GetSelf() {
 	decodedToken, _ := VerifyToken(token, "Supervisor")
 
 	//Disclamer, token already verified
-
 	id, err := strconv.Atoi(decodedToken.CondoID)
-
 	if err != nil {
 		c.BadRequest(err)
 		return

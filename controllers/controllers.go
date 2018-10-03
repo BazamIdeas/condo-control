@@ -1,10 +1,7 @@
 package controllers
 
 import (
-	"errors"
-	"mime/multipart"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -31,15 +28,7 @@ type MessageResponse struct {
 	Error         string              `json:"error,omitempty"`
 }
 
-var (
-	rootDir, _      = filepath.Abs(beego.AppConfig.String("assets::jumps"))
-	imageFolderPath = beego.AppConfig.String("assets::imageFolderPath")
-	imageFolderDir  = rootDir + "/" + imageFolderPath
-)
-
 func init() {
-
-	checkOrCreateImagesFolder(imageFolderDir)
 
 	validation.SetDefaultMessage(map[string]string{
 		"Required":     "This field is required",
@@ -215,52 +204,15 @@ func stringIsValidInt(stringIDs *map[string]string) (IDs map[string]int, err err
 		}
 
 		intIDs[key] = intID
-
 	}
-
 	IDs = intIDs
 
 	return
 }
 
 func checkOrCreateImagesFolder(imageFolderDir string) (err error) {
-
 	if _, err := os.Stat(imageFolderDir); os.IsNotExist(err) {
 		os.MkdirAll(imageFolderDir, 644)
 	}
 	return
-
-}
-
-func addNewImage(fh *multipart.FileHeader, v *models.Workers) (i *models.Images, err error) {
-
-	if v.ID == 0 {
-		err = errors.New("Parent Worker ID is empty")
-		return
-	}
-
-	fileType := fh.Header["Content-Type"][0]
-
-	if fileType != "image/jpeg" && fileType != "image/png" {
-
-		err = errors.New("Incorrect file type, expected 'image/jpeg' or 'image/png', '" + fileType + "' type was given")
-		return
-	}
-
-	i = &models.Images{Mimetype: fileType, Worker: v}
-
-	_, err = models.AddImages(i, fh, imageFolderDir)
-
-	return
-
-}
-
-func generateImageURL(v *models.Images) (err error) {
-
-	c := new(ImagesController)
-
-	v.URL = c.URLFor("ImagesController.ServeImageBySlug", ":uuid", v.UUID)
-
-	return
-
 }
