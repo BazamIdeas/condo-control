@@ -16,7 +16,7 @@ func main() {
 
 	//CORS
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
-		AllowOrigins:     []string{"*"},
+		AllowAllOrigins:  true,
 		AllowMethods:     []string{"GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Access-Control-Allow-Origin", "Country-Iso", "authorization"},
 		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin"},
