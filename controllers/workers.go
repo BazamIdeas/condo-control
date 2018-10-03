@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"mime/multipart"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -607,43 +608,27 @@ func (c *WorkersController) AddImage() {
 // GetFaceByUUID ...
 // @Title Get Face By UUID
 // @Description Get Face By UUID
-// @router /:id/face [get]
+// @router /face/:uuid [get]
 func (c *WorkersController) GetFaceByUUID() {
 
-	idStr := c.Ctx.Input.Param(":id")
+	uuid := c.Ctx.Input.Param(":uuid")
 
-	if idStr == "" {
+	if uuid == "" {
 		c.Ctx.Output.SetStatus(404)
 		c.Ctx.Output.Body([]byte{})
 		return
 	}
 
-	workerID, err := strconv.Atoi(idStr)
-	if err != nil {
-		return
-	}
-
-	v, err := models.GetWorkersByID(workerID)
+	imageBytes, err := faces.GetFaceFile(uuid)
 	if err != nil {
 		c.Ctx.Output.SetStatus(404)
 		c.Ctx.Output.Body([]byte{})
 		return
 	}
 
-	if v.ImageUUID == "" {
-		c.Ctx.Output.SetStatus(404)
-		c.Ctx.Output.Body([]byte{})
-		return
-	}
+	mimeType := http.DetectContentType(fileBytes)
 
-	imageBytes, err := faces.GetFaceFile(v.ImageUUID)
-	if err != nil {
-		c.Ctx.Output.SetStatus(404)
-		c.Ctx.Output.Body([]byte{})
-		return
-	}
-
-	c.Ctx.Output.Header("Content-Type", v.ImageMime)
+	c.Ctx.Output.Header("Content-Type", mimeType)
 	c.Ctx.Output.Body(imageBytes)
 
 }

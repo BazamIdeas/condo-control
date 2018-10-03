@@ -21,6 +21,7 @@ var (
 )
 
 var (
+	baseImageURL    = beego.AppConfig.String("faces::baseUrl")
 	rootDir, _      = filepath.Abs(beego.AppConfig.String("assets::jumps"))
 	imageFolderPath = beego.AppConfig.String("assets::imageFolderPath")
 	imageFolderDir  = rootDir + "/" + imageFolderPath
@@ -106,7 +107,7 @@ func CreateFaceID(imageUUID string) (faceID string, err error) {
 		Timeout: time.Second * 2,
 	}
 
-	imageURL := "algo" + imageUUID
+	imageURL := baseImageURL + "/" + imageUUID
 
 	requestBody := map[string]string{"url": imageURL}
 
