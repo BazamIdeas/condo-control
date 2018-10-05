@@ -331,9 +331,10 @@ func (c *SupervisorsController) Login() {
 		return
 	}
 
-	SupervisorID := strconv.Itoa(id)
+	supervisorID := strconv.Itoa(id)
+	condoID := strconv.Itoa(v.Worker.Condo.ID)
 
-	v.Token, err = c.GenerateToken("Supervisor", SupervisorID, "1")
+	v.Token, err = c.GenerateToken("Supervisor", supervisorID, condoID)
 
 	if err != nil {
 		c.BadRequest(err)
