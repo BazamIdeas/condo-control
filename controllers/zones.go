@@ -52,15 +52,36 @@ func (c *ZonesController) Post() {
 		return
 	}
 
-	//TODO:
-	// Validate foreings keys
-	/*
-		exists := models.ValidateExists("Sectors", v.Sector.ID)
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Supervisor")
 
-		if !exists {
-			c.BadRequestDontExists("Sector")
-			return
-		} */
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	condo, err := models.GetCondosByID(condoID)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	condosZonesCount := len(condo.Zones) + 1
+
+	if condosZonesCount > condo.ZoneLimit {
+		c.Ctx.Output.SetStatus(409)
+		c.Data["json"] = MessageResponse{
+			Code:    409,
+			Message: "Condo's zones limit reached",
+		}
+		c.ServeJSON()
+		return
+	}
+
+	v.Condo = &models.Condos{ID: condo.ID}
 
 	_, err = models.AddZones(&v)
 

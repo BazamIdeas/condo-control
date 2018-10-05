@@ -29,11 +29,33 @@ func (c *HolidaysController) URLMapping() {
 // @Description create Holidays
 // @router / [post]
 func (c *HolidaysController) Post() {
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyToken(token, "Supervisor")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condos, err := models.GetCondosByID(condoID)
+	if err != nil {
+		c.BadRequestDontExists("Condos")
+		return
+	}
+
 	var v models.Holidays
 
 	// Validate empty body
 
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
 	if err != nil {
 		c.BadRequest(err)
@@ -51,15 +73,20 @@ func (c *HolidaysController) Post() {
 		return
 	}
 
-	//TODO:
-	// Validate foreings keys
-	/*
-		exists := models.ValidateExists("Sectors", v.Sector.ID)
+	v.Condo = &models.Condos{ID: condos.ID}
 
-		if !exists {
-			c.BadRequestDontExists("Sector")
-			return
-		} */
+	ok, err := models.ExistHolidaysByCondoID(v.Date,v.Condo.ID)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if ok {
+		err = errors.New("Holiday already exists")
+		c.BadRequest(err)
+		return
+	}
 
 	_, err = models.AddHolidays(&v)
 

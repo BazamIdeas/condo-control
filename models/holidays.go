@@ -3,17 +3,19 @@ package models
 import (
 	"errors"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/vjeantet/jodaTime"
 )
 
 //Holidays Model
 type Holidays struct {
 	ID        int       `orm:"column(id);pk" json:"id"`
-	Date      time.Time `orm:"column(date);type(date)" json:"date,omitempty" valid:"Required"`
+	Date      string    `orm:"column(date);type(date)" json:"date,omitempty" valid:"Required"`
 	Condo     *Condos   `orm:"rel(fk);column(condos_id)" json:"condos,omitempty"`
 	CreatedAt time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
@@ -45,6 +47,11 @@ func AddHolidays(m *Holidays) (id int64, err error) {
 	o := orm.NewOrm()
 	//m.Slug = GenerateSlug(m.TableName(), m.Name)
 	id, err = o.Insert(m)
+
+	if err != nil {
+		return
+	}
+	m.ID = int(id)
 	return
 }
 
@@ -211,4 +218,64 @@ func GetHolidaysFromTrash() (holidays []*Holidays, err error) {
 
 	return
 
+}
+
+func ExistHolidaysByCondoID(date string, condosID int) (ok bool, err error) {
+
+	o := orm.NewOrm()
+
+	count, err := o.QueryTable("holidays").Filter("condos_id", condosID).Filter("date", date).Count()
+
+	if err != nil {
+		return
+	}
+
+	if count > 0 {
+		ok = true
+	}
+
+	return
+}
+
+func GetHolidaysByCondosID(year int, month time.Month, condosID int) (holidays map[string]*Holidays, err error) {
+
+	holidays = map[string]*Holidays{}
+
+	qb, err := orm.NewQueryBuilder("mysql")
+	if err != nil {
+		return
+	}
+
+	monthTarget := time.Date(year, month, 1, 1, 1, 1, 1, time.UTC)
+	monthTargetString := jodaTime.Format("Y-M-d", monthTarget)
+
+	qb.Select("holidays.id", "holidays.date, DAY(holidays.date) as day").From("holidays").Where("holidays.condos_id = ?").And("YEAR(holidays.date) = YEAR(?)").And("MONTH(holidays.date) = MONTH(?)").OrderBy("holidays.date").Asc()
+
+	sql := qb.String()
+
+	o := orm.NewOrm()
+
+	var paramMaps []orm.Params
+
+	_, err = o.Raw(sql).SetArgs(condosID, monthTargetString, monthTargetString).Values(&paramMaps)
+
+	if err != nil && err != orm.ErrNoRows {
+		return
+	}
+
+	if err == orm.ErrNoRows {
+		err = nil
+		return
+	}
+
+	for _, holiday := range paramMaps {
+
+		id, _ := strconv.Atoi(holiday["id"].(string))
+		day := holiday["day"].(string)
+		date := holiday["date"].(string)
+
+		holidays[day] = &Holidays{ID: id, Date: date}
+	}
+
+	return
 }

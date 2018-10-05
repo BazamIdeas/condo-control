@@ -18,11 +18,12 @@ type dayAssistances struct {
 	FinishBreak      *Assistances `json:"finish_break,omitempty"`
 	Exit             *Assistances `json:"exit,omitempty"`
 	Day              string       `json:"day,omitempty"`
-	TotalWorkedHours float32      `json:"total_worked_hours,omitempty"`
-	ExtraWorkedHours float32      `json:"extra_worked_hours,omitempty"`
-	BaseValue        float32      `json:"base_value,omitempty"`
-	ExtraValue       float32      `json:"extra_value,omitempty"`
-	TotalValue       float32      `json:"total_value,omitempty"`
+	TotalWorkedHours float32      `json:"total_worked_hours"`
+	ExtraWorkedHours float32      `json:"extra_worked_hours"`
+	BaseValue        float32      `json:"base_value"`
+	ExtraValue       float32      `json:"extra_value"`
+	TotalValue       float32      `json:"total_value"`
+	IsHoliday        bool         `json:"is_holiday"`
 }
 
 type monthDaysAssistances map[string]*dayAssistances
@@ -322,6 +323,12 @@ func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error
 		return
 	}
 
+	holidays, err := GetHolidaysByCondosID(year, month, t.Condo.ID)
+
+	if err != nil {
+		return
+	}
+
 	monthTarget := time.Date(year, month, 1, 1, 1, 1, 1, time.UTC)
 	monthTargetString := jodaTime.Format("Y-M-d", monthTarget)
 
@@ -345,8 +352,6 @@ func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error
 	for _, paramMap := range paramMaps {
 
 		if dayData, ok := monthData[paramMap["day"].(string)]; ok {
-
-			//dayData := &dayAssistances{Day: paramMap["day"].(string)}
 			assistanceID, _ := strconv.Atoi(paramMap["id"].(string))
 			assistance := &Assistances{ID: assistanceID, Date: paramMap["date"].(string), Type: paramMap["type"].(string)}
 			dayData.assignTypes(assistance)
@@ -376,6 +381,10 @@ func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error
 			continue
 		}
 
+		if _, ok := holidays[day]; ok {
+			dayData.IsHoliday = true
+		}
+
 		entryDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.Entry.Date)
 		exitDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.Exit.Date)
 
@@ -386,7 +395,6 @@ func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error
 		if dayData.Break != nil && dayData.FinishBreak != nil {
 			breakDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.Break.Date)
 			finishBreakDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.FinishBreak.Date)
-
 			breakDuration := finishBreakDate.Sub(breakDate)
 			breakHours := breakDuration.Hours()
 

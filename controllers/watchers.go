@@ -367,9 +367,10 @@ func (c *WatchersController) Login() {
 		return
 	}
 
-	WatcherID := strconv.Itoa(id)
+	watcherID := strconv.Itoa(id)
+	condoID := strconv.Itoa(v.Worker.Condo.ID)
 
-	v.Token, err = c.GenerateToken("Watcher", WatcherID, "1")
+	v.Token, err = c.GenerateToken("Watcher", watcherID, condoID)
 
 	if err != nil {
 		c.BadRequest(err)
