@@ -13,8 +13,8 @@ import (
 //Assistances Model
 type Assistances struct {
 	ID        int       `orm:"column(id);pk" json:"id,omitempty"`
-	Date      string    `orm:"column(date);type(datetime);" json:"date,omitempty"`
-	Type      string    `orm:"column(type)" json:"type,omitempty"`
+	Date      string    `orm:"column(date);type(datetime);" json:"date,omitempty" validate:"required"`
+	Type      string    `orm:"column(type)" json:"type,omitempty" validate:"required,alpha"`
 	Worker    *Workers  `orm:"rel(fk);column(workers_id)" json:"workers,omitempty"`
 	Watcher   *Watchers `orm:"rel(fk);column(watchers_id)" json:"watchers,omitempty"`
 	Day       string    `orm:"-" json:"day,omitempty"`

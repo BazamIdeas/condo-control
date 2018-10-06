@@ -80,6 +80,12 @@ func (c *AssistancesController) Post() {
 		return
 	}
 
+	if v.Worker == nil {
+		err = errors.New("Worker data is Empty")
+		c.BadRequest(err)
+		return
+	}
+
 	worker, err := models.GetWorkersByID(v.Worker.ID)
 
 	if err != nil {
