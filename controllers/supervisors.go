@@ -51,15 +51,25 @@ func (c *SupervisorsController) Post() {
 		return
 	}
 
-	//TODO:
-	// Validate foreings keys
-	/*
-		exists := models.ValidateExists("Sectors", v.Sector.ID)
+	if v.Worker == nil {
+		err = errors.New("Worker's info is empty")
+		c.BadRequest(err)
+		return
+	}
 
-		if !exists {
-			c.BadRequestDontExists("Sector")
-			return
-		} */
+	if v.Worker.Condo == nil {
+		err = errors.New("Condo's info is empty")
+		c.BadRequest(err)
+		return
+	}
+
+	v.Worker.Approved = true
+
+	_, err = models.AddWorkers(v.Worker)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
 
 	_, err = models.AddSupervisors(&v)
 

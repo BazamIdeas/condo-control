@@ -49,6 +49,7 @@ type Workers struct {
 	ImageUUID        string                  `orm:"column(image_uuid)" json:"image_uuid,omitempty"`
 	ImageMime        string                  `orm:"column(image_mime)" json:"-"`
 	FaceID           string                  `orm:"column(face_id)" json:"-"`
+	Approved         bool                    `orm:"column(approved)" json:"approved"`
 	TodayAssistances map[string]*Assistances `orm:"-" json:"today_assistances,omitempty"`
 	MonthData        *monthDetail            `orm:"-" json:"month_data,omitempty"`
 	YearData         *yearDetail             `orm:"-" json:"year_data,omitempty"`

@@ -88,6 +88,7 @@ func (c *WorkersController) Post() {
 	}
 
 	v.Condo = &models.Condos{ID: condoID}
+	v.Approved = false
 
 	_, err = models.AddWorkers(&v)
 	if err != nil {
@@ -198,9 +199,7 @@ func (c *WorkersController) Put() {
 	v := models.Workers{ID: id}
 
 	// Validate empty body
-
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-
 	if err != nil {
 		c.BadRequest(err)
 		return
@@ -628,4 +627,63 @@ func (c *WorkersController) GetFaceByUUID() {
 	c.Ctx.Output.Header("Content-Type", mimeType)
 	c.Ctx.Output.Body(imageBytes)
 
+}
+
+//Approve ..
+// @Title Approve Worker
+// @Description Approve Worker
+// @router /:id/approve [patch]
+func (c *WorkersController) Approve() {
+
+	idStr := c.Ctx.Input.Param(":id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Supervisor")
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByID(id)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	if worker.Condo.ID != condoID {
+		err = errors.New("Worker's Condo and Supervisor's Condo Don't match")
+		c.BadRequest(err)
+		return
+	}
+
+	if worker.Approved {
+		c.Ctx.Output.SetStatus(409)
+		c.Data["json"] = MessageResponse{
+			Code:    409,
+			Message: "Worker is already approved",
+		}
+		c.ServeJSON()
+		return
+	}
+
+	worker.Approved = true
+	err = models.UpdateWorkersByID(worker)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	v := worker
+
+	c.Data["json"] = v
+	c.ServeJSON()
 }

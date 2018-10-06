@@ -93,6 +93,12 @@ func (c *AssistancesController) Post() {
 		return
 	}
 
+	if !worker.Approved {
+		err = errors.New("Worker Not Approved")
+		c.BadRequest(err)
+		return
+	}
+
 	condoID, _ := strconv.Atoi(decodedToken.CondoID)
 
 	if worker.Condo.ID != condoID {

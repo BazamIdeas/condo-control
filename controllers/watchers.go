@@ -92,6 +92,7 @@ func (c *WatchersController) Post() {
 	}
 
 	v.Worker.Condo = &models.Condos{ID: condoID}
+	v.Worker.Approved = true
 
 	_, err = models.AddWorkers(v.Worker)
 	if err != nil {

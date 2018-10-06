@@ -51,16 +51,6 @@ func (c *CondosController) Post() {
 		return
 	}
 
-	//TODO:
-	// Validate foreings keys
-	/*
-		exists := models.ValidateExists("Sectors", v.Sector.ID)
-
-		if !exists {
-			c.BadRequestDontExists("Sector")
-			return
-		} */
-
 	_, err = models.AddCondos(&v)
 
 	if err != nil {
