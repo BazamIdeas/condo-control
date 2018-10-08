@@ -425,6 +425,14 @@ func init() {
 
 	beego.GlobalControllerRouter["condo-control/controllers:WatchersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:WatchersController"],
 		beego.ControllerComments{
+			Method: "GetVerificationsByDate",
+			Router: `/:id/verifications/:date`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:WatchersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:WatchersController"],
+		beego.ControllerComments{
 			Method: "Login",
 			Router: `/login`,
 			AllowHTTPMethods: []string{"post"},
@@ -484,6 +492,14 @@ func init() {
 			Method: "Delete",
 			Router: `/:id`,
 			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:WorkersController"] = append(beego.GlobalControllerRouter["condo-control/controllers:WorkersController"],
+		beego.ControllerComments{
+			Method: "Approve",
+			Router: `/:id/approve`,
+			AllowHTTPMethods: []string{"patch"},
 			MethodParams: param.Make(),
 			Params: nil})
 

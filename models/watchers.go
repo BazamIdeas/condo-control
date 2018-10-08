@@ -278,3 +278,34 @@ func GetWatchersByCondosID(condosID int) (watchers []*Watchers, err error) {
 	return
 
 }
+
+//GetVerificationsByDate ...
+func (t *Watchers) GetVerificationsByDate(date time.Time) (err error) {
+
+	qb, _ := orm.NewQueryBuilder("mysql")
+
+	var verifications []*Verifications
+
+	qb.Select("verifications.id, verifications.date").From("verifications").Where("DATEDIFF(verifications.date, ?) = 0").And("verifications.watchers_id = ?").OrderBy("verifications.date").Asc()
+
+	sql := qb.String()
+
+	o := orm.NewOrm()
+
+	_, err = o.Raw(sql, date.String(), t.ID).QueryRows(&verifications)
+
+	if err != nil {
+		return
+	}
+
+	for _, verification := range verifications {
+		verification.loadRelations()
+
+		searchFK(verification.TableName(), verification.ID).One(verification)
+	}
+
+	t.Verifications = verifications
+
+	return
+
+}

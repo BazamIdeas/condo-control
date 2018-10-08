@@ -4,8 +4,11 @@ import (
 	"condo-control/models"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/vjeantet/jodaTime"
 
 	"github.com/astaxie/beego/validation"
 )
@@ -24,6 +27,7 @@ func (c *WatchersController) URLMapping() {
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("Login", c.Login)
 	c.Mapping("GetSelf", c.GetSelf)
+	c.Mapping("GetVerificationsByDate", c.GetVerificationsByDate)
 
 }
 
@@ -410,4 +414,58 @@ func (c *WatchersController) GetSelf() {
 
 	c.Data["json"] = v
 	c.ServeJSON()
+}
+
+// GetVerificationsByDate ...
+// @Title Get Verifications By Date
+// @Description Get Verifications By Date
+// @router /:id/verifications/:date [get]
+func (c *WatchersController) GetVerificationsByDate() {
+
+	fmt.Println("hola")
+
+	authToken := c.Ctx.Input.Header("Authorization")
+
+	decAuthToken, _ := VerifyToken(authToken, "Supervisor")
+
+	idStr := c.Ctx.Input.Param(":id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcher, err := models.GetWatchersByID(id)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	if watcher.Worker.Condo.ID != condoID {
+		err = errors.New("Watcher's Condo and Supervisor's Condo Don't match")
+		c.BadRequest(err)
+		return
+	}
+
+	dateString := c.Ctx.Input.Param(":date")
+	date, err := jodaTime.Parse("Y-M-d", dateString)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	err = watcher.GetVerificationsByDate(date)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = watcher
+	c.ServeJSON()
+
 }
