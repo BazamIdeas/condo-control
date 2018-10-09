@@ -35,6 +35,7 @@ type monthDetail struct {
 	ExtraValue       float32               `json:"extra_value,omitempty"`
 	BaseValue        float32               `json:"base_value,omitempty"`
 	TotalValue       float32               `json:"total_value,omitempty"`
+	Holidays         int                   `json:"holidays"`
 }
 
 type yearDetail map[int]*monthDetail
@@ -384,6 +385,7 @@ func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error
 
 		if _, ok := holidays[day]; ok {
 			dayData.IsHoliday = true
+			monthDetail.Holidays++
 		}
 
 		entryDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.Entry.Date)

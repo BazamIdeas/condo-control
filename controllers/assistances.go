@@ -30,6 +30,14 @@ func (c *AssistancesController) URLMapping() {
 // Post ...
 // @Title Post
 // @Description create Assistances
+// @Accept json
+// @Param   Authorization     header   string true       "Watcher's Token"
+// @Param   date     body   string true       "date format 'Y-M-d' ej: '2018-08-28'"
+// @Param   worker     body   string true       "worker object (only id is required)"
+// @Success 200 {object} models.Assistances
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Worker Don't exists
 // @router / [post]
 func (c *AssistancesController) Post() {
 

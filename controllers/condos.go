@@ -284,3 +284,39 @@ func (c *CondosController) RestoreFromTrash() {
 	c.ServeJSON()
 
 }
+
+// GetSelf ...
+// @Title Get Self
+// @Description Get Self
+// @Accept json
+// @Param   Authorization     header   string true       "Watcher's Token or Supervisor's Token"
+// @Success 200 {object} models.Condos
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Condos Don't Exists
+// @router /self [put]
+func (c *CondosController) GetSelf() {
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyTokenByAllUserTypes(token)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condos, err := models.GetCondosByID(condoID)
+	if err != nil {
+		c.BadRequestDontExists("Condos")
+		return
+	}
+
+	c.Data["json"] = condos
+	c.ServeJSON()
+}

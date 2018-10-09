@@ -1,13 +1,17 @@
 package controllers
 
 import (
+	"bytes"
 	"condo-control/controllers/services/faces"
 	"condo-control/models"
+	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"mime/multipart"
+	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego/validation"
 	"github.com/vjeantet/jodaTime"
@@ -27,11 +31,22 @@ func (c *WorkersController) URLMapping() {
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("GetSelf", c.GetSelf)
 	c.Mapping("AddImage", c.AddImage)
+	c.Mapping("GetAssistancesDataByMonth", c.GetAssistancesDataByMonth)
+	c.Mapping("GetAssistancesDataByYear", c.GetAssistancesDataByYear)
+	c.Mapping("DownloadAssistancesDataByMonth", c.DownloadAssistancesDataByMonth)
 }
 
 // Post ...
 // @Title Post
 // @Description create Workers
+// @Accept json
+// @Param   Authorization     header   string true       "Watcher's Token"
+// @Param   first_name      body   string true       "New Worker's first name"
+// @Param   last_name      body   string true       "New Worker's last name"
+// @Success 201 {object} models.Workers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 409 Condo's user limit reached
 // @router / [post]
 func (c *WorkersController) Post() {
 
@@ -106,6 +121,12 @@ func (c *WorkersController) Post() {
 // GetOne ...
 // @Title Get One
 // @Description get Workers by id
+// @Accept json
+// @Param   id     path   string true       "Worker's id"
+// @Success 200 {object} models.Workers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Worker Don't exist
 // @router /:id [get]
 func (c *WorkersController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
@@ -125,6 +146,8 @@ func (c *WorkersController) GetOne() {
 	c.Data["json"] = v
 	c.ServeJSON()
 }
+
+//TODO: REMOVE OR ADAPT
 
 // GetAll ...
 // @Title Get All
@@ -182,6 +205,8 @@ func (c *WorkersController) GetAll() {
 	c.ServeJSON()
 
 }
+
+//TODO: REMOVE OR ADAPT
 
 // Put ...
 // @Title Put
@@ -241,6 +266,8 @@ func (c *WorkersController) Put() {
 	c.ServeJSON()
 }
 
+//TODO: REMOVE OR ADAPT
+
 // Delete ...
 // @Title Delete
 // @Description delete the Workers
@@ -275,6 +302,8 @@ func (c *WorkersController) Delete() {
 	c.ServeJSON()
 }
 
+//TODO: REMOVE OR ADAPT
+
 // GetAllFromTrash ...
 // @Title Get All From Trash
 // @Description Get All From Trash
@@ -292,6 +321,8 @@ func (c *WorkersController) GetAllFromTrash() {
 	c.ServeJSON()
 
 }
+
+//TODO: REMOVE OR ADAPT
 
 // RestoreFromTrash ...
 // @Title Restore From Trash
@@ -324,7 +355,13 @@ func (c *WorkersController) RestoreFromTrash() {
 
 // GetSelf ...
 // @Title Get Self
-// @Description Get Self
+// @Description Get Workers from Watcher's Condo or Supervisor's Condo
+// @Accept json
+// @Param   Authorization     header   string true       "Watcher's Token or Supervisor's Token"
+// @Success 200 {array} models.Workers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Condos without Workers
 // @router /self [get]
 func (c *WorkersController) GetSelf() {
 
@@ -354,6 +391,14 @@ func (c *WorkersController) GetSelf() {
 //GetAssistancesDataByMonth ..
 // @Title Get Assistances Data By Month
 // @Description Get Assistances Data By Month
+// @Accept json
+// @Param   Authorization     header   string true       "Supervisor's Token"
+// @Param   year     path   int true       "year's Date"
+// @Param   month     path   int true       "month's Date"
+// @Success 200 {object} models.Workers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Month without Data
 // @router /:id/data/:year/:month [get]
 func (c *WorkersController) GetAssistancesDataByMonth() {
 
@@ -419,6 +464,13 @@ func (c *WorkersController) GetAssistancesDataByMonth() {
 //GetAssistancesDataByYear ..
 // @Title Get Assistances Data By Year
 // @Description Get Assistances Data By Year
+// @Accept json
+// @Param   Authorization     header   string true       "Supervisor's Token"
+// @Param   year     path   int true       "year's Date"
+// @Success 200 {object} models.Workers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Year without Data
 // @router /:id/data/:year/ [get]
 func (c *WorkersController) GetAssistancesDataByYear() {
 
@@ -527,6 +579,15 @@ func VerifyWorkerIdentity(workerID int, newFaceFh *multipart.FileHeader) (worker
 // AddImage ...
 // @Title Add Image
 // @Description Add Image
+// @Accept plain
+// @Param   Authorization     header   string true       "Supervisor's Token"
+// @Param   id     path   int true       "worker's id"
+// @Param   faces     formData   string true       "worker's id"
+// @Success 200 {object} models.Workers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Workers not Found
+// @Failure 413 File size too High
 // @router /:id/face [post]
 func (c *WorkersController) AddImage() {
 
@@ -567,7 +628,7 @@ func (c *WorkersController) AddImage() {
 	worker, err := models.GetWorkersByID(id)
 
 	if err != nil {
-		c.ServeErrorJSON(err)
+		c.BadRequestDontExists("Condos")
 		return
 	}
 
@@ -606,13 +667,18 @@ func (c *WorkersController) AddImage() {
 // GetFaceByUUID ...
 // @Title Get Face By UUID
 // @Description Get Face By UUID
+// @Accept plain
+// @Param   uuid     path   string true       "worker's face uuid"
+// @Success 200 {string} Face Image
+// @Failure 400 Bad Request
+// @Failure 404 Face not Found
 // @router /face/:uuid [get]
 func (c *WorkersController) GetFaceByUUID() {
 
 	uuid := c.Ctx.Input.Param(":uuid")
 
 	if uuid == "" {
-		c.Ctx.Output.SetStatus(404)
+		c.Ctx.Output.SetStatus(400)
 		c.Ctx.Output.Body([]byte{})
 		return
 	}
@@ -625,6 +691,7 @@ func (c *WorkersController) GetFaceByUUID() {
 	}
 
 	c.Ctx.Output.Header("Content-Type", mimeType)
+	c.Ctx.Output.SetStatus(200)
 	c.Ctx.Output.Body(imageBytes)
 
 }
@@ -632,6 +699,12 @@ func (c *WorkersController) GetFaceByUUID() {
 //Approve ..
 // @Title Approve Worker
 // @Description Approve Worker
+// @Accept json
+// @Param   id     path   string true       "Pending approve Worker's id"
+// @Success 200 {object} models.Workers
+// @Failure 400 Bad Request
+// @Failure 404 Worker not Found
+// @Failure 409 Worker already approved
 // @router /:id/approve [patch]
 func (c *WorkersController) Approve() {
 
@@ -686,4 +759,204 @@ func (c *WorkersController) Approve() {
 
 	c.Data["json"] = v
 	c.ServeJSON()
+}
+
+// DownloadAssistancesDataByYear ...
+// @Title Download Assistances Data By Year
+// @Description Download Assistances Data By Year
+// @Accept plain
+// @Param   id     path   int true       "Worker's id"
+// @Param   year     path   int true       "year's Date"
+// @Success 200 {string} Csv data
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Worker or Assistances not Found
+// @router /:id/data/:year/download [get]
+func (c *WorkersController) DownloadAssistancesDataByYear() {
+
+	yearString := c.Ctx.Input.Param(":year")
+	date, err := jodaTime.Parse("Y", yearString)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	year, _, _ := date.Date()
+
+	idStr := c.Ctx.Input.Param(":id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Supervisor")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByID(id)
+	if err != nil {
+		c.BadRequestDontExists("Workers")
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+	if worker.Condo.ID != condoID {
+		err = errors.New("Worker's Condo and Supervisor's Condo Don't match")
+		c.BadRequest(err)
+		return
+	}
+
+	err = worker.GetYearAssistancesData(year)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	records := [][]string{{"Mes", "Asistencia en Días", "Horas Adicionales", "Valor Hora", "Adicional Remuneración", "Festivos", "Total Días"}}
+
+	yearData := *worker.YearData
+
+	for monthKey, monthData := range yearData {
+
+		extraWorkedHours := strconv.FormatFloat(float64(monthData.ExtraWorkedHours), 'f', 2, 32)
+		extraValue := strconv.FormatFloat(float64(monthData.ExtraValue), 'f', 2, 32)
+
+		extraHourIncreasedFloat := worker.Condo.HourValue + (worker.Condo.HourValue * (worker.Condo.ExtraHourIncrease / 100))
+		extraHourIncreased := strconv.FormatFloat(float64(extraHourIncreasedFloat), 'f', 2, 32)
+
+		workedDays := len(*monthData.Days)
+
+		record := []string{strconv.Itoa(monthKey), strconv.Itoa(workedDays - monthData.Holidays), extraWorkedHours, extraHourIncreased, extraValue, strconv.Itoa(monthData.Holidays), strconv.Itoa(workedDays)}
+		records = append(records, record)
+	}
+
+	buffer := &bytes.Buffer{}
+	w := csv.NewWriter(buffer)
+	w.WriteAll(records)
+
+	if err := w.Error(); err != nil {
+		err = errors.New("Error Writing Csv")
+		c.BadRequest(err)
+		return
+	}
+
+	dateString := jodaTime.Format("Y-M", date)
+
+	http.ServeContent(c.Ctx.ResponseWriter, c.Ctx.Request, dateString+" data.csv", time.Now(), bytes.NewReader(buffer.Bytes()))
+
+}
+
+// DownloadAssistancesDataByMonth ...
+// @Titile Download Assistances Data By Month
+// @Description Download Assistances Data By Month
+// @Accept plain
+// @Param   id     path   int true       "Worker's id"
+// @Param   year     path   int true       "year's Date"
+// @Param   month     path   int true       "month's Date"
+// @Success 200 {object} models.Workers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Worker or Assistances not Found
+// @router /:id/data/:year/:month/download [get]
+func (c *WorkersController) DownloadAssistancesDataByMonth() {
+
+	yearString := c.Ctx.Input.Param(":year")
+	monthSring := c.Ctx.Input.Param(":month")
+
+	date, err := jodaTime.Parse("Y-M", yearString+"-"+monthSring)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	year, month, _ := date.Date()
+
+	idStr := c.Ctx.Input.Param(":id")
+
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Supervisor")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByID(id)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	if worker.Condo.ID != condoID {
+		err = errors.New("Worker's Condo and Supervisor's Condo Don't match")
+		c.BadRequest(err)
+		return
+	}
+
+	err = worker.GetMonthAssistancesData(year, month)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	records := [][]string{{"Día", "Entrada", "Inicio Colación", "Termino Colación", "Salida", "Horas Trabajadas", "Diferencial", "Festivo"}}
+
+	Days := *worker.MonthData.Days
+
+	for dayKey, day := range Days {
+
+		isHoliday := ""
+
+		if day.IsHoliday {
+			isHoliday = "1"
+		} else {
+			isHoliday = "0"
+		}
+
+		totalWorkedHours := strconv.FormatFloat(float64(day.TotalWorkedHours), 'f', 2, 32)
+		extraWorkedHours := strconv.FormatFloat(float64(day.ExtraWorkedHours), 'f', 2, 32)
+
+		record := []string{dayKey, day.Entry.Date, "", "", day.Exit.Date, totalWorkedHours, extraWorkedHours, isHoliday}
+
+		if day.Break != nil && day.FinishBreak != nil {
+			record[2] = day.Break.Date
+			record[3] = day.FinishBreak.Date
+		}
+
+		records = append(records, record)
+	}
+
+	buffer := &bytes.Buffer{}
+	w := csv.NewWriter(buffer)
+	w.WriteAll(records) // calls Flush internally
+
+	if err := w.Error(); err != nil {
+		err = errors.New("Error Writing Csv")
+		c.BadRequest(err)
+		return
+	}
+
+	dateString := jodaTime.Format("Y-M", date)
+
+	http.ServeContent(c.Ctx.ResponseWriter, c.Ctx.Request, dateString+"data.csv", time.Now(), bytes.NewReader(buffer.Bytes()))
+
 }

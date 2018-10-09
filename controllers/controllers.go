@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"os"
 	"strconv"
 	"strings"
 
@@ -102,6 +101,7 @@ func (c *BaseController) ServeErrorJSON(err error) {
 				Code:          driverErr.Number,
 				PrettyMessage: "El elemento de la base de datos ya existe",
 			}
+			break
 		case 1054:
 			c.Ctx.Output.SetStatus(409)
 			c.Data["json"] = MessageResponse{
@@ -109,6 +109,7 @@ func (c *BaseController) ServeErrorJSON(err error) {
 				Code:          driverErr.Number,
 				PrettyMessage: "Columna desconocida",
 			}
+			break
 		case 1046:
 			c.Ctx.Output.SetStatus(409)
 			c.Data["json"] = MessageResponse{
@@ -116,6 +117,7 @@ func (c *BaseController) ServeErrorJSON(err error) {
 				Code:          driverErr.Number,
 				PrettyMessage: "Base de datos no encontrada",
 			}
+			break
 		case 1451:
 			c.Ctx.Output.SetStatus(409)
 			c.Data["json"] = MessageResponse{
@@ -123,6 +125,7 @@ func (c *BaseController) ServeErrorJSON(err error) {
 				Code:          driverErr.Number,
 				PrettyMessage: "Error en llaves foraneas",
 			}
+			break
 		default:
 			c.Ctx.Output.SetStatus(500)
 			c.Data["json"] = MessageResponse{
@@ -207,12 +210,5 @@ func stringIsValidInt(stringIDs *map[string]string) (IDs map[string]int, err err
 	}
 	IDs = intIDs
 
-	return
-}
-
-func checkOrCreateImagesFolder(imageFolderDir string) (err error) {
-	if _, err := os.Stat(imageFolderDir); os.IsNotExist(err) {
-		os.MkdirAll(imageFolderDir, 644)
-	}
 	return
 }
