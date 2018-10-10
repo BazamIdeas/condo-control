@@ -30,6 +30,7 @@ func (c *ZonesController) URLMapping() {
 // @Description create Zones
 // @Accept json
 // @Param   Authorization     header   string true       "Supervisor's Token"
+// @Param   name     body   string true       "Supervisor's Token"
 // @Success 200 {object} models.Zones
 // @Failure 400 Bad Request
 // @Failure 403 Invalid Token
