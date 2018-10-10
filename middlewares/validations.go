@@ -81,39 +81,6 @@ func GetControllerPatterns(route string) []*MwPattern {
 		},
 	}
 
-	condos := []*MwPattern{
-		{
-			URL:       "/",
-			Methods:   []string{"All"},
-			UserTypes: []string{"Admin"},
-		},
-		{
-			URL:       "/:id",
-			Methods:   []string{"All"},
-			UserTypes: []string{"Admin"},
-		},
-		{
-			URL:       "/:id/trash",
-			Methods:   []string{"All"},
-			UserTypes: []string{"Admin"},
-		},
-		{
-			URL:       "/:id/restore",
-			Methods:   []string{"All"},
-			UserTypes: []string{"Admin"},
-		},
-		{
-			URL:       "/trashed",
-			Methods:   []string{"All"},
-			UserTypes: []string{"Admin"},
-		},
-		{
-			URL:       "/self",
-			Methods:   []string{"GET"},
-			UserTypes: []string{"Supervisor", "Watcher"},
-		},
-	}
-
 	holidays := []*MwPattern{
 		{
 			URL:       "/",
