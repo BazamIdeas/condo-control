@@ -294,7 +294,7 @@ func (c *CondosController) RestoreFromTrash() {
 // @Failure 400 Bad Request
 // @Failure 403 Invalid Token
 // @Failure 404 Condos Don't Exists
-// @router /self [put]
+// @router /self [get]
 func (c *CondosController) GetSelf() {
 
 	token := c.Ctx.Input.Header("Authorization")
