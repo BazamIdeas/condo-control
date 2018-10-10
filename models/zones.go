@@ -45,8 +45,13 @@ func (t *Zones) loadRelations() {
 // last inserted Id on success.
 func AddZones(m *Zones) (id int64, err error) {
 	o := orm.NewOrm()
-	//m.Slug = GenerateSlug(m.TableName(), m.Name)
+
 	id, err = o.Insert(m)
+	if err != nil {
+		return
+	}
+
+	m.ID = int(id)
 	return
 }
 

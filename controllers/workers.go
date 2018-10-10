@@ -424,12 +424,7 @@ func (c *WorkersController) GetAssistancesDataByMonth() {
 	}
 
 	authToken := c.Ctx.Input.Header("Authorization")
-	decAuthToken, err := VerifyToken(authToken, "Supervisor")
-
-	if err != nil {
-		c.BadRequest(err)
-		return
-	}
+	decAuthToken, _ := VerifyToken(authToken, "Supervisor")
 
 	worker, err := models.GetWorkersByID(id)
 

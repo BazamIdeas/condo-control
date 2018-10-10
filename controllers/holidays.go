@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
-	"strings"
 
 	"github.com/astaxie/beego/validation"
 )
@@ -18,9 +17,9 @@ type HolidaysController struct {
 //URLMapping ...
 func (c *HolidaysController) URLMapping() {
 	c.Mapping("Post", c.Post)
-	c.Mapping("GetOne", c.GetOne)
+	/* c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
-	c.Mapping("Put", c.Put)
+	c.Mapping("Put", c.Put) */
 	c.Mapping("Delete", c.Delete)
 }
 
@@ -75,7 +74,7 @@ func (c *HolidaysController) Post() {
 
 	v.Condo = &models.Condos{ID: condos.ID}
 
-	ok, err := models.ExistHolidaysByCondoID(v.Date,v.Condo.ID)
+	ok, err := models.ExistHolidaysByCondoID(v.Date, v.Condo.ID)
 
 	if err != nil {
 		c.BadRequest(err)
@@ -101,6 +100,7 @@ func (c *HolidaysController) Post() {
 	c.ServeJSON()
 }
 
+/*
 // GetOne ...
 // @Title Get One
 // @Description get Holidays by id
@@ -216,16 +216,6 @@ func (c *HolidaysController) Put() {
 		return
 	}
 
-	//TODO:
-	// Validate foreings keys
-
-	/* exists := models.ValidateExists("Sectors", v.Sector.ID)
-
-	if !exists {
-		c.BadRequestDontExists("Sector")
-		return
-	} */
-
 	err = models.UpdateHolidaysByID(&v)
 
 	if err != nil {
@@ -240,12 +230,14 @@ func (c *HolidaysController) Put() {
 
 	c.ServeJSON()
 }
+*/
 
 // Delete ...
 // @Title Delete
 // @Description delete the Holidays
 // @router /:id [delete]
 func (c *HolidaysController) Delete() {
+
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 

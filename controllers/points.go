@@ -29,9 +29,8 @@ func (c *PointsController) URLMapping() {
 // @Description create Points
 // @router / [post]
 func (c *PointsController) Post() {
-	var v models.Points
 
-	// Validate empty body
+	var v models.Points
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
@@ -51,15 +50,28 @@ func (c *PointsController) Post() {
 		return
 	}
 
-	//TODO:
-	// Validate foreings keys
-	/*
-		exists := models.ValidateExists("Sectors", v.Sector.ID)
+	if v.Zone == nil || v.Zone.ID == 0 {
+		err = errors.New("Zone or Zone's id is missing")
+		c.BadRequest(err)
+		return
+	}
 
-		if !exists {
-			c.BadRequestDontExists("Sector")
-			return
-		} */
+	zone, err := models.GetZonesByID(v.Zone.ID)
+	if err != nil {
+		c.BadRequestDontExists("Zones")
+		return
+	}
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, _ := VerifyToken(authToken, "Supervisor")
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	if zone.Condo.ID != condoID {
+		err = errors.New("Zone's Condo and Supervisor's Condo dont match")
+		c.BadRequest(err)
+		return
+	}
 
 	_, err = models.AddPoints(&v)
 

@@ -3,9 +3,7 @@ package controllers
 import (
 	"condo-control/models"
 	"encoding/json"
-	"errors"
 	"strconv"
-	"strings"
 
 	"github.com/astaxie/beego/validation"
 )
@@ -18,11 +16,13 @@ type ZonesController struct {
 //URLMapping ...
 func (c *ZonesController) URLMapping() {
 	c.Mapping("Post", c.Post)
-	c.Mapping("GetOne", c.GetOne)
-	c.Mapping("GetAll", c.GetAll)
+	/* c.Mapping("GetOne", c.GetOne) */
+	/* c.Mapping("GetAll", c.GetAll) */
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("GetSelf", c.GetSelf)
+	c.Mapping("GetAllFromTrash", c.GetAllFromTrash)
+	c.Mapping("RestoreFromTrash", c.RestoreFromTrash)
 }
 
 // Post ...
@@ -100,7 +100,7 @@ func (c *ZonesController) Post() {
 // @Title Get One
 // @Description get Zones by id
 // @router /:id [get]
-func (c *ZonesController) GetOne() {
+/* func (c *ZonesController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 
@@ -117,7 +117,7 @@ func (c *ZonesController) GetOne() {
 
 	c.Data["json"] = v
 	c.ServeJSON()
-}
+} */
 
 // GetSelf ...
 // @Title Get Self
@@ -152,7 +152,7 @@ func (c *ZonesController) GetSelf() {
 // @Title Get All
 // @Description get Zones
 // @router / [get]
-func (c *ZonesController) GetAll() {
+/* func (c *ZonesController) GetAll() {
 	var fields []string
 	var sortby []string
 	var order []string
@@ -203,7 +203,7 @@ func (c *ZonesController) GetAll() {
 	c.Data["json"] = l
 	c.ServeJSON()
 
-}
+} */
 
 // Put ...
 // @Title Put
@@ -239,16 +239,6 @@ func (c *ZonesController) Put() {
 		c.BadRequestErrors(valid.Errors, v.TableName())
 		return
 	}
-
-	//TODO:
-	// Validate foreings keys
-
-	/* exists := models.ValidateExists("Sectors", v.Sector.ID)
-
-	if !exists {
-		c.BadRequestDontExists("Sector")
-		return
-	} */
 
 	err = models.UpdateZonesByID(&v)
 

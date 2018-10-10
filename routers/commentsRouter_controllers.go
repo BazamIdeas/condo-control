@@ -7,6 +7,14 @@ import (
 
 func init() {
 
+	beego.GlobalControllerRouter["condo-control/controllers:AdminController"] = append(beego.GlobalControllerRouter["condo-control/controllers:AdminController"],
+		beego.ControllerComments{
+			Method: "Login",
+			Router: `/login`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 	beego.GlobalControllerRouter["condo-control/controllers:AssistancesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:AssistancesController"],
 		beego.ControllerComments{
 			Method: "Post",
@@ -123,7 +131,7 @@ func init() {
 		beego.ControllerComments{
 			Method: "GetSelf",
 			Router: `/self`,
-			AllowHTTPMethods: []string{"put"},
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 

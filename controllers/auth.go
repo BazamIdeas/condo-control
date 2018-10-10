@@ -16,7 +16,7 @@ type AuthController struct {
 
 //JwtToken =
 type JwtToken struct {
-	Type    string `json:"tipo"`
+	Type    string `json:"type"`
 	UserID  string `json:"user_id"`
 	CondoID string `json:"condo_id"`
 	jwt.StandardClaims
@@ -34,7 +34,7 @@ type JwtTokenRoute struct {
 var hmacSecret = []byte("bazam")
 
 //UserTypes array
-var UserTypes = []string{"Watcher", "Supervisor"}
+var UserTypes = []string{"Admin", "Watcher", "Supervisor"}
 
 //VerifyToken =
 func VerifyToken(tokenString string, userType string) (decodedToken *JwtToken, err error) {
