@@ -28,6 +28,13 @@ func (c *ZonesController) URLMapping() {
 // Post ...
 // @Title Post
 // @Description create Zones
+// @Accept json
+// @Param   Authorization     header   string true       "Supervisor's Token"
+// @Success 200 {object} models.Zones
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Condos Don't Exists or Condos without Zones
+// @Failure 409 Condo's Zone Limit reached
 // @router / [post]
 func (c *ZonesController) Post() {
 	var v models.Zones
@@ -122,17 +129,19 @@ func (c *ZonesController) Post() {
 // GetSelf ...
 // @Title Get Self
 // @Description Get Self
+// @Accept json
+// @Param   Authorization     header   string true       "Watcher's Token or Supervisor's Token"
+// @Success 200 {array} models.Zones
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Condos Don't Exists or Condos without Zones
 // @router /self [get]
 func (c *ZonesController) GetSelf() {
 
 	token := c.Ctx.Input.Header("Authorization")
-
 	decodedToken, _ := VerifyTokenByAllUserTypes(token)
 
-	//token already exists
-
 	id, err := strconv.Atoi(decodedToken.CondoID)
-
 	if err != nil {
 		c.BadRequest(err)
 		return
@@ -208,6 +217,14 @@ func (c *ZonesController) GetSelf() {
 // Put ...
 // @Title Put
 // @Description update the Zones
+// @Accept json
+// @Param   Authorization     header   string true       "Supervisor's Token"
+// @Param   id     param   string true       "Zone's id"
+// @Param   name     body   string false       "Zone's new Name"
+// @Success 200 {object} models.Zones
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Zones Don't exists
 // @router /:id [put]
 func (c *ZonesController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
@@ -247,11 +264,7 @@ func (c *ZonesController) Put() {
 		return
 	}
 
-	c.Data["json"] = MessageResponse{
-		Message:       "Updated element",
-		PrettyMessage: "Elemento Actualizado",
-	}
-
+	c.Data["json"] = v
 	c.ServeJSON()
 }
 
@@ -292,7 +305,7 @@ func (c *ZonesController) Delete() {
 // GetAllFromTrash ...
 // @Title Get All From Trash
 // @Description Get All From Trash
-// @router /trashed [patch]
+// @router /trashed [get]
 func (c *ZonesController) GetAllFromTrash() {
 
 	v, err := models.GetZonesFromTrash()

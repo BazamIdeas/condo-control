@@ -34,6 +34,17 @@ func (c *WatchersController) URLMapping() {
 // Post ...
 // @Title Post
 // @Description create Watchers
+// @Accept json
+// @Param   Authorization     header   string true       "Supervisor's Token"
+// @Param   email     body   string true       "watcher's Email"
+// @Param   password     body   string true       "watcher's password"
+// @Param   phone     body   string false       "watcher's phone"
+// @Param   worker     body   object false       "Worker object (first name and last name)"
+// @Success 200 {object} models.Watchers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Zones Don't exists
+// @Failure 409 Condo's User limit reached
 // @router / [post]
 func (c *WatchersController) Post() {
 

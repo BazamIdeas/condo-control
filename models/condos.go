@@ -19,8 +19,8 @@ type Condos struct {
 	HourValue         float32     `orm:"colum(hour_value);size(20)" json:"hour_value,omitempty" valid:"Required"`
 	ExtraHourIncrease float32     `orm:"colum(extra_hour_increase);size(20)" json:"extra_hour_increase,omitempty" valid:"Required"`
 	WorkingHours      int         `orm:"column(working_hours)" json:"working_hours,omitempty" valid:"Required"`
-	AssistancesMod    bool        `orm:"column(assistances_mod)" json:"assistances_mod"`
-	RoutesMod         bool        `orm:"column(routes_mod)" json:"routes_mod"`
+	AssistancesMod    bool        `orm:"column(assistances_mod)" json:"assistances_mod" valid:"Required"`
+	RoutesMod         bool        `orm:"column(routes_mod)" json:"routes_mod" valid:"Required"`
 	Zones             []*Zones    `orm:"reverse(many)" json:"zone,omitempty"`
 	Workers           []*Workers  `orm:"reverse(many)" json:"workers,omitempty"`
 	Holidays          []*Holidays `orm:"reverse(many)" json:"holidays,omitempty"`

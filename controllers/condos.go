@@ -28,6 +28,18 @@ func (c *CondosController) URLMapping() {
 // Post ...
 // @Title Post
 // @Description create Condos
+// @Accept json
+// @Param Authorization header string true "Supervisor's Token"
+// @Param user_limit body int true "max users per condo"
+// @Param zone_limit body int true "max zones per condo"
+// @Param hour_value body int true "worker's hour value"
+// @Param extra_hour_increase body int true "Percentage Increase to Hour Value"
+// @Param working_hours body int true "Hours to work"
+// @Param assistances_mod body bool true "Assistances Capabilities"
+// @Param routes_mod body bool true "Routes Capabilities"
+// @Success 201 {object} models.Condos
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
 // @router / [post]
 func (c *CondosController) Post() {
 	var v models.Condos
