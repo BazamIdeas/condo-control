@@ -28,7 +28,7 @@ func (c *PointsController) URLMapping() {
 // @Title Post
 // @Description create Points
 // @Accept json
-// @Param Authorization header string true "Zone's Token"
+// @Param Authorization header string true "Supervisor's Token"
 // @Param name body string true "Point's Name"
 // @Param zones body string true "Zone's Object (only id is required)"
 // @Success 201 {object} models.Zones
@@ -176,6 +176,14 @@ func (c *PointsController) GetAll() {
 // Put ...
 // @Title Put
 // @Description update the Points
+// @Accept json
+// @Param Authorization header string true "Supervisor's Token"
+// @Param id param int true "Point's id"
+// @Param name body string true "Point's Name"
+// @Success 200 {object} models.Zones
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Zone's Point Dont exists
 // @router /:id [put]
 func (c *PointsController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
@@ -207,16 +215,6 @@ func (c *PointsController) Put() {
 		c.BadRequestErrors(valid.Errors, v.TableName())
 		return
 	}
-
-	//TODO:
-	// Validate foreings keys
-
-	/* exists := models.ValidateExists("Sectors", v.Sector.ID)
-
-	if !exists {
-		c.BadRequestDontExists("Sector")
-		return
-	} */
 
 	err = models.UpdatePointsByID(&v)
 
