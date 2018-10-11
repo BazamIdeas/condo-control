@@ -27,6 +27,13 @@ func (c *PointsController) URLMapping() {
 // Post ...
 // @Title Post
 // @Description create Points
+// @Accept json
+// @Param Authorization header string true "Zone's Token"
+// @Param name body string true "Point's Name"
+// @Param zones body string true "Zone's Object (only id is required)"
+// @Success 201 {object} models.Zones
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
 // @router / [post]
 func (c *PointsController) Post() {
 
