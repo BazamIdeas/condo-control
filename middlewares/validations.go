@@ -93,39 +93,39 @@ func GetControllerPatterns(route string) []*MwPattern {
 			UserTypes: []string{"Supervisor"},
 		},
 	}
-
-	zones := []*MwPattern{
-		{
-			URL:       "/",
-			Methods:   []string{"POST"},
-			UserTypes: []string{"Supervisor"},
-		},
-		{
-			URL:       "/:id",
-			Methods:   []string{"PUT"},
-			UserTypes: []string{"Supervisor"},
-		},
-		{
-			URL:       "/delete",
-			Methods:   []string{"DELETE"},
-			UserTypes: []string{"Supervisor"},
-		},
-		{
-			URL:       "/:id/restore",
-			Methods:   []string{"All"},
-			UserTypes: []string{"Supervisor"},
-		},
-		{
-			URL:       "/trashed",
-			Methods:   []string{"All"},
-			UserTypes: []string{"Supervisor"},
-		},
-	}
-
+	/*
+		zones := []*MwPattern{
+			{
+				URL:       "/",
+				Methods:   []string{"POST"},
+				UserTypes: []string{"Supervisor"},
+			},
+			{
+				URL:       "/:id",
+				Methods:   []string{"PUT"},
+				UserTypes: []string{"Supervisor"},
+			},
+			{
+				URL:       "/delete",
+				Methods:   []string{"DELETE"},
+				UserTypes: []string{"Supervisor"},
+			},
+			{
+				URL:       "/:id/restore",
+				Methods:   []string{"All"},
+				UserTypes: []string{"Supervisor"},
+			},
+			{
+				URL:       "/trashed",
+				Methods:   []string{"All"},
+				UserTypes: []string{"Supervisor"},
+			},
+		}
+	*/
 	validations := map[string][]*MwPattern{
 		"condos":   condos,
 		"holidays": holidays,
-		"zones":    zones,
+		/* "zones":    zones, */
 	}
 
 	return validations[route]
