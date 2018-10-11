@@ -124,10 +124,7 @@ func (c *HolidaysController) GetOne() {
 	c.ServeJSON()
 }
 
-// GetAll ...
-// @Title Get All
-// @Description get Holidays
-// @router / [get]
+
 func (c *HolidaysController) GetAll() {
 	var fields []string
 	var sortby []string
