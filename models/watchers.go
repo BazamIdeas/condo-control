@@ -304,6 +304,11 @@ func (t *Watchers) GetVerificationsByDate(date time.Time) (err error) {
 		return
 	}
 
+	if len(verifications) == 0 {
+		err = orm.ErrNoRows
+		return
+	}
+
 	for _, verification := range verifications {
 		verification.loadRelations()
 
