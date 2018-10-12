@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
 	"github.com/vjeantet/jodaTime"
 )
@@ -542,11 +543,12 @@ func VerifyWorkerIdentity(workerID int, newFaceFh *multipart.FileHeader) (worker
 		return
 	}
 
-	/////TODO:
-	//////TEST MODE /////
-	ok = true
-	return
-	///////END TEST MODE
+	facesDebug, _ := beego.AppConfig.Bool("faces::debug")
+
+	if facesDebug {
+		ok = true
+		return
+	}
 
 	newImageUUID, _, err := faces.CreateFaceFile(newFaceFh)
 
