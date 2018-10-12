@@ -238,26 +238,6 @@ func (c *WatchersController) Put() {
 		return
 	}
 
-	// Validate context body
-	valid := validation.Validation{}
-
-	b, _ := valid.Valid(&v)
-
-	if !b {
-		c.BadRequestErrors(valid.Errors, v.TableName())
-		return
-	}
-
-	//TODO:
-	// Validate foreings keys
-
-	/* exists := models.ValidateExists("Sectors", v.Sector.ID)
-
-	if !exists {
-		c.BadRequestDontExists("Sector")
-		return
-	} */
-
 	err = models.UpdateWatchersByID(&v)
 
 	if err != nil {
