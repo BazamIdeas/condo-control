@@ -196,6 +196,10 @@ func UpdateWatchersByID(m *Watchers) (err error) {
 
 	var num int64
 
+	if m.Password != "" {
+		m.Password = GetMD5Hash(m.Password)
+	}
+
 	num, err = o.Update(m)
 
 	if err != nil {

@@ -455,7 +455,32 @@ func (c *VerificationsController) NewRouteExecute() {
 
 	watcherID, _ := strconv.Atoi(decAuthToken.UserID)
 
-	watcher := &models.Watchers{ID: watcherID}
+	watcher, err := models.GetWatchersByID(watcherID)
+
+	if err != nil {
+		c.BadRequestDontExists("Watchers")
+		return
+	}
+
+	_, faceFh, err := c.GetFile("faces")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, ok, err := VerifyWorkerIdentity(watcher.Worker.ID, faceFh)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if !ok {
+		err = errors.New("Identity Verification Failed")
+		c.BadRequest(err)
+		return
+	}
 
 	verifications := []*models.Verifications{}
 
@@ -481,5 +506,3 @@ func (c *VerificationsController) NewRouteExecute() {
 	c.ServeJSON()
 
 }
-
-
