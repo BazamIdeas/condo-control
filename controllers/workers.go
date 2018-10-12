@@ -35,6 +35,7 @@ func (c *WorkersController) URLMapping() {
 	c.Mapping("GetAssistancesDataByMonth", c.GetAssistancesDataByMonth)
 	c.Mapping("GetAssistancesDataByYear", c.GetAssistancesDataByYear)
 	c.Mapping("DownloadAssistancesDataByMonth", c.DownloadAssistancesDataByMonth)
+	c.Mapping("Approve", c.Approve)
 }
 
 // Post ...
