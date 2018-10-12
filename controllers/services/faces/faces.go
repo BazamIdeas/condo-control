@@ -16,8 +16,8 @@ import (
 )
 
 var (
-	azureKey     = "xxxxx"
-	azureBaseURL = "xxxxx"
+	azureKey     = beego.AppConfig.String("faces::azureKey")
+	azureBaseURL = beego.AppConfig.String("faces::azureBaseURL")
 )
 
 var (
@@ -135,16 +135,23 @@ func CreateFaceID(imageUUID string) (faceID string, err error) {
 
 	res, err := client.Do(req)
 
+	if err != nil {
+		return
+	}
+
 	if res.StatusCode != 200 {
 		err = errors.New("Face Request Failed")
 		return
 	}
 
 	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return
+	}
 
 	responseBodyJSON := []map[string]interface{}{}
 
-	err = json.Unmarshal(bodyBytes, responseBodyJSON)
+	err = json.Unmarshal(bodyBytes, &responseBodyJSON)
 
 	if err != nil {
 		return
@@ -203,19 +210,9 @@ func CompareFacesIDs(oldFaceID string, newFaceID string) (ok bool, err error) {
 
 	responseBodyJSON := map[string]interface{}{}
 
-	err = json.Unmarshal(bodyBytes, responseBodyJSON)
+	err = json.Unmarshal(bodyBytes, &responseBodyJSON)
 
 	if err != nil {
-		return
-	}
-
-	if len(responseBodyJSON) == 0 {
-		err = errors.New("No faces found on Request")
-		return
-	}
-
-	if len(responseBodyJSON) > 1 {
-		err = errors.New("Too many Faces, 1 Face allowed")
 		return
 	}
 
