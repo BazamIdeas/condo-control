@@ -106,6 +106,13 @@ func (c *WatchersController) Post() {
 		return
 	}
 
+	if v.Worker.FirstName == "" || v.Worker.LastName == "" {
+
+		err = errors.New("Worker's First Name or Last Name is missing")
+		c.BadRequest(err)
+		return
+	}
+
 	v.Worker.Condo = &models.Condos{ID: condoID}
 	v.Worker.Approved = true
 

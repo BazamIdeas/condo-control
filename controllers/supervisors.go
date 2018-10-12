@@ -56,6 +56,18 @@ func (c *SupervisorsController) Post() {
 		c.BadRequest(err)
 		return
 	}
+	if v.Worker == nil {
+		err = errors.New("Worker info is empty")
+		c.BadRequest(err)
+		return
+	}
+
+	if v.Worker.FirstName == "" || v.Worker.LastName == "" {
+
+		err = errors.New("Worker's First Name or Last Name is missing")
+		c.BadRequest(err)
+		return
+	}
 
 	if v.Worker.Condo == nil {
 		err = errors.New("Condo's info is empty")
