@@ -47,7 +47,7 @@ type MwPattern struct {
 func GetControllerPatterns(route string) []*MwPattern {
 
 	/** Custom **/
-
+/* 
 	condos := []*MwPattern{
 		{
 			URL:       "/",
@@ -92,7 +92,7 @@ func GetControllerPatterns(route string) []*MwPattern {
 			Methods:   []string{"DELETE"},
 			UserTypes: []string{"Supervisor"},
 		},
-	}
+	} */
 	/*
 		zones := []*MwPattern{
 			{
