@@ -257,7 +257,7 @@ func (c *SupervisorsController) ChangePasswordSelf() {
 
 	supervisor.Password = v.Password
 
-	err = models.UpdateSupervisorsByID(&supervisor)
+	err = models.UpdateSupervisorsByID(supervisor)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
