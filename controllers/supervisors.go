@@ -22,6 +22,7 @@ func (c *SupervisorsController) URLMapping() {
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
+	c.Mapping("ChangePasswordSelf", c.ChangePasswordSelf)
 }
 
 // Post ...
@@ -200,29 +201,63 @@ func (c *SupervisorsController) Put() {
 		return
 	}
 
-	// Validate context body
+	err = models.UpdateSupervisorsByID(&v)
 
-	valid := validation.Validation{}
-
-	b, _ := valid.Valid(&v)
-
-	if !b {
-		c.BadRequestErrors(valid.Errors, v.TableName())
+	if err != nil {
+		c.ServeErrorJSON(err)
 		return
 	}
 
-	//TODO:
-	// Validate foreings keys
+	c.Data["json"] = MessageResponse{
+		Message:       "Updated element",
+		PrettyMessage: "Elemento Actualizado",
+	}
 
-	/* exists := models.ValidateExists("Sectors", v.Sector.ID)
+	c.ServeJSON()
+}
 
-	if !exists {
-		c.BadRequestDontExists("Sector")
+// ChangePasswordSelf ...
+// @Title Put
+// @Description update the ChangePassword
+// @router /change-password/self [put]
+func (c *SupervisorsController) ChangePasswordSelf() {
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyToken(token, "Supervisor")
+
+	if err != nil {
+		c.BadRequest(err)
 		return
-	} */
+	}
 
-	err = models.UpdateSupervisorsByID(&v)
+	supervisorID, _ := strconv.Atoi(decodedToken.UserID)
 
+	supervisor, err := models.GetSupervisorsByID(supervisorID)
+
+	if err != nil {
+		c.BadRequestDontExists("Supervisor")
+		return
+	}
+
+	v := models.Supervisors{}
+
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if v.Password == "" {
+		err = errors.New("Missing password")
+		c.BadRequest(err)
+		return
+	}
+
+	supervisor.Password = v.Password
+
+	err = models.UpdateSupervisorsByID(&supervisor)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return

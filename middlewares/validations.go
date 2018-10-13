@@ -123,9 +123,9 @@ func GetControllerPatterns(route string) []*MwPattern {
 		}
 	*/
 	validations := map[string][]*MwPattern{
-		"condos":   condos,
+		/* "condos":   condos,
 		"holidays": holidays,
-		/* "zones":    zones, */
+		"zones":    zones, */
 	}
 
 	return validations[route]
