@@ -54,6 +54,13 @@ func AddCondos(m *Condos) (id int64, err error) {
 	o := orm.NewOrm()
 	//m.Slug = GenerateSlug(m.TableName(), m.Name)
 	id, err = o.Insert(m)
+
+	if err != nil {
+		return
+	}
+
+	m.ID = int(id)
+
 	return
 }
 
