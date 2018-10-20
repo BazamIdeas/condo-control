@@ -29,12 +29,12 @@ type dayAssistances struct {
 type monthDaysAssistances map[string]*dayAssistances
 
 type monthDetail struct {
-	Days             *monthDaysAssistances `json:"days,omitempty"`
-	TotalWorkedHours float32               `json:"total_worked_hours,omitempty"`
-	ExtraWorkedHours float32               `json:"extra_worked_hours,omitempty"`
-	ExtraValue       float32               `json:"extra_value,omitempty"`
-	BaseValue        float32               `json:"base_value,omitempty"`
-	TotalValue       float32               `json:"total_value,omitempty"`
+	Days             *monthDaysAssistances `json:"days"`
+	TotalWorkedHours float32               `json:"total_worked_hours"`
+	ExtraWorkedHours float32               `json:"extra_worked_hours"`
+	ExtraValue       float32               `json:"extra_value"`
+	BaseValue        float32               `json:"base_value"`
+	TotalValue       float32               `json:"total_value"`
 	Holidays         int                   `json:"holidays"`
 }
 
