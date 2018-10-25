@@ -147,7 +147,7 @@ func (c *ZonesController) GetSelf() {
 		c.BadRequest(err)
 		return
 	}
-
+	//TODO: use another function, filter by deleted needed
 	v, err := models.GetCondosByID(id)
 	if err != nil {
 		c.ServeErrorJSON(err)

@@ -23,6 +23,7 @@ func (c *CondosController) URLMapping() {
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
+	c.Mapping("GetSupervisorsByCondosID", c.GetSupervisorsByCondosID)
 }
 
 // Post ...
@@ -97,6 +98,36 @@ func (c *CondosController) GetOne() {
 	}
 
 	c.Data["json"] = v
+	c.ServeJSON()
+}
+
+// GetSupervisorsByCondosID ...
+// @Title Get Supervisors By CondosID
+// @Description Get Supervisors By CondosID
+// @router /:id/supervisors [get]
+func (c *CondosController) GetSupervisorsByCondosID() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, err = models.GetCondosByID(id)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	supervisors, err := models.GetSupervisorsByCondosID(id)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = supervisors
 	c.ServeJSON()
 }
 

@@ -246,3 +246,37 @@ func GetSupervisorsFromTrash() (supervisors []*Supervisors, err error) {
 	return
 
 }
+
+//GetSupervisorsByCondosID return Supervisors soft Deleted
+func GetSupervisorsByCondosID(condosID int) (supervisors []*Supervisors, err error) {
+
+	o := orm.NewOrm()
+
+	var (
+		w []*Workers
+		v []*Supervisors
+	)
+
+	_, err = o.QueryTable("workers").Filter("condos_id", condosID).Filter("deleted_at__isnull", true).All(&w)
+
+	if err != nil {
+		return
+	}
+
+	workersIDs := []interface{}{}
+
+	for _, worker := range w {
+		workersIDs = append(workersIDs, worker.ID)
+	}
+
+	_, err = o.QueryTable("supervisors").Filter("workers_id__in", workersIDs...).Filter("deleted_at__isnull", true).RelatedSel().All(&v)
+
+	if err != nil {
+		return
+	}
+
+	supervisors = v
+
+	return
+
+}
