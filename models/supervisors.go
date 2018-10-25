@@ -47,6 +47,9 @@ func (t *Supervisors) loadRelations() {
 func AddSupervisors(m *Supervisors) (id int64, err error) {
 	o := orm.NewOrm()
 	//m.Slug = GenerateSlug(m.TableName(), m.Name)
+
+	m.Password = GetMD5Hash(m.Password)
+	
 	id, err = o.Insert(m)
 
 	if err != nil {

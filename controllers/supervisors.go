@@ -57,11 +57,6 @@ func (c *SupervisorsController) Post() {
 		c.BadRequest(err)
 		return
 	}
-	if v.Worker == nil {
-		err = errors.New("Worker info is empty")
-		c.BadRequest(err)
-		return
-	}
 
 	if v.Worker.FirstName == "" || v.Worker.LastName == "" {
 
