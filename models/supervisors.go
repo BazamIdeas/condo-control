@@ -257,7 +257,7 @@ func GetSupervisorsByCondosID(condosID int) (supervisors []*Supervisors, err err
 		v []*Supervisors
 	)
 
-	_, err = o.QueryTable("workers").Filter("condos_id", condosID).Filter("deleted_at__isnull", true).All(&w)
+	_, err = o.QueryTable("workers").Filter("condos_id", condosID).All(&w)
 
 	if err != nil {
 		return
