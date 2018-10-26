@@ -13,7 +13,7 @@ import (
 //Supervisors Model
 type Supervisors struct {
 	ID        int       `orm:"column(id);pk" json:"id"`
-	Email     string    `orm:"column(email);size(255)" json:"email,omitempty" valid:"Required,Email"`
+	Email     string    `orm:"column(email);size(255)" json:"email,omitempty" valid:"Required"`
 	Password  string    `orm:"column(password);" json:"password,omitempty" valid:"Required"`
 	Phone     string    `orm:"column(phone);null" json:"phone,omitempty" valid:"Required"`
 	Token     string    `orm:"-" json:"token,omitempty"`
@@ -49,7 +49,7 @@ func AddSupervisors(m *Supervisors) (id int64, err error) {
 	//m.Slug = GenerateSlug(m.TableName(), m.Name)
 
 	m.Password = GetMD5Hash(m.Password)
-	
+
 	id, err = o.Insert(m)
 
 	if err != nil {

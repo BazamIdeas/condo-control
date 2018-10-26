@@ -6,7 +6,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
-
+	"fmt"
 	"github.com/astaxie/beego/validation"
 )
 
@@ -30,8 +30,10 @@ func (c *SupervisorsController) URLMapping() {
 // @Description create Supervisors
 // @router / [post]
 func (c *SupervisorsController) Post() {
-	var v models.Supervisors
+	
+	v := models.Supervisors{}
 
+	fmt.Println("hola")
 	// Validate empty body
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
