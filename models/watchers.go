@@ -12,16 +12,20 @@ import (
 
 //Watchers Model
 type Watchers struct {
-	ID            int              `orm:"column(id);pk" json:"id"`
-	Email         string           `orm:"column(email);size(255)" json:"email,omitempty" valid:"Required"`
-	Password      string           `orm:"column(password);" json:"password,omitempty" valid:"Required"`
-	Phone         string           `orm:"column(phone);" json:"phone,omitempty" valid:"Required"`
-	Token         string           `orm:"-" json:"token,omitempty"`
-	Worker        *Workers         `orm:"rel(fk);column(workers_id)" json:"worker,omitempty"`
-	Verifications []*Verifications `orm:"reverse(many);" json:"verifications,omitempty"`
-	CreatedAt     time.Time        `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
-	UpdatedAt     time.Time        `orm:"column(updated_at);type(datetime);null" json:"-"`
-	DeletedAt     time.Time        `orm:"column(deleted_at);type(datetime);null" json:"-"`
+	ID             int              `orm:"column(id);pk" json:"id"`
+	Username       string           `orm:"column(username);size(255)" json:"username,omitempty" valid:"Required"`
+	Password       string           `orm:"column(password);" json:"password,omitempty" valid:"Required"`
+	Phone          string           `orm:"column(phone);" json:"phone,omitempty" valid:"Required"`
+	AssistancesMod bool             `orm:"column(assistances_mod)" json:"assistances_mod"`
+	RoutesMod      bool             `orm:"column(routes_mod)" json:"routes_mod"`
+	DeliveryMod    bool             `orm:"column(delivery_mod)" json:"delivery_mod"`
+	TasksMod       bool             `orm:"column(tasks_mod)" json:"tasks_mod"`
+	Token          string           `orm:"-" json:"token,omitempty"`
+	Worker         *Workers         `orm:"rel(fk);column(workers_id)" json:"worker,omitempty"`
+	Verifications  []*Verifications `orm:"reverse(many);" json:"verifications,omitempty"`
+	CreatedAt      time.Time        `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
+	UpdatedAt      time.Time        `orm:"column(updated_at);type(datetime);null" json:"-"`
+	DeletedAt      time.Time        `orm:"column(deleted_at);type(datetime);null" json:"-"`
 }
 
 //TableName =
@@ -85,7 +89,7 @@ func LoginWatchers(m *Watchers) (id int, err error) {
 
 	m.Password = GetMD5Hash(m.Password)
 
-	err = o.QueryTable(m.TableName()).Filter("deleted_at__isnull", true).Filter("email", m.Email).Filter("password", m.Password).RelatedSel().One(m)
+	err = o.QueryTable(m.TableName()).Filter("deleted_at__isnull", true).Filter("username", m.Username).Filter("password", m.Password).RelatedSel().One(m)
 
 	if err != nil {
 		return 0, err

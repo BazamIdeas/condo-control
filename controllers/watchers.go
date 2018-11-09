@@ -36,7 +36,7 @@ func (c *WatchersController) URLMapping() {
 // @Description create Watchers
 // @Accept json
 // @Param   Authorization     header   string true       "Supervisor's Token"
-// @Param   email     body   string true       "watcher's Email"
+// @Param   username     body   string true       "watcher's Username"
 // @Param   password     body   string true       "watcher's password"
 // @Param   phone     body   string false       "watcher's phone"
 // @Param   worker     body   object false       "Worker object (first name and last name)"
@@ -355,7 +355,7 @@ func (c *WatchersController) Login() {
 
 	valid := validation.Validation{}
 
-	valid.Required(v.Email, "email")
+	valid.Required(v.Username, "username")
 	valid.Required(v.Password, "password")
 
 	if valid.HasErrors() {

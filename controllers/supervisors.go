@@ -4,9 +4,10 @@ import (
 	"condo-control/models"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
-	"fmt"
+
 	"github.com/astaxie/beego/validation"
 )
 
@@ -30,7 +31,7 @@ func (c *SupervisorsController) URLMapping() {
 // @Description create Supervisors
 // @router / [post]
 func (c *SupervisorsController) Post() {
-	
+
 	v := models.Supervisors{}
 
 	fmt.Println("hola")
@@ -370,7 +371,7 @@ func (c *SupervisorsController) Login() {
 
 	valid := validation.Validation{}
 
-	valid.Required(v.Email, "email")
+	valid.Required(v.Username, "username")
 	valid.Required(v.Password, "password")
 
 	if valid.HasErrors() {

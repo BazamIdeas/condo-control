@@ -14,6 +14,7 @@ import (
 type Condos struct {
 	ID                int         `orm:"column(id);pk" json:"id"`
 	Name              string      `orm:"column(name);size(255)" json:"name,omitempty" valid:"Required"`
+	RUT               string      `orm:"column(rut);size(255)" json:"rut" valid:"Required"`
 	UserLimit         int         `orm:"column(user_limit);size(255)" json:"user_limit" valid:"Required"`
 	ZoneLimit         int         `orm:"column(zone_limit);size(255)" json:"zone_limit" valid:"Required"`
 	HourValue         float32     `orm:"colum(hour_value);size(20)" json:"hour_value" valid:"Required"`
@@ -21,6 +22,8 @@ type Condos struct {
 	WorkingHours      int         `orm:"column(working_hours)" json:"working_hours" valid:"Required"`
 	AssistancesMod    bool        `orm:"column(assistances_mod)" json:"assistances_mod" valid:"Required"`
 	RoutesMod         bool        `orm:"column(routes_mod)" json:"routes_mod" valid:"Required"`
+	DeliveryMod       bool        `orm:"column(delivery_mod)" json:"delivery_mod" valid:"Required"`
+	TasksMod          bool        `orm:"column(tasks_mod)" json:"tasks_mod" valid:"Required"`
 	Zones             []*Zones    `orm:"reverse(many)" json:"zone,omitempty"`
 	Workers           []*Workers  `orm:"reverse(many)" json:"workers,omitempty"`
 	Holidays          []*Holidays `orm:"reverse(many)" json:"holidays,omitempty"`
@@ -228,6 +231,25 @@ func GetCondosFromTrash() (condos []*Condos, err error) {
 	}
 
 	condos = v
+
+	return
+
+}
+
+//GetCondosByRUT ...
+func GetCondosByRUT(RUT string) (condo *Condos, err error) {
+
+	o := orm.NewOrm()
+
+	var v *Condos
+
+	err = o.QueryTable("condos").Filter("RUT", RUT).Filter("deleted_at__isnull", false).RelatedSel().One(&v)
+
+	if err != nil {
+		return
+	}
+
+	condo = v
 
 	return
 

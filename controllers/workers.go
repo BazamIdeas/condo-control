@@ -13,6 +13,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/astaxie/beego/orm"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
 	"github.com/vjeantet/jodaTime"
@@ -380,13 +382,32 @@ func (c *WorkersController) GetSelf() {
 		return
 	}
 
-	v, err := models.GetWorkersByCondosID(condoID)
+	workers, err := models.GetWorkersByCondosID(condoID)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	c.Data["json"] = v
+	supervisors, err := models.GetSupervisorsByCondosID(condoID)
+	if err != nil && err != orm.ErrNoRows {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	if supervisors != nil && len(supervisors) > 0 {
+		for workerIndex, worker := range workers {
+			for _, supervisor := range supervisors {
+				if supervisor.Worker.ID != worker.ID {
+					continue
+				}
+				workers[workerIndex] = workers[len(workers)-1]
+				workers[len(workers)-1] = nil
+				workers = workers[:len(workers)-1]
+			}
+		}
+	}
+
+	c.Data["json"] = workers
 	c.ServeJSON()
 }
 

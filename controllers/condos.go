@@ -364,3 +364,70 @@ func (c *CondosController) GetSelf() {
 	c.Data["json"] = condos
 	c.ServeJSON()
 }
+
+// AddWatcherToCondosByRUT ...
+// @Title Add Watcher To Condos By RUT
+// @Description Add Watcher To Condos By RUT
+// @Accept json
+// @Success 200 {object} models.Watchers
+// @Failure 400 Bad Request
+// @Failure 404 Condos Don't Exists
+// @router /rut/:rut/watchers [post]
+func (c *CondosController) AddWatcherToCondosByRUT() {
+
+	v := models.Watchers{}
+
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if v.Worker == nil {
+		err = errors.New("Worker data is missing")
+		c.BadRequest(err)
+		return
+	}
+
+	valid := validation.Validation{}
+	b, _ := valid.Valid(&v)
+
+	if !b {
+		c.BadRequestErrors(valid.Errors, v.TableName())
+		return
+	}
+
+	RUTStr := c.Ctx.Input.Param(":rut")
+
+	if RUTStr == "" {
+		err = errors.New("Missing RUT")
+		c.BadRequest(err)
+		return
+	}
+
+	condo, err := models.GetCondosByRUT(RUTStr)
+	if err != nil {
+		c.BadRequestDontExists("Condos")
+		return
+	}
+
+	v.Worker.Condo = condo
+
+	_, err = models.AddWorkers(v.Worker)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	_, err = models.AddWatchers(&v)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = v
+	c.ServeJSON()
+}

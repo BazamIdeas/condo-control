@@ -450,9 +450,7 @@ func (c *VerificationsController) NewRouteExecute() {
 		c.BadRequest(err)
 		return
 	}
-
-	//TODO: VERIFICATION FACE
-
+	
 	watcherID, _ := strconv.Atoi(decAuthToken.UserID)
 
 	watcher, err := models.GetWatchersByID(watcherID)

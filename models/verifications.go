@@ -12,16 +12,17 @@ import (
 
 //Verifications Model
 type Verifications struct {
-	ID        int       `orm:"column(id);pk" json:"id,omitempty"`
-	Date      string    `orm:"column(date);type(datetime);" json:"date,omitempty" valid:"Required"`
-	Latitude  float32   `orm:"column(latitude)" json:"latitude" valid:"Required"`
-	Longitude float32   `orm:"column(longitude)" json:"longitude" valid:"Required"`
-	Watcher   *Watchers `orm:"rel(fk);column(watchers_id)" json:"watchers,omitempty"`
-	Point     *Points   `orm:"rel(fk);column(points_id)" json:"point,omitempty"`
-
-	CreatedAt time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
-	UpdatedAt time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
-	DeletedAt time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
+	ID                int       `orm:"column(id);pk" json:"id,omitempty"`
+	Date              string    `orm:"column(date);type(datetime);" json:"date,omitempty" valid:"Required"`
+	SupervisorComment string    `orm:"column(supervisor_comment);" json:"supervisor_comment,omitempty"`
+	WatcherComment    string    `orm:"column(watcher_comment);" json:"watcher_comment,omitempty"`
+	Latitude          float32   `orm:"column(latitude)" json:"latitude" valid:"Required"`
+	Longitude         float32   `orm:"column(longitude)" json:"longitude" valid:"Required"`
+	Watcher           *Watchers `orm:"rel(fk);column(watchers_id)" json:"watchers,omitempty"`
+	Point             *Points   `orm:"rel(fk);column(points_id)" json:"point,omitempty"`
+	CreatedAt         time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
+	UpdatedAt         time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
+	DeletedAt         time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
 }
 
 //TableName =

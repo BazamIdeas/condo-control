@@ -13,7 +13,7 @@ import (
 //Supervisors Model
 type Supervisors struct {
 	ID        int       `orm:"column(id);pk" json:"id"`
-	Email     string    `orm:"column(email);size(255)" json:"email,omitempty" valid:"Required"`
+	Username  string    `orm:"column(username);size(255)" json:"username,omitempty" valid:"Required"`
 	Password  string    `orm:"column(password);" json:"password,omitempty" valid:"Required"`
 	Phone     string    `orm:"column(phone);null" json:"phone,omitempty" valid:"Required"`
 	Token     string    `orm:"-" json:"token,omitempty"`
@@ -84,7 +84,7 @@ func LoginSupervisors(m *Supervisors) (id int, err error) {
 
 	m.Password = GetMD5Hash(m.Password)
 
-	err = o.QueryTable(m.TableName()).Filter("deleted_at__isnull", true).Filter("email", m.Email).Filter("password", m.Password).RelatedSel().One(m)
+	err = o.QueryTable(m.TableName()).Filter("deleted_at__isnull", true).Filter("username", m.Username).Filter("password", m.Password).RelatedSel().One(m)
 
 	if err != nil {
 		return 0, err
