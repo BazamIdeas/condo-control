@@ -241,15 +241,17 @@ func GetCondosByRUT(RUT string) (condo *Condos, err error) {
 
 	o := orm.NewOrm()
 
-	var v *Condos
+	v := Condos{RUT: RUT}
 
-	err = o.QueryTable("condos").Filter("RUT", RUT).Filter("deleted_at__isnull", false).RelatedSel().One(&v)
+	err = o.Read(&v, "rut")
+
+	//err = o.QueryTable("condos").Filter("RUT", RUT).Filter("deleted_at__isnull", false).RelatedSel().One(&v)
 
 	if err != nil {
 		return
 	}
 
-	condo = v
+	condo = &v
 
 	return
 
