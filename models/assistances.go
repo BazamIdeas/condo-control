@@ -12,16 +12,17 @@ import (
 
 //Assistances Model
 type Assistances struct {
-	ID        int       `orm:"column(id);pk" json:"id,omitempty"`
-	Date      string    `orm:"column(date);type(datetime);" json:"date,omitempty" validate:"required"`
-	Type      string    `orm:"column(type)" json:"type,omitempty" validate:"required,alpha"`
-	Worker    *Workers  `orm:"rel(fk);column(workers_id)" json:"workers,omitempty"`
-	Watcher   *Watchers `orm:"rel(fk);column(watchers_id)" json:"watchers,omitempty"`
-	Day       string    `orm:"-" json:"day,omitempty"`
-	Token     string    `orm:"-" json:"token,omitempty"`
-	CreatedAt time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
-	UpdatedAt time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
-	DeletedAt time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
+	ID         int       `orm:"column(id);pk" json:"id,omitempty"`
+	Date       string    `orm:"column(date);type(datetime);" json:"date,omitempty" validate:"required"`
+	Type       string    `orm:"column(type)" json:"type,omitempty" validate:"required,alpha"`
+	WorkTimeID int       `orm:"column(work_time_id);null" json:"work_time_id"`
+	Worker     *Workers  `orm:"rel(fk);column(workers_id)" json:"workers,omitempty"`
+	Watcher    *Watchers `orm:"rel(fk);column(watchers_id)" json:"watchers,omitempty"`
+	Day        string    `orm:"-" json:"day,omitempty"`
+	Token      string    `orm:"-" json:"token,omitempty"`
+	CreatedAt  time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
+	UpdatedAt  time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
+	DeletedAt  time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
 }
 
 //TableName =

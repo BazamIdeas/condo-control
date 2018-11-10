@@ -275,7 +275,8 @@ func GetWorkersByCondosID(condosID int) (workers []*Workers, err error) {
 	}
 
 	for _, worker := range v {
-		worker.GetTodayAssistances()
+		//worker.GetTodayAssistances()
+		worker.GetCurrentWorkTimeAssistances()
 	}
 
 	workers = v
@@ -500,6 +501,51 @@ func (t *Workers) GetYearAssistancesData(year int) (err error) {
 	}
 
 	t.YearData = &yearData
+
+	return
+
+}
+
+//GetCurrentWorkTimeAssistances ...
+func (t *Workers) GetCurrentWorkTimeAssistances() (err error) {
+
+	o := orm.NewOrm()
+	//todayDate := time.Now().Local().Format("2006-01-02")
+	lastAssistanceEntry := &Assistances{}
+
+	qs := o.QueryTable("assistances").Filter("workers_id", t.ID).Filter("type", "entry")
+	qs = qs.Limit(1).OrderBy("-date")
+
+	//qs = qs.Filter("date__gte", todayDate+" 00:00:00").Filter("date__lte", todayDate+" 23:59:59")
+
+	err = qs.One(lastAssistanceEntry)
+
+	mapAssistances := map[string]*Assistances{}
+
+	if err != nil {
+		t.TodayAssistances = mapAssistances
+		return
+	}
+
+	mapAssistances[lastAssistanceEntry.Type] = lastAssistanceEntry
+
+	nextAssistances := []*Assistances{}
+
+	qs = o.QueryTable("assistances").Filter("workers_id", t.ID).Filter("work_time_id", lastAssistanceEntry.ID)
+	qs = qs.Limit(3)
+
+	_, err = qs.All(&nextAssistances)
+
+	if err != nil {
+		t.TodayAssistances = mapAssistances
+		return
+	}
+
+	for _, nextAssistance := range nextAssistances {
+		mapAssistances[nextAssistance.Type] = nextAssistance
+	}
+
+	t.TodayAssistances = mapAssistances
 
 	return
 
