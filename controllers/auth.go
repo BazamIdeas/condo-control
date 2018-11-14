@@ -70,14 +70,17 @@ func VerifyToken(tokenString string, userType string) (decodedToken *JwtToken, e
 }
 
 //VerifyTokenByAllUserTypes ...
-func VerifyTokenByAllUserTypes(ts string) (decodedToken *JwtToken, err error) {
+func VerifyTokenByAllUserTypes(ts string) (decodedToken *JwtToken, userType string, err error) {
 
 	for _, UserType := range UserTypes {
 		userToken, errToken := VerifyToken(ts, UserType)
-		if errToken == nil {
-			decodedToken = userToken
-			return
+		if errToken != nil {
+			continue
 		}
+		userType = UserType
+		decodedToken = userToken
+		return
+		
 	}
 	err = errors.New("Token is invalid")
 	return

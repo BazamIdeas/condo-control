@@ -61,9 +61,9 @@ func (c *SupervisorsController) Post() {
 		return
 	}
 
-	if v.Worker.FirstName == "" || v.Worker.LastName == "" {
+	if v.Worker.FirstName == "" {
 
-		err = errors.New("Worker's First Name or Last Name is missing")
+		err = errors.New("Worker's First Name is missing")
 		c.BadRequest(err)
 		return
 	}

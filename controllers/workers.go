@@ -46,7 +46,6 @@ func (c *WorkersController) URLMapping() {
 // @Accept json
 // @Param   Authorization     header   string true       "Watcher's Token"
 // @Param   first_name      body   string true       "New Worker's first name"
-// @Param   last_name      body   string true       "New Worker's last name"
 // @Success 201 {object} models.Workers
 // @Failure 400 Bad Request
 // @Failure 403 Invalid Token
@@ -371,7 +370,7 @@ func (c *WorkersController) GetSelf() {
 
 	token := c.Ctx.Input.Header("Authorization")
 
-	decodedToken, _ := VerifyTokenByAllUserTypes(token)
+	decodedToken, _, _ := VerifyTokenByAllUserTypes(token)
 
 	//Disclamer, token already verified
 

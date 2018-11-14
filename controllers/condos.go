@@ -343,7 +343,7 @@ func (c *CondosController) GetSelf() {
 
 	token := c.Ctx.Input.Header("Authorization")
 
-	decodedToken, err := VerifyTokenByAllUserTypes(token)
+	decodedToken, _, err := VerifyTokenByAllUserTypes(token)
 	if err != nil {
 		c.BadRequest(err)
 		return

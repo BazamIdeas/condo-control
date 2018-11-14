@@ -140,7 +140,7 @@ func (c *ZonesController) Post() {
 func (c *ZonesController) GetSelf() {
 
 	token := c.Ctx.Input.Header("Authorization")
-	decodedToken, _ := VerifyTokenByAllUserTypes(token)
+	decodedToken, _, _ := VerifyTokenByAllUserTypes(token)
 
 	id, err := strconv.Atoi(decodedToken.CondoID)
 	if err != nil {

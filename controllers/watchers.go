@@ -39,7 +39,7 @@ func (c *WatchersController) URLMapping() {
 // @Param   username     body   string true       "watcher's Username"
 // @Param   password     body   string true       "watcher's password"
 // @Param   phone     body   string false       "watcher's phone"
-// @Param   worker     body   object false       "Worker object (first name and last name)"
+// @Param   worker     body   object false       "Worker object (first name)"
 // @Success 200 {object} models.Watchers
 // @Failure 400 Bad Request
 // @Failure 403 Invalid Token
@@ -106,9 +106,9 @@ func (c *WatchersController) Post() {
 		return
 	}
 
-	if v.Worker.FirstName == "" || v.Worker.LastName == "" {
+	if v.Worker.FirstName == "" {
 
-		err = errors.New("Worker's First Name or Last Name is missing")
+		err = errors.New("Worker's First Name is missing")
 		c.BadRequest(err)
 		return
 	}

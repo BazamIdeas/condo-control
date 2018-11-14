@@ -66,6 +66,22 @@ func init() {
 				&controllers.ZonesController{},
 			),
 		),
+		/// NEW MODELS TASKS MOD
+		beego.NSNamespace("/tasks",
+			beego.NSInclude(
+				&controllers.TasksController{},
+			),
+		),
+		beego.NSNamespace("/goals",
+			beego.NSInclude(
+				&controllers.GoalsController{},
+			),
+		),
+		beego.NSNamespace("/goals-comments",
+			beego.NSInclude(
+				&controllers.GoalsController{},
+			),
+		),
 	)
 
 	beego.AddNamespace(mainNS)

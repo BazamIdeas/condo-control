@@ -44,7 +44,6 @@ type yearDetail map[int]*monthDetail
 type Workers struct {
 	ID               int                     `orm:"column(id);pk" json:"id"`
 	FirstName        string                  `orm:"column(first_name);size(255)" json:"first_name,omitempty" valid:"Required"`
-	LastName         string                  `orm:"column(last_name);" json:"last_name,omitempty" valid:"Required"`
 	Condo            *Condos                 `orm:"rel(fk);column(condos_id)" json:"condos,omitempty"`
 	Assistances      []*Assistances          `orm:"reverse(many)" json:"assistances,omitempty"`
 	ImageUUID        string                  `orm:"column(image_uuid)" json:"image_uuid,omitempty"`

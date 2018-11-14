@@ -220,6 +220,7 @@ func GetHolidaysFromTrash() (holidays []*Holidays, err error) {
 
 }
 
+// ExistHolidaysByCondoID ...
 func ExistHolidaysByCondoID(date string, condosID int) (ok bool, err error) {
 
 	o := orm.NewOrm()
@@ -237,6 +238,7 @@ func ExistHolidaysByCondoID(date string, condosID int) (ok bool, err error) {
 	return
 }
 
+// GetHolidaysByCondosID ..
 func GetHolidaysByCondosID(year int, month time.Month, condosID int) (holidays map[string]*Holidays, err error) {
 
 	holidays = map[string]*Holidays{}
