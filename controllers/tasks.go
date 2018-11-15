@@ -171,7 +171,13 @@ func (c *TasksController) GetSelf() {
 		return
 	}
 
-	worker, err := models.GetWorkersByID(id)
+	watcher, err := models.GetWatchersByID(id)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByID(watcher.Worker.ID)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
