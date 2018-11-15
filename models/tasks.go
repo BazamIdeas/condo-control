@@ -48,7 +48,6 @@ func AddTasks(m *Tasks) (id int64, err error) {
 	o := orm.NewOrm()
 
 	now := jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
-
 	m.Date = now
 
 	id, err = o.Insert(m)

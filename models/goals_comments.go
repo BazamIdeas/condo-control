@@ -45,10 +45,10 @@ func AddGoalsComments(m *GoalsComments) (id int64, err error) {
 
 	o := orm.NewOrm()
 
-	id, err = o.Insert(m)
-
 	now := jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
 	m.Date = now
+
+	id, err = o.Insert(m)
 
 	if err != nil {
 		return

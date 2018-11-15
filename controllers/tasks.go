@@ -76,7 +76,7 @@ func (c *TasksController) GetByCondosID() {
 
 	}
 
-	c.Ctx.Output.SetStatus(201)
+	c.Ctx.Output.SetStatus(200)
 	c.Data["json"] = v
 
 	c.ServeJSON()
