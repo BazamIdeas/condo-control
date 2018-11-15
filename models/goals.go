@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego/orm"
+	"github.com/vjeantet/jodaTime"
 )
 
 //Goals Model
@@ -45,6 +46,9 @@ func (t *Goals) loadRelations() {
 func AddGoals(m *Goals) (id int64, err error) {
 
 	o := orm.NewOrm()
+
+	now := jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
+	m.Date = now
 
 	id, err = o.Insert(m)
 

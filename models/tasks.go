@@ -3,6 +3,8 @@ package models
 import (
 	"time"
 
+	"github.com/vjeantet/jodaTime"
+
 	"github.com/astaxie/beego/orm"
 )
 
@@ -12,9 +14,9 @@ type Tasks struct {
 	Name        string    `orm:"column(name);" json:"name,omitempty" valid:"Required"`
 	Description string    `orm:"column(description);null" json:"description,omitempty"`
 	Status      string    `orm:"column(status);" json:"status" valid:"Required"`
-	Date        string    `orm:"column(date);type(datetime);" json:"date,omitempty"`
+	Date        string    `orm:"column(date);auto_now_add;type(datetime);" json:"date,omitempty"`
 	DateEnd     string    `orm:"column(date_end);type(datetime);" json:"date_end,omitempty"`
-	Worker      *Workers  `orm:"rel(fk);column(workers_id)" json:"worker,omitempty"`
+	Worker      *Workers  `orm:"rel(fk);column(worker_id)" json:"worker,omitempty"`
 	Goals       []*Goals  `orm:"reverse(many);" json:"goals,omitempty"`
 	CreatedAt   time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt   time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
@@ -44,6 +46,10 @@ func (t *Tasks) loadRelations() {
 // last inserted Id on success.
 func AddTasks(m *Tasks) (id int64, err error) {
 	o := orm.NewOrm()
+
+	now := jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
+
+	m.Date = now
 
 	id, err = o.Insert(m)
 

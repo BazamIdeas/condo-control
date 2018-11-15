@@ -108,6 +108,7 @@ func (c *BaseController) ServeErrorJSON(err error) {
 				Message:       "Unknown column in 'Field List'",
 				Code:          driverErr.Number,
 				PrettyMessage: "Columna desconocida",
+				Error:         err.Error(),
 			}
 			break
 		case 1046:

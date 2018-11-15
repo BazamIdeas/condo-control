@@ -22,7 +22,7 @@ func (c *GoalsCommentsController) URLMapping() {
 
 // Post ...
 // @Title Post
-// @Description create Tasks
+// @Description create Goals comments
 // @router / [post]
 func (c *GoalsCommentsController) Post() {
 

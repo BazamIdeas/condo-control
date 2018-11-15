@@ -79,7 +79,7 @@ func init() {
 		),
 		beego.NSNamespace("/goals-comments",
 			beego.NSInclude(
-				&controllers.GoalsController{},
+				&controllers.GoalsCommentsController{},
 			),
 		),
 	)

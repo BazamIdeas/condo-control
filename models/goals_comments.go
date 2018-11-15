@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego/orm"
+	"github.com/vjeantet/jodaTime"
 )
 
 //GoalsComments Model
@@ -12,7 +13,7 @@ type GoalsComments struct {
 	Description string    `orm:"column(description);null" json:"description,omitempty" valid:"Required"`
 	Date        string    `orm:"column(date);type(datetime);" json:"date,omitempty"`
 	Goal        *Goals    `orm:"rel(fk);column(goal_id)" json:"goal,omitempty"`
-	Worker      *Workers  `orm:"rel(fk);column(workers_id)" json:"worker,omitempty"`
+	Worker      *Workers  `orm:"rel(fk);column(worker_id)" json:"worker,omitempty"`
 	Attachment  string    `orm:"attachment;null" json:"attachment,omitempty" `
 	CreatedAt   time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt   time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
@@ -45,6 +46,9 @@ func AddGoalsComments(m *GoalsComments) (id int64, err error) {
 	o := orm.NewOrm()
 
 	id, err = o.Insert(m)
+
+	now := jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
+	m.Date = now
 
 	if err != nil {
 		return
