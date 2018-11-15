@@ -15,7 +15,7 @@ type Tasks struct {
 	Description string    `orm:"column(description);null" json:"description,omitempty"`
 	Status      string    `orm:"column(status);" json:"status" valid:"Required"`
 	Date        string    `orm:"column(date);auto_now_add;type(datetime);" json:"date,omitempty"`
-	DateEnd     string    `orm:"column(date_end);type(datetime);" json:"date_end,omitempty"`
+	DateEnd     string    `orm:"column(date_end);" json:"date_end,omitempty"`
 	Worker      *Workers  `orm:"rel(fk);column(worker_id)" json:"worker,omitempty"`
 	Goals       []*Goals  `orm:"reverse(many);" json:"goals,omitempty"`
 	CreatedAt   time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
