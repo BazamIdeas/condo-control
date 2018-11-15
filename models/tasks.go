@@ -88,6 +88,10 @@ func UpdateTasksByID(m *Tasks) (err error) {
 		return
 	}
 
+	m.Date = v.Date
+	m.DateEnd = v.DateEnd
+	m.Status = v.Status
+
 	_, err = o.Update(m)
 
 	if err != nil {

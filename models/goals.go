@@ -11,10 +11,10 @@ import (
 type Goals struct {
 	ID            int              `orm:"column(id);pk" json:"id"`
 	Name          string           `orm:"column(name);" json:"name,omitempty" valid:"Required"`
-	Description   string           `orm:"column(description);null" json:"description,omitempty"`
+	Description   string           `orm:"column(description);" json:"description,omitempty"`
 	Status        string           `orm:"column(status);" json:"status" valid:"Required"`
 	Date          string           `orm:"column(date);type(datetime);" json:"date,omitempty"`
-	DateEnd       string           `orm:"column(date_end);type(datetime);" json:"date_end,omitempty"`
+	DateEnd       string           `orm:"column(date_end);" json:"date_end,omitempty"`
 	Task          *Tasks           `orm:"rel(fk);column(task_id)" json:"task,omitempty"`
 	GoalsComments []*GoalsComments `orm:"reverse(many);" json:"comments,omitempty"`
 	CreatedAt     time.Time        `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
@@ -87,6 +87,10 @@ func UpdateGoalsByID(m *Goals) (err error) {
 	if err != nil {
 		return
 	}
+
+	m.Date = v.Date
+	m.DateEnd = v.DateEnd
+	m.Status = v.Status
 
 	_, err = o.Update(m)
 

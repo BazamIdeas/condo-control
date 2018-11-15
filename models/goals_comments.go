@@ -86,6 +86,8 @@ func UpdateGoalsCommentsByID(m *GoalsComments) (err error) {
 		return
 	}
 
+	m.Date = v.Date
+
 	_, err = o.Update(m)
 
 	if err != nil {
