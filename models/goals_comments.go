@@ -6,7 +6,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/vjeantet/jodaTime"
 )
-XEarias
+
 //GoalsComments Model
 type GoalsComments struct {
 	ID          int       `orm:"column(id);pk" json:"id"`
