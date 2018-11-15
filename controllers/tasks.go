@@ -327,17 +327,6 @@ func (c *TasksController) Put() {
 		return
 	}
 
-	// Validate context body
-
-	valid := validation.Validation{}
-
-	b, _ := valid.Valid(&v)
-
-	if !b {
-		c.BadRequestErrors(valid.Errors, v.TableName())
-		return
-	}
-
 	err = models.UpdateTasksByID(&v)
 
 	if err != nil {
