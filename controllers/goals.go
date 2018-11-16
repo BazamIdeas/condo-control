@@ -120,6 +120,27 @@ func (c *GoalsController) GetOne() {
 		return
 	}
 
+	workersMap := map[int]*models.Workers{}
+
+	if v.GoalsComments != nil {
+		for _, goalComments := range v.GoalsComments {
+
+			if workerMap, ok := workersMap[goalComments.Worker.ID]; ok {
+				goalComments.Worker = workerMap
+				continue
+			}
+
+			worker, err := models.GetWorkersByID(goalComments.Worker.ID)
+			if err != nil {
+				c.ServeErrorJSON(err)
+				return
+			}
+
+			goalComments.Worker = worker
+
+		}
+	}
+
 	c.Data["json"] = v
 	c.ServeJSON()
 }
