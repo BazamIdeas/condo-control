@@ -7,17 +7,15 @@ import (
 	"strconv"
 
 	"github.com/astaxie/beego/orm"
-
-	"github.com/astaxie/beego/validation"
 )
 
-// TasksController operations for Holidays
-type TasksController struct {
+// DeliviriesController operations for Holidays
+type DeliveriesController struct {
 	BaseController
 }
 
 //URLMapping ...
-func (c *TasksController) URLMapping() {
+func (c *DeliveriesController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetSelf", c.GetSelf)
@@ -34,7 +32,7 @@ func (c *TasksController) URLMapping() {
 // @Title Get By CondosID
 // @Description Get By CondosID
 // @router /condos/self [get]
-func (c *TasksController) GetByCondosID() {
+func (c *DeliveriesController) GetByCondosID() {
 
 	token := c.Ctx.Input.Header("Authorization")
 
@@ -57,11 +55,11 @@ func (c *TasksController) GetByCondosID() {
 		return
 	}
 
-	v := []*models.Tasks{}
+	v := []*models.Deliveries{}
 
 	for _, worker := range condos.Workers {
 
-		workerTasks, err := models.GetTasksByWorkersID(worker.ID)
+		workerDeliveries, err := models.GetDeliveriesByWorkersID(worker.ID)
 
 		if err != nil && err != orm.ErrNoRows {
 			c.BadRequest(err)
@@ -72,7 +70,7 @@ func (c *TasksController) GetByCondosID() {
 			continue
 		}
 
-		v = append(v, workerTasks...)
+		v = append(v, workerDeliveries...)
 
 	}
 
@@ -87,7 +85,7 @@ func (c *TasksController) GetByCondosID() {
 // @Title Get By WorkersID
 // @Description Get By WorkersID
 // @router /workers/:id [get]
-func (c *TasksController) GetByWorkersID() {
+func (c *DeliveriesController) GetByWorkersID() {
 
 	token := c.Ctx.Input.Header("Authorization")
 
@@ -124,14 +122,14 @@ func (c *TasksController) GetByWorkersID() {
 		return
 	}
 
-	workerTasks, err := models.GetTasksByWorkersID(worker.ID)
+	workerDeliveries, err := models.GetDeliveriesByWorkersID(worker.ID)
 	if err != nil {
 		c.BadRequest(err)
 		return
 	}
 
 	c.Ctx.Output.SetStatus(201)
-	c.Data["json"] = workerTasks
+	c.Data["json"] = workerDeliveries
 
 	c.ServeJSON()
 
@@ -141,7 +139,7 @@ func (c *TasksController) GetByWorkersID() {
 // @Title Get Self
 // @Description Get Self
 // @router /self [get]
-func (c *TasksController) GetSelf() {
+func (c *DeliveriesController) GetSelf() {
 
 	token := c.Ctx.Input.Header("Authorization")
 
@@ -183,14 +181,14 @@ func (c *TasksController) GetSelf() {
 		return
 	}
 
-	workerTasks, err := models.GetTasksByWorkersID(worker.ID)
+	workerDeliveries, err := models.GetDeliveriesByWorkersID(worker.ID)
 	if err != nil {
 		c.BadRequest(err)
 		return
 	}
 
 	c.Ctx.Output.SetStatus(201)
-	c.Data["json"] = workerTasks
+	c.Data["json"] = workerDeliveries
 
 	c.ServeJSON()
 
@@ -200,7 +198,7 @@ func (c *TasksController) GetSelf() {
 // @Title Post
 // @Description create Tasks
 // @router / [post]
-func (c *TasksController) Post() {
+func (c *DeliveriesController) Post() {
 
 	token := c.Ctx.Input.Header("Authorization")
 
@@ -223,7 +221,7 @@ func (c *TasksController) Post() {
 		return
 	}
 
-	var v models.Tasks
+	var v models.Deliveries
 
 	// Validate empty body
 
@@ -247,18 +245,7 @@ func (c *TasksController) Post() {
 		return
 	}
 
-	v.Status = "pending"
-
-	valid := validation.Validation{}
-
-	b, _ := valid.Valid(&v)
-
-	if !b {
-		c.BadRequestErrors(valid.Errors, v.TableName())
-		return
-	}
-
-	_, err = models.AddTasks(&v)
+	_, err = models.AddDeliveries(&v)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -276,7 +263,7 @@ func (c *TasksController) Post() {
 // @Title Get One
 // @Description get Tasks by id
 // @router /:id [get]
-func (c *TasksController) GetOne() {
+func (c *DeliveriesController) GetOne() {
 
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
@@ -286,7 +273,7 @@ func (c *TasksController) GetOne() {
 		return
 	}
 
-	v, err := models.GetTasksByID(id)
+	v, err := models.GetDeliveriesByID(id)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -301,13 +288,13 @@ func (c *TasksController) GetOne() {
 // @Description update the Tasks
 // @Accept json
 // @Param Authorization header string true "Supervisor's Token"
-// @Param id param int true "Task's id"
-// @Success 200 {object} models.Tasks
+// @Param id param int true "Delivery's id"
+// @Success 200 {object} models.Deliveries
 // @Failure 400 Bad Request
 // @Failure 403 Invalid Token
 // @Failure 404 Task's Dont exists
 // @router /:id [put]
-func (c *TasksController) Put() {
+func (c *DeliveriesController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 
@@ -316,7 +303,7 @@ func (c *TasksController) Put() {
 		return
 	}
 
-	v := models.Tasks{ID: id}
+	v := models.Deliveries{ID: id}
 
 	// Validate empty body
 
@@ -327,7 +314,7 @@ func (c *TasksController) Put() {
 		return
 	}
 
-	err = models.UpdateTasksByID(&v)
+	err = models.UpdateDeliveriesByID(&v)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -344,9 +331,9 @@ func (c *TasksController) Put() {
 
 // Delete ...
 // @Title Delete
-// @Description delete the Tasks
+// @Description delete the Deliveries
 // @router /:id [delete]
-func (c *TasksController) Delete() {
+func (c *DeliveriesController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 
@@ -361,7 +348,7 @@ func (c *TasksController) Delete() {
 		trash = true
 	}
 
-	err = models.DeleteTasks(id, trash)
+	err = models.DeleteDeliveries(id, trash)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -380,9 +367,9 @@ func (c *TasksController) Delete() {
 // @Title Get All From Trash
 // @Description Get All From Trash
 // @router /trashed [patch]
-func (c *TasksController) GetAllFromTrash() {
+func (c *DeliveriesController) GetAllFromTrash() {
 
-	v, err := models.GetTasksFromTrash()
+	v, err := models.GetDeliveriesFromTrash()
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -398,7 +385,7 @@ func (c *TasksController) GetAllFromTrash() {
 // @Title Restore From Trash
 // @Description Restore From Trash
 // @router /:id/restore [put]
-func (c *TasksController) RestoreFromTrash() {
+func (c *DeliveriesController) RestoreFromTrash() {
 
 	idStr := c.Ctx.Input.Param(":id")
 
@@ -409,7 +396,7 @@ func (c *TasksController) RestoreFromTrash() {
 		return
 	}
 
-	v := &models.Tasks{ID: id}
+	v := &models.Deliveries{ID: id}
 
 	err = models.RestoreFromTrash(v.TableName(), v.ID)
 
@@ -427,7 +414,7 @@ func (c *TasksController) RestoreFromTrash() {
 // @Title Change Status
 // @Description ChangeStatus
 // @router /:id/status/:approved [put]
-func (c *TasksController) ChangeStatus() {
+func (c *DeliveriesController) ChangeStatus() {
 
 	idStr := c.Ctx.Input.Param(":id")
 
@@ -453,23 +440,23 @@ func (c *TasksController) ChangeStatus() {
 		return
 	}
 
-	task, err := models.GetTasksByID(id)
+	delivery, err := models.GetDeliveriesByID(id)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	task.Approved = approved
+	delivery.Approved = approved
 
-	err = models.UpdateTasksByID(task)
+	err = models.UpdateDeliveriesByID(delivery)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	c.Data["json"] = task
+	c.Data["json"] = delivery
 	c.ServeJSON()
 
 }

@@ -5,17 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
-
-	"github.com/astaxie/beego/validation"
 )
 
-// GoalsController operations for Holidays
-type GoalsController struct {
+// DeliviriesController operations for Holidays
+type ItemsController struct {
 	BaseController
 }
 
 //URLMapping ...
-func (c *GoalsController) URLMapping() {
+func (c *ItemsController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("Put", c.Put)
@@ -29,7 +27,7 @@ func (c *GoalsController) URLMapping() {
 // @Title Post
 // @Description create Tasks
 // @router / [post]
-func (c *GoalsController) Post() {
+func (c *ItemsController) Post() {
 
 	token := c.Ctx.Input.Header("Authorization")
 
@@ -52,7 +50,7 @@ func (c *GoalsController) Post() {
 		return
 	}
 
-	var v models.Goals
+	var v models.Items
 
 	// Validate empty body
 
@@ -63,28 +61,20 @@ func (c *GoalsController) Post() {
 		return
 	}
 
-	if v.Task == nil || v.Task.ID == 0 {
-		err = errors.New("Task data is empty")
+	if v.Delivery == nil || v.Delivery.ID == 0 {
+		err = errors.New("Delivery data is empty")
 		c.BadRequest(err)
 		return
 	}
 
-	_, err = models.GetTasksByID(v.Task.ID)
+	_, err = models.GetDeliveriesByID(v.Deliveries.ID)
+
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	valid := validation.Validation{}
-
-	b, _ := valid.Valid(&v)
-
-	if !b {
-		c.BadRequestErrors(valid.Errors, v.TableName())
-		return
-	}
-
-	_, err = models.AddGoals(&v)
+	_, err = models.AddItems(&v)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -100,9 +90,9 @@ func (c *GoalsController) Post() {
 
 // GetOne ...
 // @Title Get One
-// @Description get Goals by id
+// @Description get Tasks by id
 // @router /:id [get]
-func (c *GoalsController) GetOne() {
+func (c *DeliveriesController) GetOne() {
 
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
@@ -112,51 +102,28 @@ func (c *GoalsController) GetOne() {
 		return
 	}
 
-	v, err := models.GetGoalsByID(id)
+	v, err := models.GetDeliveriesByID(id)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
-	}
-
-	workersMap := map[int]*models.Workers{}
-
-	if v.GoalsComments != nil {
-		for _, goalComments := range v.GoalsComments {
-
-			if workerMap, ok := workersMap[goalComments.Worker.ID]; ok {
-				goalComments.Worker = workerMap
-				continue
-			}
-
-			worker, err := models.GetWorkersByID(goalComments.Worker.ID)
-			if err != nil {
-				c.ServeErrorJSON(err)
-				return
-			}
-
-			goalComments.Worker = worker
-
-		}
 	}
 
 	c.Data["json"] = v
 	c.ServeJSON()
 }
 
-///////////////////
-
 // Put ...
 // @Title Put
-// @Description update the Goals
+// @Description update the Tasks
 // @Accept json
 // @Param Authorization header string true "Supervisor's Token"
-// @Param id param int true "Goal's id"
-// @Success 200 {object} models.Goals
+// @Param id param int true "Delivery's id"
+// @Success 200 {object} models.Deliveries
 // @Failure 400 Bad Request
 // @Failure 403 Invalid Token
-// @Failure 404 Goal's Dont exists
+// @Failure 404 Task's Dont exists
 // @router /:id [put]
-func (c *GoalsController) Put() {
+func (c *DeliveriesController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 
@@ -165,7 +132,7 @@ func (c *GoalsController) Put() {
 		return
 	}
 
-	v := models.Goals{ID: id}
+	v := models.Deliveries{ID: id}
 
 	// Validate empty body
 
@@ -176,7 +143,7 @@ func (c *GoalsController) Put() {
 		return
 	}
 
-	err = models.UpdateGoalsByID(&v)
+	err = models.UpdateDeliveriesByID(&v)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -193,9 +160,9 @@ func (c *GoalsController) Put() {
 
 // Delete ...
 // @Title Delete
-// @Description delete the Goals
+// @Description delete the Deliveries
 // @router /:id [delete]
-func (c *GoalsController) Delete() {
+func (c *DeliveriesController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 
@@ -210,7 +177,7 @@ func (c *GoalsController) Delete() {
 		trash = true
 	}
 
-	err = models.DeleteGoals(id, trash)
+	err = models.DeleteDeliveries(id, trash)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -229,9 +196,9 @@ func (c *GoalsController) Delete() {
 // @Title Get All From Trash
 // @Description Get All From Trash
 // @router /trashed [patch]
-func (c *GoalsController) GetAllFromTrash() {
+func (c *DeliveriesController) GetAllFromTrash() {
 
-	v, err := models.GetGoalsFromTrash()
+	v, err := models.GetDeliveriesFromTrash()
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -247,7 +214,7 @@ func (c *GoalsController) GetAllFromTrash() {
 // @Title Restore From Trash
 // @Description Restore From Trash
 // @router /:id/restore [put]
-func (c *GoalsController) RestoreFromTrash() {
+func (c *DeliveriesController) RestoreFromTrash() {
 
 	idStr := c.Ctx.Input.Param(":id")
 
@@ -258,7 +225,7 @@ func (c *GoalsController) RestoreFromTrash() {
 		return
 	}
 
-	v := &models.Tasks{ID: id}
+	v := &models.Deliveries{ID: id}
 
 	err = models.RestoreFromTrash(v.TableName(), v.ID)
 
@@ -274,9 +241,9 @@ func (c *GoalsController) RestoreFromTrash() {
 
 // ChangeStatus ...
 // @Title Change Status
-// @Description Change Status
-// @router /:id/status/:completed [put]
-func (c *GoalsController) ChangeStatus() {
+// @Description ChangeStatus
+// @router /:id/status/:status [put]
+func (c *DeliveriesController) ChangeStatus() {
 
 	idStr := c.Ctx.Input.Param(":id")
 
@@ -287,38 +254,32 @@ func (c *GoalsController) ChangeStatus() {
 		return
 	}
 
-	completedStr := c.Ctx.Input.Param(":completed")
+	status := c.Ctx.Input.Param(":status")
 
-	var completed bool
+	if status == "" || (status != "pending" && status != "completed" && status != "finished") {
 
-	switch completedStr {
-	case "true":
-		completed = true
-	case "false":
-		completed = false
-	default:
-		err = errors.New("Invalid Completed value")
+		err = errors.New("Wrong status")
 		c.BadRequest(err)
 		return
 	}
 
-	goal, err := models.GetGoalsByID(id)
+	delivery, err := models.GetDeliveriesByID(id)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	goal.Completed = completed
+	delivery.Status = status
 
-	err = models.UpdateGoalsByID(goal)
+	err = models.UpdateDeliveriesByID(delivery)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	c.Data["json"] = goal
+	c.Data["json"] = delivery
 	c.ServeJSON()
 
 }

@@ -12,7 +12,7 @@ type Goals struct {
 	ID            int              `orm:"column(id);pk" json:"id"`
 	Name          string           `orm:"column(name);" json:"name,omitempty" valid:"Required"`
 	Description   string           `orm:"column(description);" json:"description,omitempty"`
-	Status        string           `orm:"column(status);" json:"status" valid:"Required"`
+	Completed     bool             `orm:"column(completed);" json:"completed" valid:"Required"`
 	Date          string           `orm:"column(date);type(datetime);" json:"date,omitempty"`
 	DateEnd       string           `orm:"column(date_end);" json:"date_end,omitempty"`
 	Task          *Tasks           `orm:"column(task_id);rel(fk);" json:"task,omitempty"`
@@ -90,7 +90,7 @@ func UpdateGoalsByID(m *Goals) (err error) {
 
 	m.Date = v.Date
 	m.DateEnd = v.DateEnd
-	m.Status = v.Status
+	m.Completed = v.Completed
 
 	_, err = o.Update(m)
 

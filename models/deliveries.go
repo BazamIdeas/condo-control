@@ -3,35 +3,32 @@ package models
 import (
 	"time"
 
-	"github.com/vjeantet/jodaTime"
-
 	"github.com/astaxie/beego/orm"
 )
 
-//Tasks Model
-type Tasks struct {
+// Deliveries Model
+type Deliveries struct {
 	ID        int       `orm:"column(id);pk" json:"id"`
 	Name      string    `orm:"column(name);" json:"name,omitempty" valid:"Required"`
-	Approved  bool      `orm:"column(approved);" json:"approved" valid:"Required"`
+	Approved  bool      `orm:"column(approved);" json:"approved"`
 	Date      string    `orm:"column(date);auto_now_add;type(datetime);" json:"date,omitempty"`
-	DateEnd   string    `orm:"column(date_end);" json:"date_end,omitempty"`
 	Worker    *Workers  `orm:"column(worker_id);rel(fk);" json:"worker,omitempty"`
-	Goals     []*Goals  `orm:"reverse(many);" json:"goals,omitempty"`
+	Items     []*Items  `orm:"reverse(many);" json:"items,omitempty"`
 	CreatedAt time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
 	DeletedAt time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
 }
 
 //TableName =
-func (t *Tasks) TableName() string {
-	return "tasks"
+func (t *Deliveries) TableName() string {
+	return "deliveries"
 }
 
-func (t *Tasks) loadRelations() {
+func (t *Deliveries) loadRelations() {
 
 	o := orm.NewOrm()
 
-	relations := []string{"Goals"}
+	relations := []string{"Items"}
 
 	for _, relation := range relations {
 		o.LoadRelated(t, relation)
@@ -41,13 +38,10 @@ func (t *Tasks) loadRelations() {
 
 }
 
-// AddTasks insert a new Tasks into database and returns
+// AddDeliveries insert a new Tasks into database and returns
 // last inserted Id on success.
-func AddTasks(m *Tasks) (id int64, err error) {
+func AddDeliveries(m *Deliveries) (id int64, err error) {
 	o := orm.NewOrm()
-
-	now := jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
-	m.Date = now
 
 	id, err = o.Insert(m)
 
@@ -60,10 +54,10 @@ func AddTasks(m *Tasks) (id int64, err error) {
 	return
 }
 
-// GetTasksByID retrieves Points by Id. Returns error if
+// GetDeliveriesByID retrieves deliveries by Id. Returns error if
 // Id doesn't exist
-func GetTasksByID(id int) (v *Tasks, err error) {
-	v = &Tasks{ID: id}
+func GetDeliveriesByID(id int) (v *Deliveries, err error) {
+	v = &Deliveries{ID: id}
 
 	err = searchFK(v.TableName(), v.ID).One(v)
 
@@ -76,20 +70,19 @@ func GetTasksByID(id int) (v *Tasks, err error) {
 	return
 }
 
-// UpdateTasksByID updates Points by Id and returns error if
+// UpdateDeliveriesByID updates deliveries by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateTasksByID(m *Tasks) (err error) {
+func UpdateDeliveriesByID(m *Deliveries) (err error) {
 	o := orm.NewOrm()
-	v := Tasks{ID: m.ID}
+	v := Deliveries{ID: m.ID}
 	// ascertain id exists in the database
 	err = o.Read(&v)
 	if err != nil {
 		return
 	}
 
-	m.Date = v.Date
-	m.DateEnd = v.DateEnd
 	m.Approved = v.Approved
+	m.Date = v.Date
 
 	_, err = o.Update(m)
 
@@ -100,11 +93,11 @@ func UpdateTasksByID(m *Tasks) (err error) {
 	return
 }
 
-// DeleteTasks deletes Tasks by Id and returns error if
+// DeleteDeliveries deletes Deliveries by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteTasks(id int, trash bool) (err error) {
+func DeleteDeliveries(id int, trash bool) (err error) {
 	o := orm.NewOrm()
-	v := Tasks{ID: id}
+	v := Deliveries{ID: id}
 	// ascertain id exists in the database
 	err = o.Read(&v)
 
@@ -126,51 +119,43 @@ func DeleteTasks(id int, trash bool) (err error) {
 	return
 }
 
-//GetTasksFromTrash return Points soft Deleted
-func GetTasksFromTrash() (tasks []*Tasks, err error) {
+//GetDeliveriesFromTrash return Points soft Deleted
+func GetDeliveriesFromTrash() (deliveries []*Deliveries, err error) {
 
 	o := orm.NewOrm()
 
-	var v []*Tasks
+	var v []*Deliveries
 
-	_, err = o.QueryTable("tasks").Filter("deleted_at__isnull", false).All(&v)
+	_, err = o.QueryTable("deliveries").Filter("deleted_at__isnull", false).All(&v)
 
 	if err != nil {
 		return
 	}
 
-	tasks = v
+	deliveries = v
 
 	return
 
 }
 
-//GetTasksByWorkersID ...
-func GetTasksByWorkersID(workerID int) (tasks []*Tasks, err error) {
+//GetDeliveriesByWorkersID ...
+func GetDeliveriesByWorkersID(workerID int) (deliveries []*Deliveries, err error) {
 
 	o := orm.NewOrm()
 
-	var v []*Tasks
+	var v []*Deliveries
 
-	_, err = o.QueryTable("tasks").Filter("worker_id", workerID).Filter("deleted_at__isnull", true).RelatedSel().All(&v)
+	_, err = o.QueryTable("deliveries").Filter("worker_id", workerID).Filter("deleted_at__isnull", true).RelatedSel().All(&v)
 
 	if err != nil {
 		return
 	}
 
-	for _, task := range v {
-		task.loadRelations()
-
-		if task.Goals == nil {
-			continue
-		}
-
-		for _, goal := range task.Goals {
-			goal.loadRelations()
-		}
+	for _, delivery := range v {
+		delivery.loadRelations()
 	}
 
-	tasks = v
+	deliveries = v
 
 	return
 

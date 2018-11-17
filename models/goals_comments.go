@@ -9,15 +9,16 @@ import (
 
 //GoalsComments Model
 type GoalsComments struct {
-	ID          int       `orm:"column(id);pk" json:"id"`
-	Description string    `orm:"column(description);null" json:"description,omitempty" valid:"Required"`
-	Date        string    `orm:"column(date);type(datetime);" json:"date,omitempty"`
-	Goal        *Goals    `orm:"column(goal_id);rel(fk);" json:"goal,omitempty"`
-	Worker      *Workers  `orm:"column(worker_id);rel(fk);" json:"worker,omitempty"`
-	Attachment  string    `orm:"column(attachment);null" json:"attachment,omitempty" `
-	CreatedAt   time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
-	UpdatedAt   time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
-	DeletedAt   time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
+	ID             int       `orm:"column(id);pk" json:"id"`
+	Description    string    `orm:"column(description);null" json:"description,omitempty" valid:"Required"`
+	Date           string    `orm:"column(date);type(datetime);" json:"date,omitempty"`
+	Goal           *Goals    `orm:"column(goal_id);rel(fk);" json:"goal,omitempty"`
+	Worker         *Workers  `orm:"column(worker_id);rel(fk);" json:"worker,omitempty"`
+	Attachment     string    `orm:"column(attachment);null" json:"attachment,omitempty" `
+	AttachmentMime string    `orm:"column(attachment_mime);null" json:"attachment_mime,omitempty"`
+	CreatedAt      time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
+	UpdatedAt      time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
+	DeletedAt      time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
 }
 
 //TableName =
