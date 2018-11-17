@@ -82,6 +82,16 @@ func init() {
 				&controllers.GoalsCommentsController{},
 			),
 		),
+		beego.NSNamespace("/deliveries",
+			beego.NSInclude(
+				&controllers.DeliveriesController{},
+			),
+		),
+		beego.NSNamespace("/items",
+			beego.NSInclude(
+				&controllers.ItemsController{},
+			),
+		),
 	)
 
 	beego.AddNamespace(mainNS)
