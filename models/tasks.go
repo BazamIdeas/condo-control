@@ -160,6 +160,14 @@ func GetTasksByWorkersID(workerID int) (tasks []*Tasks, err error) {
 
 	for _, task := range v {
 		task.loadRelations()
+
+		if task.Goals == nil {
+			continue
+		}
+
+		for _, goal := range task.Goals {
+			goal.loadRelations()
+		}
 	}
 
 	tasks = v
