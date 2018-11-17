@@ -278,6 +278,20 @@ func (c *GoalsController) RestoreFromTrash() {
 // @router /:id/status/:completed [put]
 func (c *GoalsController) ChangeStatus() {
 
+	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
+
+	if err != nil {
+		c.Ctx.Output.SetStatus(413)
+		c.ServeJSON()
+		return
+	}
+
+	if !c.Ctx.Input.IsUpload() {
+		err := errors.New("Not image file found on request")
+		c.BadRequest(err)
+		return
+	}
+
 	idStr := c.Ctx.Input.Param(":id")
 
 	id, err := strconv.Atoi(idStr)

@@ -289,3 +289,112 @@ func (c *ItemsController) ChangeStatus() {
 	c.ServeJSON()
 
 }
+
+// MakeComment ...
+// @Title Make Comment
+// @Description Make comment
+// @router /:id/comment [put]
+func (c *ItemsController) MakeComment() {
+
+	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
+
+	if err != nil {
+		c.Ctx.Output.SetStatus(413)
+		c.ServeJSON()
+		return
+	}
+
+	if !c.Ctx.Input.IsUpload() {
+		err := errors.New("Not image file found on request")
+		c.BadRequest(err)
+		return
+	}
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyToken(token, "Watcher")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, err = models.GetCondosByID(condoID)
+	if err != nil {
+		c.BadRequestDontExists("Condos")
+		return
+	}
+
+	watcherID, err := strconv.Atoi(decodedToken.UserID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcher, err := models.GetWatchersByID(watcherID)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	idStr := c.Ctx.Input.Param(":id")
+
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	item, err := models.GetItemsByID(id)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	var r = c.Ctx.Request
+
+	comment := r.FormValue("comment")
+
+	if comment != "" {
+		item.Comment = comment
+	}
+
+	_, faceFh, err := c.GetFile("faces")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, ok, err := VerifyWorkerIdentity(watcher.Worker.ID, faceFh)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if !ok {
+		err = errors.New("Identity Verification Failed")
+		c.BadRequest(err)
+		return
+	}
+
+	err = models.UpdateItemsByID(item)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = item
+	c.ServeJSON()
+
+}
