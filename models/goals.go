@@ -15,7 +15,7 @@ type Goals struct {
 	Status        string           `orm:"column(status);" json:"status" valid:"Required"`
 	Date          string           `orm:"column(date);type(datetime);" json:"date,omitempty"`
 	DateEnd       string           `orm:"column(date_end);" json:"date_end,omitempty"`
-	Task          *Tasks           `orm:"rel(fk);column(task_id)" json:"task,omitempty"`
+	Task          *Tasks           `orm:"column(task_id);rel(fk);" json:"task,omitempty"`
 	GoalsComments []*GoalsComments `orm:"reverse(many);" json:"comments,omitempty"`
 	CreatedAt     time.Time        `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt     time.Time        `orm:"column(updated_at);type(datetime);null" json:"-"`

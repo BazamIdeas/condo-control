@@ -12,8 +12,8 @@ type GoalsComments struct {
 	ID          int       `orm:"column(id);pk" json:"id"`
 	Description string    `orm:"column(description);null" json:"description,omitempty" valid:"Required"`
 	Date        string    `orm:"column(date);type(datetime);" json:"date,omitempty"`
-	Goal        *Goals    `orm:"rel(fk);column(goal_id)" json:"goal,omitempty"`
-	Worker      *Workers  `orm:"rel(fk);column(worker_id)" json:"worker,omitempty"`
+	Goal        *Goals    `orm:"column(goal_id);rel(fk);" json:"goal,omitempty"`
+	Worker      *Workers  `orm:"column(worker_id);rel(fk);" json:"worker,omitempty"`
 	Attachment  string    `orm:"column(attachment);null" json:"attachment,omitempty" `
 	CreatedAt   time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt   time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`

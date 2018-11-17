@@ -10,17 +10,16 @@ import (
 
 //Tasks Model
 type Tasks struct {
-	ID          int       `orm:"column(id);pk" json:"id"`
-	Name        string    `orm:"column(name);" json:"name,omitempty" valid:"Required"`
-	Description string    `orm:"column(description);null" json:"description,omitempty"`
-	Status      string    `orm:"column(status);" json:"status" valid:"Required"`
-	Date        string    `orm:"column(date);auto_now_add;type(datetime);" json:"date,omitempty"`
-	DateEnd     string    `orm:"column(date_end);" json:"date_end,omitempty"`
-	Worker      *Workers  `orm:"rel(fk);column(worker_id)" json:"worker,omitempty"`
-	Goals       []*Goals  `orm:"reverse(many);" json:"goals,omitempty"`
-	CreatedAt   time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
-	UpdatedAt   time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
-	DeletedAt   time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
+	ID        int       `orm:"column(id);pk" json:"id"`
+	Name      string    `orm:"column(name);" json:"name,omitempty" valid:"Required"`
+	Status    string    `orm:"column(status);" json:"status" valid:"Required"`
+	Date      string    `orm:"column(date);auto_now_add;type(datetime);" json:"date,omitempty"`
+	DateEnd   string    `orm:"column(date_end);" json:"date_end,omitempty"`
+	Worker    *Workers  `orm:"column(worker_id);rel(fk);" json:"worker,omitempty"`
+	Goals     []*Goals  `orm:"reverse(many);" json:"goals,omitempty"`
+	CreatedAt time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
+	UpdatedAt time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
+	DeletedAt time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
 }
 
 //TableName =
@@ -157,6 +156,10 @@ func GetTasksByWorkersID(workerID int) (tasks []*Tasks, err error) {
 
 	if err != nil {
 		return
+	}
+
+	for _, task := range v {
+		task.loadRelations()
 	}
 
 	tasks = v
