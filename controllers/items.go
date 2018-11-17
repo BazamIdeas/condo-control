@@ -24,6 +24,8 @@ func (c *ItemsController) URLMapping() {
 	c.Mapping("ChangeStatus", c.ChangeStatus)
 	c.Mapping("GetAllFromTrash", c.GetAllFromTrash)
 	c.Mapping("RestoreFromTrash", c.RestoreFromTrash)
+	c.Mapping("MakeComment", c.MakeComment)
+	c.Mapping("MakeCommentExecute", c.MakeCommentExecute)
 }
 
 // Post ...
