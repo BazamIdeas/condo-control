@@ -247,8 +247,6 @@ func (c *TasksController) Post() {
 		return
 	}
 
-	v.Status = "pending"
-
 	valid := validation.Validation{}
 
 	b, _ := valid.Valid(&v)

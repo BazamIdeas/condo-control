@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-// DeliviriesController operations for Holidays
+// ItemsController operations for Holidays
 type ItemsController struct {
 	BaseController
 }
@@ -67,7 +67,7 @@ func (c *ItemsController) Post() {
 		return
 	}
 
-	_, err = models.GetDeliveriesByID(v.Deliveries.ID)
+	_, err = models.GetDeliveriesByID(v.Delivery.ID)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -92,7 +92,7 @@ func (c *ItemsController) Post() {
 // @Title Get One
 // @Description get Tasks by id
 // @router /:id [get]
-func (c *DeliveriesController) GetOne() {
+func (c *ItemsController) GetOne() {
 
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
@@ -102,7 +102,7 @@ func (c *DeliveriesController) GetOne() {
 		return
 	}
 
-	v, err := models.GetDeliveriesByID(id)
+	v, err := models.GetItemsByID(id)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -117,13 +117,13 @@ func (c *DeliveriesController) GetOne() {
 // @Description update the Tasks
 // @Accept json
 // @Param Authorization header string true "Supervisor's Token"
-// @Param id param int true "Delivery's id"
-// @Success 200 {object} models.Deliveries
+// @Param id param int true "Item's id"
+// @Success 200 {object} models.Items
 // @Failure 400 Bad Request
 // @Failure 403 Invalid Token
 // @Failure 404 Task's Dont exists
 // @router /:id [put]
-func (c *DeliveriesController) Put() {
+func (c *ItemsController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 
@@ -132,7 +132,7 @@ func (c *DeliveriesController) Put() {
 		return
 	}
 
-	v := models.Deliveries{ID: id}
+	v := models.Items{ID: id}
 
 	// Validate empty body
 
@@ -143,7 +143,7 @@ func (c *DeliveriesController) Put() {
 		return
 	}
 
-	err = models.UpdateDeliveriesByID(&v)
+	err = models.UpdateItemsByID(&v)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -160,9 +160,9 @@ func (c *DeliveriesController) Put() {
 
 // Delete ...
 // @Title Delete
-// @Description delete the Deliveries
+// @Description delete the Items
 // @router /:id [delete]
-func (c *DeliveriesController) Delete() {
+func (c *ItemsController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, err := strconv.Atoi(idStr)
 
@@ -177,7 +177,7 @@ func (c *DeliveriesController) Delete() {
 		trash = true
 	}
 
-	err = models.DeleteDeliveries(id, trash)
+	err = models.DeleteItems(id, trash)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -196,9 +196,9 @@ func (c *DeliveriesController) Delete() {
 // @Title Get All From Trash
 // @Description Get All From Trash
 // @router /trashed [patch]
-func (c *DeliveriesController) GetAllFromTrash() {
+func (c *ItemsController) GetAllFromTrash() {
 
-	v, err := models.GetDeliveriesFromTrash()
+	v, err := models.GetItemsFromTrash()
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -214,7 +214,7 @@ func (c *DeliveriesController) GetAllFromTrash() {
 // @Title Restore From Trash
 // @Description Restore From Trash
 // @router /:id/restore [put]
-func (c *DeliveriesController) RestoreFromTrash() {
+func (c *ItemsController) RestoreFromTrash() {
 
 	idStr := c.Ctx.Input.Param(":id")
 
@@ -225,7 +225,7 @@ func (c *DeliveriesController) RestoreFromTrash() {
 		return
 	}
 
-	v := &models.Deliveries{ID: id}
+	v := &models.Items{ID: id}
 
 	err = models.RestoreFromTrash(v.TableName(), v.ID)
 
@@ -242,8 +242,8 @@ func (c *DeliveriesController) RestoreFromTrash() {
 // ChangeStatus ...
 // @Title Change Status
 // @Description ChangeStatus
-// @router /:id/status/:status [put]
-func (c *DeliveriesController) ChangeStatus() {
+// @router /:id/status/:delivered [put]
+func (c *ItemsController) ChangeStatus() {
 
 	idStr := c.Ctx.Input.Param(":id")
 
@@ -254,32 +254,38 @@ func (c *DeliveriesController) ChangeStatus() {
 		return
 	}
 
-	status := c.Ctx.Input.Param(":status")
+	deliveredStr := c.Ctx.Input.Param(":delivered")
 
-	if status == "" || (status != "pending" && status != "completed" && status != "finished") {
+	var delivered bool
 
-		err = errors.New("Wrong status")
+	switch deliveredStr {
+	case "true":
+		delivered = true
+	case "false":
+		delivered = false
+	default:
+		err = errors.New("Invalid Delivered value")
 		c.BadRequest(err)
 		return
 	}
 
-	delivery, err := models.GetDeliveriesByID(id)
+	item, err := models.GetItemsByID(id)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	delivery.Status = status
+	item.Delivered = delivered
 
-	err = models.UpdateDeliveriesByID(delivery)
+	err = models.UpdateItemsByID(item)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	c.Data["json"] = delivery
+	c.Data["json"] = item
 	c.ServeJSON()
 
 }

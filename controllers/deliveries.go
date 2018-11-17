@@ -9,7 +9,7 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-// DeliviriesController operations for Holidays
+// DeliveriesController operations for Holidays
 type DeliveriesController struct {
 	BaseController
 }
