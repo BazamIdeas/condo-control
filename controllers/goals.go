@@ -302,6 +302,47 @@ func (c *GoalsController) ChangeStatus() {
 		return
 	}
 
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyToken(token, "Watcher")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcherID, err := strconv.Atoi(decodedToken.UserID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcher, err := models.GetWatchersByID(watcherID)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	_, faceFh, err := c.GetFile("faces")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, ok, err := VerifyWorkerIdentity(watcher.Worker.ID, faceFh)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if !ok {
+		err = errors.New("Identity Verification Failed")
+		c.BadRequest(err)
+		return
+	}
+
 	goal, err := models.GetGoalsByID(id)
 
 	if err != nil {
