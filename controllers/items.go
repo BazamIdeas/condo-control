@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"time"
+
+	"github.com/vjeantet/jodaTime"
 )
 
 // ItemsController operations for Holidays
@@ -277,6 +280,12 @@ func (c *ItemsController) ChangeStatus() {
 	}
 
 	item.Delivered = delivered
+
+	if item.Delivered {
+		item.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
+	} else {
+		item.DateEnd = ""
+	}
 
 	err = models.UpdateItemsByID(item)
 

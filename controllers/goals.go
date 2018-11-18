@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"time"
 
 	"github.com/astaxie/beego/validation"
+	"github.com/vjeantet/jodaTime"
 )
 
 // GoalsController operations for Holidays
@@ -365,6 +367,12 @@ func (c *GoalsController) ChangeStatus() {
 	}
 
 	goal.Completed = completed
+
+	if goal.Completed {
+		goal.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
+	} else {
+		goal.DateEnd = ""
+	}
 
 	err = models.UpdateGoalsByID(goal)
 

@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"time"
 
 	"github.com/astaxie/beego/orm"
+	"github.com/vjeantet/jodaTime"
 
 	"github.com/astaxie/beego/validation"
 )
@@ -443,6 +445,7 @@ func (c *TasksController) ChangeStatus() {
 	switch approvedStr {
 	case "true":
 		approved = true
+
 	case "false":
 		approved = false
 	default:
@@ -459,6 +462,12 @@ func (c *TasksController) ChangeStatus() {
 	}
 
 	task.Approved = approved
+
+	if task.Approved {
+		task.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
+	} else {
+		task.DateEnd = ""
+	}
 
 	err = models.UpdateTasksByID(task)
 
