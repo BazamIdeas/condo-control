@@ -17,6 +17,7 @@ type Goals struct {
 	DateEnd       string           `orm:"column(date_end);" json:"date_end,omitempty"`
 	Task          *Tasks           `orm:"column(task_id);rel(fk);" json:"task,omitempty"`
 	GoalsComments []*GoalsComments `orm:"reverse(many);" json:"comments,omitempty"`
+	Token         string           `orm:"-" json:"token,omitempty"`
 	CreatedAt     time.Time        `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt     time.Time        `orm:"column(updated_at);type(datetime);null" json:"-"`
 	DeletedAt     time.Time        `orm:"column(deleted_at);type(datetime);null" json:"-"`

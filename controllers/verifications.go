@@ -413,7 +413,7 @@ func (c *VerificationsController) NewRoute() {
 
 	}
 
-	routeToken, err := GenerateGeneralToken(decodedToken.UserID, decodedToken.CondoID, v.Points, nil)
+	routeToken, err := GenerateGeneralToken(decodedToken.UserID, decodedToken.CondoID, v.Points, nil, nil)
 
 	if err != nil {
 		c.BadRequest(err)
@@ -450,7 +450,7 @@ func (c *VerificationsController) NewRouteExecute() {
 		c.BadRequest(err)
 		return
 	}
-	
+
 	watcherID, _ := strconv.Atoi(decAuthToken.UserID)
 
 	watcher, err := models.GetWatchersByID(watcherID)

@@ -17,6 +17,7 @@ type Items struct {
 	ImageUUID   string      `orm:"column(image_uuid);null" json:"image_uuid,omitempty"`
 	ImageMime   string      `orm:"column(image_mime);null" json:"image_mime,omitempty"`
 	Delivery    *Deliveries `orm:"rel(fk);column(delivery_id)" json:"delivery,omitempty"`
+	Token       string      `orm:"-" json:"token,omitempty"`
 	CreatedAt   time.Time   `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt   time.Time   `orm:"column(updated_at);type(datetime);null" json:"-"`
 	DeletedAt   time.Time   `orm:"column(deleted_at);type(datetime);null" json:"-"`

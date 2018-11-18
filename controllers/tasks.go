@@ -445,9 +445,11 @@ func (c *TasksController) ChangeStatus() {
 	switch approvedStr {
 	case "true":
 		approved = true
+		break
 
 	case "false":
 		approved = false
+		break
 	default:
 		err = errors.New("Invalid Approved value")
 		c.BadRequest(err)

@@ -346,7 +346,7 @@ func (c *ItemsController) MakeComment() {
 		return
 	}
 
-	watcher, err := models.GetWatchersByID(watcherID)
+	_, err = models.GetWatchersByID(watcherID)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -376,6 +376,63 @@ func (c *ItemsController) MakeComment() {
 		item.Comment = comment
 	}
 
+	//TODO: IMAGENES
+
+	commentToken, err := GenerateGeneralToken(decodedToken.UserID, decodedToken.CondoID, nil, nil, item)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	item.Token = commentToken
+
+	c.Data["json"] = item
+	c.ServeJSON()
+
+}
+
+// MakeCommentExecute ...
+// @Title Make Comment Execute
+// @Description Make comment Execute
+// @router /:id/comment/:token [put]
+func (c *ItemsController) MakeCommentExecute() {
+
+	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
+
+	if err != nil {
+		c.Ctx.Output.SetStatus(413)
+		c.ServeJSON()
+		return
+	}
+
+	if !c.Ctx.Input.IsUpload() {
+		err := errors.New("Not image file found on request")
+		c.BadRequest(err)
+		return
+	}
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyToken(token, "Watcher")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcherID, err := strconv.Atoi(decodedToken.UserID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcher, err := models.GetWatchersByID(watcherID)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
 	_, faceFh, err := c.GetFile("faces")
 
 	if err != nil {
@@ -396,14 +453,19 @@ func (c *ItemsController) MakeComment() {
 		return
 	}
 
+	commentToken := c.Ctx.Input.Param(":token")
+	decCommentToken, err := VerifyGeneralToken(commentToken)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	item := decCommentToken.Item
+
 	err = models.UpdateItemsByID(item, true)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
-
-	c.Data["json"] = item
-	c.ServeJSON()
-
 }

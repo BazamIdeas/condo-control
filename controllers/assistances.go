@@ -115,7 +115,7 @@ func (c *AssistancesController) Post() {
 		return
 	}
 
-	tokenAssistance, err := GenerateGeneralToken(decodedToken.UserID, decodedToken.CondoID, nil, &v)
+	tokenAssistance, err := GenerateGeneralToken(decodedToken.UserID, decodedToken.CondoID, nil, &v, nil)
 
 	if err != nil {
 		c.BadRequest(err)

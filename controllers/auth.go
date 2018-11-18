@@ -28,6 +28,7 @@ type JwtTokenRoute struct {
 	CondoID    string              `json:"condo_id,omitempty"`
 	Points     []*models.Points    `json:"points,omitempty"`
 	Assistance *models.Assistances `json:"assistances,omitempty"`
+	Item       *models.Items       `json:"item,omitempty"`
 	jwt.StandardClaims
 }
 
@@ -80,7 +81,7 @@ func VerifyTokenByAllUserTypes(ts string) (decodedToken *JwtToken, userType stri
 		userType = UserType
 		decodedToken = userToken
 		return
-		
+
 	}
 	err = errors.New("Token is invalid")
 	return
@@ -116,7 +117,7 @@ func (c *BaseController) GenerateToken(userType string, userID string, condoID s
 }
 
 //GenerateGeneralToken ..
-func GenerateGeneralToken(userID string, condoID string, points []*models.Points, assistance *models.Assistances) (token string, err error) {
+func GenerateGeneralToken(userID string, condoID string, points []*models.Points, assistance *models.Assistances, item *models.Items) (token string, err error) {
 
 	now := time.Now()
 
@@ -127,6 +128,7 @@ func GenerateGeneralToken(userID string, condoID string, points []*models.Points
 		CondoID:    condoID,
 		Points:     points,
 		Assistance: assistance,
+		Item:       item,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: now.Add(time.Minute * 10).Unix(),
 			Issuer:    "test",
