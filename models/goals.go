@@ -79,7 +79,7 @@ func GetGoalsByID(id int) (v *Goals, err error) {
 
 // UpdateGoalsByID updates Points by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateGoalsByID(m *Goals) (err error) {
+func UpdateGoalsByID(m *Goals, ignoreStatus bool) (err error) {
 	o := orm.NewOrm()
 	v := Goals{ID: m.ID}
 	// ascertain id exists in the database
@@ -90,7 +90,10 @@ func UpdateGoalsByID(m *Goals) (err error) {
 
 	m.Date = v.Date
 	m.DateEnd = v.DateEnd
-	m.Completed = v.Completed
+
+	if ignoreStatus {
+		m.Completed = v.Completed
+	}
 
 	_, err = o.Update(m)
 

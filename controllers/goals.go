@@ -178,7 +178,7 @@ func (c *GoalsController) Put() {
 		return
 	}
 
-	err = models.UpdateGoalsByID(&v)
+	err = models.UpdateGoalsByID(&v, true)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -374,7 +374,7 @@ func (c *GoalsController) ChangeStatus() {
 		goal.DateEnd = ""
 	}
 
-	err = models.UpdateGoalsByID(goal)
+	err = models.UpdateGoalsByID(goal, false)
 
 	if err != nil {
 		c.ServeErrorJSON(err)

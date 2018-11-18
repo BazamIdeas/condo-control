@@ -78,7 +78,7 @@ func GetTasksByID(id int) (v *Tasks, err error) {
 
 // UpdateTasksByID updates Points by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateTasksByID(m *Tasks) (err error) {
+func UpdateTasksByID(m *Tasks, ignoreStatus bool) (err error) {
 	o := orm.NewOrm()
 	v := Tasks{ID: m.ID}
 	// ascertain id exists in the database
@@ -89,7 +89,10 @@ func UpdateTasksByID(m *Tasks) (err error) {
 
 	m.Date = v.Date
 	m.DateEnd = v.DateEnd
-	m.Approved = v.Approved
+
+	if ignoreStatus {
+		m.Approved = v.Approved
+	}
 
 	_, err = o.Update(m)
 

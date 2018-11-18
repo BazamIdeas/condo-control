@@ -75,13 +75,19 @@ func GetItemsByID(id int) (v *Items, err error) {
 
 // UpdateItemsByID updates Items by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateItemsByID(m *Items) (err error) {
+func UpdateItemsByID(m *Items, ignoreStatus bool) (err error) {
 	o := orm.NewOrm()
 	v := Items{ID: m.ID}
 	// ascertain id exists in the database
 	err = o.Read(&v)
 	if err != nil {
 		return
+	}
+
+	m.DateEnd = v.DateEnd
+
+	if ignoreStatus {
+		m.Delivered = v.Delivered
 	}
 
 	_, err = o.Update(m)

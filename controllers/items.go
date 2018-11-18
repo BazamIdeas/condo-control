@@ -146,7 +146,7 @@ func (c *ItemsController) Put() {
 		return
 	}
 
-	err = models.UpdateItemsByID(&v)
+	err = models.UpdateItemsByID(&v, true)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -287,7 +287,7 @@ func (c *ItemsController) ChangeStatus() {
 		item.DateEnd = ""
 	}
 
-	err = models.UpdateItemsByID(item)
+	err = models.UpdateItemsByID(item, false)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -396,7 +396,7 @@ func (c *ItemsController) MakeComment() {
 		return
 	}
 
-	err = models.UpdateItemsByID(item)
+	err = models.UpdateItemsByID(item, true)
 
 	if err != nil {
 		c.ServeErrorJSON(err)

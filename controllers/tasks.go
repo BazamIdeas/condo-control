@@ -327,7 +327,7 @@ func (c *TasksController) Put() {
 		return
 	}
 
-	err = models.UpdateTasksByID(&v)
+	err = models.UpdateTasksByID(&v, true)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -469,7 +469,7 @@ func (c *TasksController) ChangeStatus() {
 		task.DateEnd = ""
 	}
 
-	err = models.UpdateTasksByID(task)
+	err = models.UpdateTasksByID(task, false)
 
 	if err != nil {
 		c.ServeErrorJSON(err)

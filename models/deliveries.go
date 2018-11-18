@@ -76,7 +76,7 @@ func GetDeliveriesByID(id int) (v *Deliveries, err error) {
 
 // UpdateDeliveriesByID updates deliveries by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateDeliveriesByID(m *Deliveries) (err error) {
+func UpdateDeliveriesByID(m *Deliveries, ignoreStatus bool) (err error) {
 	o := orm.NewOrm()
 	v := Deliveries{ID: m.ID}
 	// ascertain id exists in the database
@@ -85,8 +85,11 @@ func UpdateDeliveriesByID(m *Deliveries) (err error) {
 		return
 	}
 
-	m.Approved = v.Approved
 	m.Date = v.Date
+
+	if ignoreStatus {
+		m.Approved = v.Approved
+	}
 
 	_, err = o.Update(m)
 

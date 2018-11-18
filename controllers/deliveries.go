@@ -314,7 +314,7 @@ func (c *DeliveriesController) Put() {
 		return
 	}
 
-	err = models.UpdateDeliveriesByID(&v)
+	err = models.UpdateDeliveriesByID(&v, true)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -449,7 +449,7 @@ func (c *DeliveriesController) ChangeStatus() {
 
 	delivery.Approved = approved
 
-	err = models.UpdateDeliveriesByID(delivery)
+	err = models.UpdateDeliveriesByID(delivery, false)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
