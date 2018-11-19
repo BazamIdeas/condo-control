@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/astaxie/beego/orm"
+
 	"github.com/astaxie/beego/validation"
 )
 
@@ -183,18 +185,23 @@ func (c *CondosController) GetAll() {
 		return
 	}
 
-	for _, condo := range l {
+	for index := range l {
 
-		condoID := condo.(models.Condos).ID
+		condo := l[index].(models.Condos)
 
-		supervisors, err := models.GetSupervisorsByCondosID(condoID)
+		supervisors, err := models.GetSupervisorsByCondosID(condo.ID)
 
 		if err != nil {
+			if err == orm.ErrNoRows {
+				continue
+			}
 			c.ServeErrorJSON(err)
 			return
 		}
 
-		condo.(models.Condos).Supervisors = supervisors
+		condo.Supervisors = supervisors
+
+		l[index] = condo
 
 	}
 
