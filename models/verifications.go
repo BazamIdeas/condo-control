@@ -16,6 +16,8 @@ type Verifications struct {
 	Date              string    `orm:"column(date);type(datetime);" json:"date,omitempty" valid:"Required"`
 	SupervisorComment string    `orm:"column(supervisor_comment);" json:"supervisor_comment,omitempty"`
 	WatcherComment    string    `orm:"column(watcher_comment);" json:"watcher_comment,omitempty"`
+	ImageUUID         string    `orm:"column(image_uuid);" json:"image_uuid,omitempty"`
+	ImageMime         string    `orm:"column(image_mime);" json:"image_mime,omitempty"`
 	Latitude          float32   `orm:"column(latitude)" json:"latitude" valid:"Required"`
 	Longitude         float32   `orm:"column(longitude)" json:"longitude" valid:"Required"`
 	Watcher           *Watchers `orm:"rel(fk);column(watchers_id)" json:"watchers,omitempty"`

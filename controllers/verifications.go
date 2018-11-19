@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"condo-control/controllers/services/files"
 	"condo-control/models"
 	"encoding/json"
 	"errors"
@@ -502,5 +503,93 @@ func (c *VerificationsController) NewRouteExecute() {
 
 	c.Data["json"] = verifications
 	c.ServeJSON()
+
+}
+
+// addImage ...
+// @Title add Image
+// @Description  add Image
+// @router /:id/image [put]
+func (c *VerificationsController) addImage() {
+
+	authToken := c.Ctx.Input.Header("Authorization")
+
+	_, err := VerifyToken(authToken, "Watcher")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if err != nil {
+		c.BadRequestDontExists("Watchers")
+		return
+	}
+
+	idStr := c.Ctx.Input.Param(":id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	v, err := models.GetVerificationsByID(id)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, filesFh, err := c.GetFile("files")
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	fileUUID, fileMime, err := files.CreateFile(filesFh, "verifications")
+
+	v.ImageUUID = fileUUID
+	v.ImageMime = fileMime
+
+	err = models.UpdateVerificationsByID(v)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = v
+	c.ServeJSON()
+
+}
+
+// GetImagesByUUID ...
+// @Title Get  By UUID
+// @Description Get image By UUID
+// @router /image/:uuid [get]
+func (c *VerificationsController) GetImagesByUUID() {
+
+	uuid := c.Ctx.Input.Param(":uuid")
+
+	if uuid == "" {
+		c.Ctx.Output.SetStatus(400)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	imageBytes, mimeType, err := files.GetFile(uuid, "verifications")
+	if err != nil {
+		c.Ctx.Output.SetStatus(404)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	c.Ctx.Output.Header("Content-Type", mimeType)
+	c.Ctx.Output.SetStatus(200)
+	c.Ctx.Output.Body(imageBytes)
 
 }
