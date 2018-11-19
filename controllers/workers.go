@@ -387,26 +387,32 @@ func (c *WorkersController) GetSelf() {
 		return
 	}
 
-	_, err = models.GetSupervisorsByCondosID(condoID)
+	supervisors, err := models.GetSupervisorsByCondosID(condoID)
 	if err != nil && err != orm.ErrNoRows {
 		c.ServeErrorJSON(err)
 		return
 	}
-	//TODO:
-	/* if supervisors != nil && len(supervisors) > 0 {
-		for workerIndex, worker := range workers {
+
+	workersNoSupervisors := []*models.Workers{}
+
+	if supervisors != nil && len(supervisors) > 0 {
+		for _, worker := range workers {
+			noSupervisor := true
 			for _, supervisor := range supervisors {
-				if supervisor.Worker.ID != worker.ID {
-					continue
+				if supervisor.Worker.ID == worker.ID {
+					noSupervisor = false
+					break
 				}
-				workers[workerIndex] = workers[len(workers)-1]
-				workers[len(workers)-1] = nil
-				workers = workers[:len(workers)-1]
+
+			}
+
+			if noSupervisor {
+				workersNoSupervisors = append(workersNoSupervisors, worker)
 			}
 		}
-	} */
+	}
 
-	c.Data["json"] = workers
+	c.Data["json"] = workersNoSupervisors
 	c.ServeJSON()
 }
 
