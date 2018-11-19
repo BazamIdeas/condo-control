@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"condo-control/controllers/services/files"
 	"condo-control/models"
 	"errors"
 	"strconv"
@@ -14,6 +15,7 @@ type GoalsCommentsController struct {
 //URLMapping ...
 func (c *GoalsCommentsController) URLMapping() {
 	c.Mapping("Post", c.Post)
+	c.Mapping("GetAttachmentByUUID", c.GetAttachmentByUUID)
 	/*c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
@@ -102,6 +104,20 @@ func (c *GoalsCommentsController) Post() {
 		Worker:      worker,
 	}
 
+	_, fileFh, err := c.GetFile("files")
+
+	if err == nil {
+		fileUUID, mimeType, err := files.CreateFile(fileFh, "goals-comments")
+
+		if err != nil {
+			c.BadRequest(err)
+			return
+		}
+
+		v.Attachment = fileUUID
+		v.AttachmentMime = mimeType
+	}
+
 	_, err = models.AddGoalsComments(v)
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -112,5 +128,32 @@ func (c *GoalsCommentsController) Post() {
 	c.Data["json"] = v
 
 	c.ServeJSON()
+
+}
+
+// GetAttachmentByUUID ...
+// @Title Get  By UUID
+// @Description Get file By UUID
+// @router /attachment/:uuid [get]
+func (c *GoalsCommentsController) GetAttachmentByUUID() {
+
+	uuid := c.Ctx.Input.Param(":uuid")
+
+	if uuid == "" {
+		c.Ctx.Output.SetStatus(400)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	imageBytes, mimeType, err := files.GetFile(uuid, "goals-comments")
+	if err != nil {
+		c.Ctx.Output.SetStatus(404)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	c.Ctx.Output.Header("Content-Type", mimeType)
+	c.Ctx.Output.SetStatus(200)
+	c.Ctx.Output.Body(imageBytes)
 
 }

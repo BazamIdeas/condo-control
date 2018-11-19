@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"condo-control/controllers/services/files"
 	"condo-control/models"
 	"encoding/json"
 	"errors"
@@ -26,6 +27,7 @@ func (c *ItemsController) URLMapping() {
 	c.Mapping("RestoreFromTrash", c.RestoreFromTrash)
 	c.Mapping("MakeComment", c.MakeComment)
 	c.Mapping("MakeCommentExecute", c.MakeCommentExecute)
+	c.Mapping("GetFilesByUUID", c.GetFilesByUUID)
 }
 
 // Post ...
@@ -378,7 +380,18 @@ func (c *ItemsController) MakeComment() {
 		item.Comment = comment
 	}
 
-	//TODO: IMAGENES
+	_, fileFh, err := c.GetFile("files")
+
+	if err == nil {
+		fileUUID, mimeType, err := files.CreateFile(fileFh, "items")
+
+		if err != nil {
+			c.BadRequest(err)
+			return
+		}
+		item.ImageMime = mimeType
+		item.ImageUUID = fileUUID
+	}
 
 	commentToken, err := GenerateGeneralToken(decodedToken.UserID, decodedToken.CondoID, nil, nil, item)
 
@@ -470,4 +483,31 @@ func (c *ItemsController) MakeCommentExecute() {
 		c.ServeErrorJSON(err)
 		return
 	}
+}
+
+// GetFilesByUUID ...
+// @Title Get By UUID
+// @Description Get file By UUID
+// @router /image/:uuid [get]
+func (c *ItemsController) GetFilesByUUID() {
+
+	uuid := c.Ctx.Input.Param(":uuid")
+
+	if uuid == "" {
+		c.Ctx.Output.SetStatus(400)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	imageBytes, mimeType, err := files.GetFile(uuid, "items")
+	if err != nil {
+		c.Ctx.Output.SetStatus(404)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	c.Ctx.Output.Header("Content-Type", mimeType)
+	c.Ctx.Output.SetStatus(200)
+	c.Ctx.Output.Body(imageBytes)
+
 }
