@@ -27,6 +27,8 @@ func (c *VerificationsController) URLMapping() {
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("NewRouteExecute", c.NewRouteExecute)
 	c.Mapping("NewRoute", c.NewRoute)
+	c.Mapping("GetImagesByUUID", c.GetImagesByUUID)
+	c.Mapping("AddImage", c.AddImage)
 }
 
 // Post ...
@@ -506,11 +508,11 @@ func (c *VerificationsController) NewRouteExecute() {
 
 }
 
-// addImage ...
+// AddImage ...
 // @Title add Image
 // @Description  add Image
 // @router /:id/image [put]
-func (c *VerificationsController) addImage() {
+func (c *VerificationsController) AddImage() {
 
 	authToken := c.Ctx.Input.Header("Authorization")
 
