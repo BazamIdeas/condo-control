@@ -493,10 +493,16 @@ func (c *VerificationsController) NewRouteExecute() {
 			verification.Point = p
 			verification.Watcher = watcher
 			verifications = append(verifications, verification)
+
+			_, err = models.AddVerifications(verification)
+			if err != nil {
+				c.ServeErrorJSON(err)
+				return
+			}
 		}
 	}
 
-	err = models.AddManyVerifications(verifications)
+	//err = models.AddManyVerifications(verifications)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
