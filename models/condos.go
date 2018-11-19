@@ -12,25 +12,26 @@ import (
 
 //Condos Model
 type Condos struct {
-	ID                int         `orm:"column(id);pk" json:"id"`
-	Name              string      `orm:"column(name);size(255)" json:"name,omitempty" valid:"Required"`
-	RUT               string      `orm:"column(rut);size(255)" json:"rut" valid:"Required"`
-	UserLimit         int         `orm:"column(user_limit);size(255)" json:"user_limit" valid:"Required"`
-	ZoneLimit         int         `orm:"column(zone_limit);size(255)" json:"zone_limit" valid:"Required"`
-	HourValue         float32     `orm:"colum(hour_value);size(20)" json:"hour_value" valid:"Required"`
-	ExtraHourIncrease float32     `orm:"colum(extra_hour_increase);size(20)" json:"extra_hour_increase" valid:"Required"`
-	WorkingHours      int         `orm:"column(working_hours)" json:"working_hours" valid:"Required"`
-	AssistancesMod    bool        `orm:"column(assistances_mod)" json:"assistances_mod" valid:"Required"`
-	RoutesMod         bool        `orm:"column(routes_mod)" json:"routes_mod" valid:"Required"`
-	DeliveryMod       bool        `orm:"column(delivery_mod)" json:"delivery_mod" valid:"Required"`
-	TasksMod          bool        `orm:"column(tasks_mod)" json:"tasks_mod" valid:"Required"`
-	Zones             []*Zones    `orm:"reverse(many)" json:"zone,omitempty"`
-	Workers           []*Workers  `orm:"reverse(many)" json:"workers,omitempty"`
-	Holidays          []*Holidays `orm:"reverse(many)" json:"holidays,omitempty"`
-	Watchers          []*Watchers `orm:"-" json:"watchers,omitempty"`
-	CreatedAt         time.Time   `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
-	UpdatedAt         time.Time   `orm:"column(updated_at);type(datetime);null" json:"-"`
-	DeletedAt         time.Time   `orm:"column(deleted_at);type(datetime);null" json:"-"`
+	ID                int            `orm:"column(id);pk" json:"id"`
+	Name              string         `orm:"column(name);size(255)" json:"name,omitempty" valid:"Required"`
+	RUT               string         `orm:"column(rut);size(255)" json:"rut" valid:"Required"`
+	UserLimit         int            `orm:"column(user_limit);size(255)" json:"user_limit" valid:"Required"`
+	ZoneLimit         int            `orm:"column(zone_limit);size(255)" json:"zone_limit" valid:"Required"`
+	HourValue         float32        `orm:"colum(hour_value);size(20)" json:"hour_value" valid:"Required"`
+	ExtraHourIncrease float32        `orm:"colum(extra_hour_increase);size(20)" json:"extra_hour_increase" valid:"Required"`
+	WorkingHours      int            `orm:"column(working_hours)" json:"working_hours" valid:"Required"`
+	AssistancesMod    bool           `orm:"column(assistances_mod)" json:"assistances_mod" valid:"Required"`
+	RoutesMod         bool           `orm:"column(routes_mod)" json:"routes_mod" valid:"Required"`
+	DeliveryMod       bool           `orm:"column(delivery_mod)" json:"delivery_mod" valid:"Required"`
+	TasksMod          bool           `orm:"column(tasks_mod)" json:"tasks_mod" valid:"Required"`
+	Zones             []*Zones       `orm:"reverse(many)" json:"zone,omitempty"`
+	Workers           []*Workers     `orm:"reverse(many)" json:"workers,omitempty"`
+	Holidays          []*Holidays    `orm:"reverse(many)" json:"holidays,omitempty"`
+	Watchers          []*Watchers    `orm:"-" json:"watchers,omitempty"`
+	Supervisors       []*Supervisors `orm:"-" json:"supervisors,omitempty"`
+	CreatedAt         time.Time      `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
+	UpdatedAt         time.Time      `orm:"column(updated_at);type(datetime);null" json:"-"`
+	DeletedAt         time.Time      `orm:"column(deleted_at);type(datetime);null" json:"-"`
 }
 
 //TableName =

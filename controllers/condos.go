@@ -183,6 +183,21 @@ func (c *CondosController) GetAll() {
 		return
 	}
 
+	for _, condo := range l {
+
+		condoID := condo.(models.Condos).ID
+
+		supervisors, err := models.GetSupervisorsByCondosID(condoID)
+
+		if err != nil {
+			c.ServeErrorJSON(err)
+			return
+		}
+
+		condo.(models.Condos).Supervisors = supervisors
+
+	}
+
 	c.Data["json"] = l
 	c.ServeJSON()
 
