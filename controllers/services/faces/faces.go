@@ -100,7 +100,7 @@ func GetFaceFile(imageUUID string) (imageBytes []byte, mimeType string, err erro
 //DeleteFaceFile ...
 func DeleteFaceFile(imageUUID string) (err error) {
 
-	err = os.Remove(imageUUID)
+	err = os.Remove(imageFolderDir + "/" + imageUUID)
 
 	return
 }
