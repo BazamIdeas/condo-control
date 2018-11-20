@@ -92,6 +92,11 @@ func init() {
 				&controllers.ItemsController{},
 			),
 		),
+		beego.NSNamespace("/notifications",
+			beego.NSInclude(
+				&controllers.NotificationsController{},
+			),
+		),
 	)
 
 	beego.AddNamespace(mainNS)

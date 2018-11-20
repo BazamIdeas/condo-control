@@ -46,6 +46,7 @@ type Workers struct {
 	FirstName        string                  `orm:"column(first_name);size(255)" json:"first_name,omitempty" valid:"Required"`
 	Condo            *Condos                 `orm:"rel(fk);column(condos_id)" json:"condos,omitempty"`
 	Assistances      []*Assistances          `orm:"reverse(many)" json:"assistances,omitempty"`
+	Notifications    []*Notifications        `orm:"reverse(many)" json:"notifications,omitempty"`
 	ImageUUID        string                  `orm:"column(image_uuid)" json:"image_uuid,omitempty"`
 	ImageMime        string                  `orm:"column(image_mime)" json:"-"`
 	FaceID           string                  `orm:"column(face_id)" json:"-"`

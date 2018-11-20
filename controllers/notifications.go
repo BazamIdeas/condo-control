@@ -24,6 +24,7 @@ func (c *NotificationsController) URLMapping() {
 	c.Mapping("GetImageByUUID", c.GetImageByUUID)
 	c.Mapping("Approve", c.Approve)
 	c.Mapping("View", c.View)
+	c.Mapping("GetSelf", c.GetSelf)
 }
 
 // Post ...
@@ -417,5 +418,55 @@ func (c *NotificationsController) GetByCondosSelf() {
 	}
 
 	c.Data["json"] = notifications
+	c.ServeJSON()
+}
+
+// GetSelf ...
+// @Title Get Self
+// @router /self [get]
+func (c *NotificationsController) GetSelf() {
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyToken(token, "Watcher")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, err = models.GetCondosByID(condoID)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	watcherID, err := strconv.Atoi(decodedToken.UserID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcher, err := models.GetWatchersByID(watcherID)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByID(watcher.Worker.ID)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = worker.Notifications
 	c.ServeJSON()
 }
