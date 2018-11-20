@@ -41,6 +41,8 @@ func (c *AssistancesController) URLMapping() {
 // @router / [post]
 func (c *AssistancesController) Post() {
 
+	// TODO: VALIDAR QUE NO EXISTA EL MISMO TIPO DE ASISTENCIA EL MISMO DIA PARA LA MISMA PERSONA
+
 	token := c.Ctx.Input.Header("Authorization")
 
 	decodedToken, _ := VerifyToken(token, "Watcher")

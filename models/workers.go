@@ -18,6 +18,7 @@ type dayAssistances struct {
 	FinishBreak      *Assistances `json:"finish_break,omitempty"`
 	Exit             *Assistances `json:"exit,omitempty"`
 	Day              string       `json:"day,omitempty"`
+	DayEnd           string       `json:"day_end,omitempty"`
 	TotalWorkedHours float32      `json:"total_worked_hours"`
 	ExtraWorkedHours float32      `json:"extra_worked_hours"`
 	BaseValue        float32      `json:"base_value"`
@@ -318,6 +319,7 @@ func (t *Workers) GetTodayAssistances() (err error) {
 
 }
 
+/*
 //GetMonthAssistancesData ...
 func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error) {
 
@@ -449,6 +451,154 @@ func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error
 
 	return
 }
+*/
+
+//GetMonthAssistancesData ...
+func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error) {
+
+	qb, err := orm.NewQueryBuilder("mysql")
+	if err != nil {
+		return
+	}
+
+	holidays, err := GetHolidaysByCondosID(year, month, t.Condo.ID)
+
+	if err != nil {
+		return
+	}
+
+	monthTarget := time.Date(year, month, 1, 1, 1, 1, 1, time.UTC)
+	monthTargetString := jodaTime.Format("Y-M-d", monthTarget)
+
+	//Construct query object
+	qb.Select("assistances.id", "assistances.type", "assistances.date", "DAY(assistances.date) AS day").From("assistances").Where("assistances.workers_id = ?").And("assistances.type = ?").And("YEAR(assistances.date) = YEAR(?)").And("MONTH(assistances.date) = MONTH(?)").OrderBy("assistances.date").Asc()
+
+	sql := qb.String()
+
+	o := orm.NewOrm()
+
+	var paramMaps []orm.Params
+
+	_, err = o.Raw(sql).SetArgs(t.ID, monthTargetString, monthTargetString, "entry").Values(&paramMaps)
+
+	if err != nil {
+		return
+	}
+
+	monthData := monthDaysAssistances{}
+
+	for _, paramMap := range paramMaps {
+
+		dayData := &dayAssistances{Day: paramMap["day"].(string)}
+		assistanceID, _ := strconv.Atoi(paramMap["id"].(string))
+		assistance := &Assistances{ID: assistanceID, Date: paramMap["date"].(string), Type: paramMap["type"].(string)}
+
+		dayData.assignTypes(assistance)
+
+		ox := orm.NewOrm()
+
+		var nextAssistances []*Assistances
+
+		_, err = ox.QueryTable("assistances").Filter("work_time_id", assistance.ID).All(&nextAssistances)
+
+		if err != nil && err != orm.ErrNoRows {
+			return
+		}
+
+		if err == orm.ErrNoRows {
+			continue
+		}
+
+		for _, nextAssistance := range nextAssistances {
+			dayData.assignTypes(nextAssistance)
+
+			if nextAssistance.Type == "exit" {
+				dayData.DayEnd = nextAssistance.Date
+			}
+		}
+
+		monthData[paramMap["day"].(string)] = dayData
+
+	}
+
+	monthDetail := &monthDetail{}
+
+	for day, dayData := range monthData {
+
+		if dayData.Entry == nil || dayData.Exit == nil {
+			delete(monthData, day)
+			continue
+		}
+
+		if (dayData.Break != nil && dayData.FinishBreak == nil) || (dayData.Break == nil && dayData.FinishBreak != nil) {
+			delete(monthData, day)
+			continue
+		}
+
+		if _, ok := holidays[day]; ok {
+			dayData.IsHoliday = true
+			monthDetail.Holidays++
+		}
+
+		entryDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.Entry.Date)
+		exitDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.Exit.Date)
+
+		workedDuration := exitDate.Sub(entryDate)
+
+		workedHours := workedDuration.Hours()
+
+		if dayData.Break != nil && dayData.FinishBreak != nil {
+			breakDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.Break.Date)
+			finishBreakDate, _ := jodaTime.Parse("Y-M-d HH:mm:ss", dayData.FinishBreak.Date)
+			breakDuration := finishBreakDate.Sub(breakDate)
+			breakHours := breakDuration.Hours()
+
+			workedHours = workedHours - breakHours
+		}
+
+		dayData.TotalWorkedHours = float32(workedHours)
+
+		if t.Condo == nil {
+			continue
+		}
+
+		extraHours := dayData.TotalWorkedHours - float32(t.Condo.WorkingHours)
+
+		var extraHoursValue float32
+
+		if extraHours > 0 {
+
+			dayData.ExtraWorkedHours = extraHours
+			extraHourIncreased := t.Condo.HourValue + (t.Condo.HourValue * (t.Condo.ExtraHourIncrease / 100))
+
+			extraHoursValue = extraHours * extraHourIncreased
+
+			dayData.ExtraValue = extraHoursValue
+		} else {
+			dayData.ExtraValue = 0
+		}
+
+		monthDetail.ExtraWorkedHours += dayData.ExtraWorkedHours
+		monthDetail.ExtraValue += dayData.ExtraValue
+
+		if dayData.ExtraValue == 0 {
+			dayData.BaseValue = dayData.TotalWorkedHours * t.Condo.HourValue
+		} else {
+			dayData.BaseValue = (dayData.TotalWorkedHours - dayData.ExtraWorkedHours) * t.Condo.HourValue
+		}
+
+		dayData.TotalValue = dayData.BaseValue + dayData.ExtraValue
+
+		monthDetail.BaseValue += dayData.BaseValue
+		monthDetail.TotalValue += dayData.TotalValue
+
+	}
+
+	monthDetail.Days = &monthData
+
+	t.MonthData = monthDetail
+	return
+}
 
 func (d *dayAssistances) assignTypes(assistance *Assistances) {
 	switch assistance.Type {
@@ -530,6 +680,8 @@ func (t *Workers) GetCurrentWorkTimeAssistances() (err error) {
 	mapAssistances[lastAssistanceEntry.Type] = lastAssistanceEntry
 
 	nextAssistances := []*Assistances{}
+
+	// TODO: VALIDAR QUE LA JORNADA ACTUAL NO PUEDA SUPERAR LAS 10 HORAS PASADAS
 
 	qs = o.QueryTable("assistances").Filter("workers_id", t.ID).Filter("work_time_id", lastAssistanceEntry.ID)
 	qs = qs.Limit(3)
