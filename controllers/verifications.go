@@ -29,6 +29,7 @@ func (c *VerificationsController) URLMapping() {
 	c.Mapping("NewRoute", c.NewRoute)
 	c.Mapping("GetImagesByUUID", c.GetImagesByUUID)
 	c.Mapping("AddImage", c.AddImage)
+	c.Mapping("Comment", c.Comment)
 }
 
 // Post ...
@@ -195,16 +196,6 @@ func (c *VerificationsController) Put() {
 		c.BadRequestErrors(valid.Errors, v.TableName())
 		return
 	}
-
-	//TODO:
-	// Validate foreings keys
-
-	/* exists := models.ValidateExists("Sectors", v.Sector.ID)
-
-	if !exists {
-		c.BadRequestDontExists("Sector")
-		return
-	} */
 
 	err = models.UpdateVerificationsByID(&v)
 
@@ -492,6 +483,7 @@ func (c *VerificationsController) NewRouteExecute() {
 			p := &models.Points{ID: point.ID}
 			verification.Point = p
 			verification.Watcher = watcher
+			verification.SupervisorComment = ""
 			verifications = append(verifications, verification)
 
 			_, err = models.AddVerifications(verification)
@@ -521,16 +513,10 @@ func (c *VerificationsController) NewRouteExecute() {
 func (c *VerificationsController) AddImage() {
 
 	authToken := c.Ctx.Input.Header("Authorization")
-
 	_, err := VerifyToken(authToken, "Watcher")
 
 	if err != nil {
 		c.BadRequest(err)
-		return
-	}
-
-	if err != nil {
-		c.BadRequestDontExists("Watchers")
 		return
 	}
 
@@ -600,4 +586,62 @@ func (c *VerificationsController) GetImagesByUUID() {
 	c.Ctx.Output.SetStatus(200)
 	c.Ctx.Output.Body(imageBytes)
 
+}
+
+// Comment ...
+// @Title Comment
+// @Description comment the Verification
+// @router /:id/comment [put]
+func (c *VerificationsController) Comment() {
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	_, err := VerifyToken(authToken, "Watcher")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	idStr := c.Ctx.Input.Param(":id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	v := models.Verifications{}
+
+	// Validate empty body
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if v.SupervisorComment == "" {
+		err := errors.New("supervisor_comment is missing")
+		c.BadRequest(err)
+		return
+	}
+
+	// Validate context body
+	verification, err := models.GetVerificationsByID(id)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	verification.SupervisorComment = v.SupervisorComment
+
+	err = models.UpdateVerificationsByID(verification)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = verification
+	c.ServeJSON()
 }
