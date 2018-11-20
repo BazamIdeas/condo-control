@@ -18,7 +18,7 @@ type Notifications struct {
 	Date        string    `orm:"column(date);type(string);" json:"date,omitempty"`
 	ImageUUID   string    `orm:"column(image_uuid);null" json:"image_uuid,omitempty"`
 	ImageMime   string    `orm:"column(image_mime);null" json:"image_mime,omitempty"`
-	Worker      *Workers  `orm:"rel(fk);column(workers_id)" json:"worker,omitempty"`
+	Worker      *Workers  `orm:"rel(fk);column(worker_id)" json:"worker,omitempty"`
 	CreatedAt   time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt   time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
 	DeletedAt   time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
