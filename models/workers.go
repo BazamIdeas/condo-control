@@ -471,7 +471,7 @@ func (t *Workers) GetMonthAssistancesData(year int, month time.Month) (err error
 	monthTargetString := jodaTime.Format("Y-M-d", monthTarget)
 
 	//Construct query object
-	qb.Select("assistances.id", "assistances.type", "assistances.date", "DAY(assistances.date) AS day").From("assistances").Where("assistances.workers_id = ?").And("assistances.type = ?").And("YEAR(assistances.date) = YEAR(?)").And("MONTH(assistances.date) = MONTH(?)").OrderBy("assistances.date").Asc()
+	qb.Select("assistances.id", "assistances.type", "assistances.date", "DAY(assistances.date) AS day").From("assistances").Where("assistances.workers_id = ?").And("YEAR(assistances.date) = YEAR(?)").And("MONTH(assistances.date) = MONTH(?)").And("assistances.type = ?").OrderBy("assistances.date").Asc()
 
 	sql := qb.String()
 
