@@ -595,7 +595,7 @@ func (c *VerificationsController) GetImagesByUUID() {
 func (c *VerificationsController) Comment() {
 
 	authToken := c.Ctx.Input.Header("Authorization")
-	_, err := VerifyToken(authToken, "Watcher")
+	_, err := VerifyToken(authToken, "Supervisor")
 
 	if err != nil {
 		c.BadRequest(err)
