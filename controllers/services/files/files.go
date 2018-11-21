@@ -18,7 +18,7 @@ var (
 
 func checkOrCreateFolder(folderName string) (folderPath string, err error) {
 
-	folderPath = rootDir + "/" + folderName
+	folderPath = rootDir + "/assets/" + folderName
 
 	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
 		os.MkdirAll(folderPath, 644)
