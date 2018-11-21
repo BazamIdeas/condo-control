@@ -82,6 +82,24 @@ func GetWatchersByID(id int) (v *Watchers, err error) {
 	return
 }
 
+// GetWatchersByUsername retrieves Watchers by username. Returns error if
+// Id doesn't exist
+func GetWatchersByUsername(username string) (v *Watchers, err error) {
+	v = &Watchers{Username: username}
+
+	o := orm.NewOrm()
+
+	err = o.Read(v, "Username")
+
+	if err != nil {
+		return nil, err
+	}
+
+	v.loadRelations()
+
+	return
+}
+
 // LoginWatchers login a Watchers, returns
 // if Exists.
 func LoginWatchers(m *Watchers) (id int, err error) {

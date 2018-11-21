@@ -26,6 +26,7 @@ func (c *CondosController) URLMapping() {
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("GetSupervisorsByCondosID", c.GetSupervisorsByCondosID)
+	c.Mapping("GetByRUT", c.GetByRUT)
 }
 
 // Post ...
@@ -94,6 +95,29 @@ func (c *CondosController) GetOne() {
 	}
 
 	v, err := models.GetCondosByID(id)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = v
+	c.ServeJSON()
+}
+
+// GetByRUT ...
+// @Title Get By RUT
+// @Description Ge tBy RUT
+// @router /rut/:rut [get]
+func (c *CondosController) GetByRUT() {
+
+	rut := c.Ctx.Input.Param(":rut")
+	if rut == "" {
+		err := errors.New("rut is empty")
+		c.BadRequest(err)
+		return
+	}
+
+	v, err := models.GetCondosByRUT(rut)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return

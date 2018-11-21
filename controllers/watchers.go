@@ -28,6 +28,7 @@ func (c *WatchersController) URLMapping() {
 	c.Mapping("Login", c.Login)
 	c.Mapping("GetSelf", c.GetSelf)
 	c.Mapping("GetVerificationsByDate", c.GetVerificationsByDate)
+	c.Mapping("GetByUsername", c.GetByUsername)
 
 }
 
@@ -149,6 +150,29 @@ func (c *WatchersController) GetOne() {
 	}
 
 	v, err := models.GetWatchersByID(id)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = v
+	c.ServeJSON()
+}
+
+// GetByUsername ...
+// @Title Get By Username
+// @Description get By Username by id
+// @router /username/:username [get]
+func (c *WatchersController) GetByUsername() {
+	username := c.Ctx.Input.Param(":username")
+
+	if username == "" {
+		err := errors.New("Username is missing")
+		c.BadRequest(err)
+		return
+	}
+
+	v, err := models.GetWatchersByUsername(username)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
