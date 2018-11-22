@@ -157,7 +157,7 @@ func GetNotificationsByCondosID(condosID int) (notifications []*Notifications, e
 		v []*Notifications
 	)
 
-	_, err = o.QueryTable("notifications").Filter("condos_id", condosID).All(&w)
+	_, err = o.QueryTable("workers").Filter("condos_id", condosID).All(&w)
 
 	if err != nil {
 		return
