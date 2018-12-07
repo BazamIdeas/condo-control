@@ -252,6 +252,53 @@ func (c *ItemsController) RestoreFromTrash() {
 // @router /:id/status/:delivered [put]
 func (c *ItemsController) ChangeStatus() {
 
+	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
+
+	if err != nil {
+		c.Ctx.Output.SetStatus(413)
+		c.ServeJSON()
+		return
+	}
+
+	if !c.Ctx.Input.IsUpload() {
+		err := errors.New("Not image file found on request")
+		c.BadRequest(err)
+		return
+	}
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyToken(token, "Watcher")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, err = models.GetCondosByID(condoID)
+	if err != nil {
+		c.BadRequestDontExists("Condos")
+		return
+	}
+
+	watcherID, err := strconv.Atoi(decodedToken.UserID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcher, err = models.GetWatchersByID(watcherID)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
 	idStr := c.Ctx.Input.Param(":id")
 
 	id, err := strconv.Atoi(idStr)
@@ -289,6 +336,26 @@ func (c *ItemsController) ChangeStatus() {
 		item.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
 	} else {
 		item.DateEnd = ""
+	}
+
+	_, faceFh, err := c.GetFile("faces")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, ok, err := VerifyWorkerIdentity(watcher.Worker.ID, faceFh)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if !ok {
+		err = errors.New("Identity Verification Failed")
+		c.BadRequest(err)
+		return
 	}
 
 	err = models.UpdateItemsByID(item, false)
