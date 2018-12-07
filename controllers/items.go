@@ -293,7 +293,7 @@ func (c *ItemsController) ChangeStatus() {
 		return
 	}
 
-	watcher, err = models.GetWatchersByID(watcherID)
+	watcher, err := models.GetWatchersByID(watcherID)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
