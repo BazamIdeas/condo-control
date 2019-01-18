@@ -1,7 +1,6 @@
 package mails
 
 import (
-	"condo-control/models"
 	"bytes"
 	"errors"
 	"fmt"
@@ -17,20 +16,7 @@ import (
 )
 
 type HTMLParams struct {
-	ClientName string
-	AdminName  string
-	Client     *models.Clients
-	Service    *models.Services
-	Services   []*models.Services
-	Order      *models.Orders
-	Country    *models.Countries
-	Location   *models.Locations
-	Sectors    *models.Sectors
-	Activities *models.Activities
-	Gateway    *models.Gateways
-	Portfolio  *models.Portfolios
-	Brief      *models.Briefs
-	Token      string
+	Token string
 }
 
 //Email ...

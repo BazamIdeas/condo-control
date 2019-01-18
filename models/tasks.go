@@ -15,6 +15,8 @@ type Tasks struct {
 	Approved  bool      `orm:"column(approved);" json:"approved" valid:"Required"`
 	Date      string    `orm:"column(date);auto_now_add;type(datetime);" json:"date,omitempty"`
 	DateEnd   string    `orm:"column(date_end);" json:"date_end,omitempty"`
+	Address   string    `orm:"column(address);" json:"address,omitempty"`
+	Phone     string    `orm:"column(phone);" json:"phone,omitempty"`
 	Worker    *Workers  `orm:"column(worker_id);rel(fk);" json:"worker,omitempty"`
 	Goals     []*Goals  `orm:"reverse(many);" json:"goals,omitempty"`
 	CreatedAt time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
@@ -177,4 +179,22 @@ func GetTasksByWorkersID(workerID int) (tasks []*Tasks, err error) {
 
 	return
 
+}
+
+// GetSupervisorsByWorkersID retrieves Supervisors by workerID. Returns error if
+// Id doesn't exist
+func GetSupervisorsByWorkersID(workerID int) (v *Supervisors, err error) {
+	v = &Supervisors{Worker: &Workers{ID: workerID}}
+
+	o := orm.NewOrm()
+
+	err = o.Read(v, "Worker")
+
+	if err != nil {
+		return nil, err
+	}
+
+	v.loadRelations()
+
+	return
 }

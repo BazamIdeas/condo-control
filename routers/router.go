@@ -97,6 +97,11 @@ func init() {
 				&controllers.NotificationsController{},
 			),
 		),
+		beego.NSNamespace("/ws",
+			beego.NSInclude(
+				&controllers.WebSocketController{},
+			),
+		),
 	)
 
 	beego.AddNamespace(mainNS)

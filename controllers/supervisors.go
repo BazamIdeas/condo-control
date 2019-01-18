@@ -402,3 +402,114 @@ func (c *SupervisorsController) Login() {
 	c.ServeJSON()
 
 }
+
+
+
+// GenerateChangePasswordToken ..
+// @Title Generate Change Password Token
+// @Description Generate Change Password Token
+// @Accept json
+// @Success 200 {object} models.Watchers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 email without Data
+// @router /:email/change-password/ [post]
+func (c *SupervisorsController) GenerateChangePasswordToken() {
+
+	email := c.Ctx.Input.Param(":email")
+
+	if email == "" {
+		err := errors.New("missing email")
+		c.BadRequest(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByEmail(email)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	supervisor, err := models.GetSupervisorsByWorkersID(worker.ID)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	supervisorID := strconv.Itoa(supervisor.ID)
+	condoID := strconv.Itoa(worker.Condo.ID)
+
+	token, err := GenerateGeneralToken(supervisorID, condoID, nil, nil, nil)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	supervisor.Token = token
+	c.Data["json"] = supervisor
+	c.ServeJSON()
+
+}
+
+//ChangePassword ..
+// @Title Change Password
+// @Description Change Password
+// @Accept json
+// @Success 200 {object} models.Watchers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @router /change-password/:token [put]
+func (c *SupervisorsController) ChangePassword() {
+
+	token := c.Ctx.Input.Param(":token")
+
+	if token == "" {
+		err := errors.New("missing token")
+		c.BadRequest(err)
+		return
+	}
+
+	decodedToken, err := VerifyGeneralToken(token)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	var v models.Supervisors
+
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if v.Password == "" {
+		err = errors.New("missing Password")
+		c.BadRequest(err)
+		return
+	}
+
+	supervisorID, _ := strconv.Atoi(decodedToken.UserID)
+
+	supervisor, err := models.GetSupervisorsByID(supervisorID)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	supervisor.Password = v.Password
+
+	err = models.UpdateSupervisorsByID(supervisor)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = supervisor
+	c.ServeJSON()
+
+}

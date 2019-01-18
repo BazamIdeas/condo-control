@@ -8,6 +8,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/vjeantet/jodaTime"
 )
 
 //Condos Model
@@ -24,6 +25,7 @@ type Condos struct {
 	RoutesMod         bool           `orm:"column(routes_mod)" json:"routes_mod" valid:"Required"`
 	DeliveryMod       bool           `orm:"column(delivery_mod)" json:"delivery_mod" valid:"Required"`
 	TasksMod          bool           `orm:"column(tasks_mod)" json:"tasks_mod" valid:"Required"`
+	AlertsTime        string         `orm:"column(alerts_time);type(alerts_time);null" json:"alerts_time,omitempty"`
 	Zones             []*Zones       `orm:"reverse(many)" json:"zone,omitempty"`
 	Workers           []*Workers     `orm:"reverse(many)" json:"workers,omitempty"`
 	Holidays          []*Holidays    `orm:"reverse(many)" json:"holidays,omitempty"`
@@ -254,6 +256,48 @@ func GetCondosByRUT(RUT string) (condo *Condos, err error) {
 	}
 
 	condo = &v
+
+	return
+
+}
+
+//GetCondosVerificationsByMonth ...
+func GetCondosVerificationsByMonth(condosID int, year int, month time.Month) (Verifications []*Verifications, err error) {
+
+	qb, err := orm.NewQueryBuilder("mysql")
+	if err != nil {
+		return
+	}
+
+	monthTarget := time.Date(year, month, 1, 1, 1, 1, 1, time.UTC)
+	monthTargetString := jodaTime.Format("Y-M-d", monthTarget)
+
+	qb.Select("verifications.*").From("verifications, watchers, workers").Where("workers.condos_id = ?").And("watchers.workers_id = workers.id").And("YEAR(verifications.date) = YEAR(?)").And("MONTH(verifications.date) = MONTH(?)").OrderBy("verifications.date").Desc()
+
+	sql := qb.String()
+
+	o := orm.NewOrm()
+
+	_, err = o.Raw(sql).SetArgs(condosID, monthTargetString, monthTargetString).QueryRows(&Verifications)
+
+	if err != nil {
+		return
+	}
+
+	for _, verification := range Verifications {
+		watcher, errW := GetWatchersByID(verification.Watcher.ID)
+
+		if errW == nil {
+			verification.Watcher = watcher
+		}
+
+		point, errP := GetPointsByID(verification.Point.ID)
+
+		if errP == nil {
+			verification.Point = point
+		}
+
+	}
 
 	return
 

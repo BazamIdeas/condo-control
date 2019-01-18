@@ -8,6 +8,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/vjeantet/jodaTime"
 )
 
 //Watchers Model
@@ -90,6 +91,24 @@ func GetWatchersByUsername(username string) (v *Watchers, err error) {
 	o := orm.NewOrm()
 
 	err = o.Read(v, "Username")
+
+	if err != nil {
+		return nil, err
+	}
+
+	v.loadRelations()
+
+	return
+}
+
+// GetWatchersByWorkersID retrieves Watchers by workerID. Returns error if
+// Id doesn't exist
+func GetWatchersByWorkersID(workerID int) (v *Watchers, err error) {
+	v = &Watchers{Worker: &Workers{ID: workerID}}
+
+	o := orm.NewOrm()
+
+	err = o.Read(v, "Worker")
 
 	if err != nil {
 		return nil, err
@@ -338,6 +357,45 @@ func (t *Watchers) GetVerificationsByDate(date time.Time) (err error) {
 	}
 
 	t.Verifications = verifications
+
+	return
+
+}
+
+//GetWatchersVerificationsByMonth ...
+func GetWatchersVerificationsByMonth(watchersID int, year int, month time.Month) (Verifications []*Verifications, err error) {
+
+	qb, err := orm.NewQueryBuilder("mysql")
+	if err != nil {
+		return
+	}
+
+	monthTarget := time.Date(year, month, 1, 1, 1, 1, 1, time.UTC)
+	monthTargetString := jodaTime.Format("Y-M-d", monthTarget)
+
+	qb.Select("verifications.*").From("verifications, watchers").Where("watchers.id = ?").And("YEAR(verifications.date) = YEAR(?)").And("MONTH(verifications.date) = MONTH(?)").OrderBy("verifications.date").Desc()
+
+	sql := qb.String()
+
+	o := orm.NewOrm()
+
+	_, err = o.Raw(sql).SetArgs(watchersID, monthTargetString, monthTargetString).QueryRows(&Verifications)
+
+	if err != nil {
+		return
+	}
+
+	for _, verification := range Verifications {
+
+		point, errP := GetPointsByID(verification.Point.ID)
+
+		if errP != nil {
+			continue
+		}
+
+		verification.Point = point
+
+	}
 
 	return
 

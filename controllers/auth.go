@@ -130,7 +130,7 @@ func GenerateGeneralToken(userID string, condoID string, points []*models.Points
 		Assistance: assistance,
 		Item:       item,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: now.Add(time.Minute * 10).Unix(),
+			ExpiresAt: now.Add(time.Minute * 30).Unix(),
 			Issuer:    "test",
 		},
 	}

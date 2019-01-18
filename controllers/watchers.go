@@ -4,7 +4,6 @@ import (
 	"condo-control/models"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -28,7 +27,10 @@ func (c *WatchersController) URLMapping() {
 	c.Mapping("Login", c.Login)
 	c.Mapping("GetSelf", c.GetSelf)
 	c.Mapping("GetVerificationsByDate", c.GetVerificationsByDate)
+	c.Mapping("GetWatchersVerificationsByMonth", c.GetWatchersVerificationsByMonth)
 	c.Mapping("GetByUsername", c.GetByUsername)
+	c.Mapping("ChangePublicInfo", c.ChangePublicInfo)
+	c.Mapping("ChangePassword", c.ChangePassword)
 
 }
 
@@ -164,6 +166,7 @@ func (c *WatchersController) GetOne() {
 // @Description get By Username by id
 // @router /username/:username [get]
 func (c *WatchersController) GetByUsername() {
+
 	username := c.Ctx.Input.Param(":username")
 
 	if username == "" {
@@ -173,6 +176,12 @@ func (c *WatchersController) GetByUsername() {
 	}
 
 	v, err := models.GetWatchersByUsername(username)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	err = v.Worker.GetCurrentWorkTimeAssistances()
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -263,6 +272,66 @@ func (c *WatchersController) Put() {
 	}
 
 	err = models.UpdateWatchersByID(&v)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = MessageResponse{
+		Message:       "Updated element",
+		PrettyMessage: "Elemento Actualizado",
+	}
+
+	c.ServeJSON()
+}
+
+// ChangePublicInfo ...
+// @Title ChangePublicInfo
+// @Description update the Watchers's ChangePublicInfo
+// @router /change-public-info [put]
+func (c *WatchersController) ChangePublicInfo() {
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, err := VerifyToken(token, "Watcher")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcherID, err := strconv.Atoi(decodedToken.UserID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcher, err := models.GetWatchersByID(watcherID)
+	if err != nil {
+		c.BadRequestDontExists("Watcher")
+		return
+	}
+
+	v := models.Watchers{}
+
+	// Validate empty body
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if v.Password != "" {
+		watcher.Password = v.Password
+	}
+
+	if v.Phone != "" {
+		watcher.Phone = v.Phone
+	}
+
+	err = models.UpdateWatchersByID(watcher)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
@@ -444,8 +513,6 @@ func (c *WatchersController) GetSelf() {
 // @router /:id/verifications/:date [get]
 func (c *WatchersController) GetVerificationsByDate() {
 
-	fmt.Println("hola")
-
 	authToken := c.Ctx.Input.Header("Authorization")
 
 	decAuthToken, _ := VerifyToken(authToken, "Supervisor")
@@ -481,6 +548,173 @@ func (c *WatchersController) GetVerificationsByDate() {
 	}
 
 	err = watcher.GetVerificationsByDate(date)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = watcher
+	c.ServeJSON()
+
+}
+
+// GetWatchersVerificationsByMonth ..
+// @Title Get Watchers Verifications By Month
+// @Description Get Watchers Verifications By Month
+// @Accept json
+// @Param   Authorization     header   string true       "Supervisor's Token"
+// @Param   year     path   int true       "year's Date"
+// @Param   month     path   int true       "month's Date"
+// @Success 200 {array} models.Verfications
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Month without Data
+// @router /:id/verifications/:year/:month [get]
+func (c *WatchersController) GetWatchersVerificationsByMonth() {
+
+	yearString := c.Ctx.Input.Param(":year")
+	monthSring := c.Ctx.Input.Param(":month")
+
+	date, err := jodaTime.Parse("Y-M", yearString+"-"+monthSring)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	year, month, _ := date.Date()
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Supervisor")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	condo, err := models.GetCondosByID(condoID)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	// worker.MonthAssistances =  map[string]map[string]*models.Assistances{}
+
+	verifications, err := models.GetCondosVerificationsByMonth(condo.ID, year, month)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = verifications
+	c.ServeJSON()
+}
+
+// GenerateChangePasswordToken ..
+// @Title Generate Change Password Token
+// @Description Generate Change Password Token
+// @Accept json
+// @Success 200 {object} models.Watchers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 email without Data
+// @router /:email/change-password/ [post]
+func (c *WatchersController) GenerateChangePasswordToken() {
+
+	email := c.Ctx.Input.Param(":email")
+
+	if email == "" {
+		err := errors.New("missing email")
+		c.BadRequest(err)
+		return
+	}
+
+	worker, err := models.GetWorkersByEmail(email)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	watcher, err := models.GetWatchersByWorkersID(worker.ID)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	watcherID := strconv.Itoa(watcher.ID)
+	condoID := strconv.Itoa(worker.Condo.ID)
+
+	token, err := GenerateGeneralToken(watcherID, condoID, nil, nil, nil)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcher.Token = token
+	c.Data["json"] = watcher
+	c.ServeJSON()
+
+}
+
+//ChangePassword ..
+// @Title Change Password
+// @Description Change Password
+// @Accept json
+// @Success 200 {object} models.Watchers
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @router /change-password/:token [put]
+func (c *WatchersController) ChangePassword() {
+
+	token := c.Ctx.Input.Param(":token")
+
+	if token == "" {
+		err := errors.New("missing token")
+		c.BadRequest(err)
+		return
+	}
+
+	decodedToken, err := VerifyGeneralToken(token)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	var v models.Watchers
+
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if v.Password == "" {
+		err = errors.New("missing Password")
+		c.BadRequest(err)
+		return
+	}
+
+	watcherID, _ := strconv.Atoi(decodedToken.UserID)
+
+	watcher, err := models.GetWatchersByID(watcherID)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	watcher.Password = v.Password
+
+	err = models.UpdateWatchersByID(watcher)
 
 	if err != nil {
 		c.ServeErrorJSON(err)

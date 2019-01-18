@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/orm"
+	"github.com/vjeantet/jodaTime"
 
 	"github.com/astaxie/beego/validation"
 )
@@ -27,6 +28,7 @@ func (c *CondosController) URLMapping() {
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("GetSupervisorsByCondosID", c.GetSupervisorsByCondosID)
 	c.Mapping("GetByRUT", c.GetByRUT)
+	c.Mapping("GetSelfVerificationsByMonth", c.GetSelfVerificationsByMonth)
 }
 
 // Post ...
@@ -470,6 +472,83 @@ func (c *CondosController) AddWatcherToCondosByRUT() {
 	_, err = models.AddWatchers(&v)
 
 	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = v
+	c.ServeJSON()
+}
+
+//GetSelfVerificationsByMonth ..
+// @Title Get Self Verifications By Month
+// @Description Get Self Verifications By Month
+// @Accept json
+// @Param   Authorization     header   string true       "Supervisor's Token"
+// @Param   year     path   int true       "year's Date"
+// @Param   month     path   int true       "month's Date"
+// @Success 200 {array} models.Verfications
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Month without Data
+// @router /verifications/:year/:month [get]
+func (c *CondosController) GetSelfVerificationsByMonth() {
+
+	yearString := c.Ctx.Input.Param(":year")
+	monthSring := c.Ctx.Input.Param(":month")
+
+	date, err := jodaTime.Parse("Y-M", yearString+"-"+monthSring)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	year, month, _ := date.Date()
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Supervisor")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	condo, err := models.GetCondosByID(condoID)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	// worker.MonthAssistances =  map[string]map[string]*models.Assistances{}
+
+	verifications, err := models.GetCondosVerificationsByMonth(condo.ID, year, month)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	var v []*models.Verifications
+
+	for _, verification := range verifications {
+
+		if c.Ctx.Input.Query("supervisor-comment") == "true" && verification.SupervisorComment == "" {
+			continue
+		}
+
+		if c.Ctx.Input.Query("watcher-comment") == "true" && verification.WatcherComment == "" {
+			continue
+		}
+
+		v = append(v, verification)
+	}
+
+	if len(v) == 0 {
+		err = orm.ErrNoRows
 		c.ServeErrorJSON(err)
 		return
 	}

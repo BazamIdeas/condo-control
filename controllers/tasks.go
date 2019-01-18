@@ -4,6 +4,7 @@ import (
 	"condo-control/models"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -30,6 +31,7 @@ func (c *TasksController) URLMapping() {
 	c.Mapping("ChangeStatus", c.ChangeStatus)
 	c.Mapping("GetAllFromTrash", c.GetAllFromTrash)
 	c.Mapping("RestoreFromTrash", c.RestoreFromTrash)
+	c.Mapping("RequestTasks", c.RequestTasks)
 }
 
 // GetByCondosID ...
@@ -479,6 +481,77 @@ func (c *TasksController) ChangeStatus() {
 	}
 
 	c.Data["json"] = task
+	c.ServeJSON()
+
+}
+
+// RequestTasks ...
+// @Title Request Tasks
+// @Description Request Tasks
+// @Accept json
+// @Success 200 {string}
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @router /request/:id/supervisor [post]
+func (c *TasksController) RequestTasks() {
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	if token == "" {
+		err := errors.New("missing token")
+		c.BadRequest(err)
+		return
+	}
+
+	decodedToken, err := VerifyToken(token, "Watcher")
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	var reason string
+
+	defer func() {
+		fmt.Println(reason)
+	}()
+
+	watcherID, err := strconv.Atoi(decodedToken.UserID)
+	if err != nil {
+		reason = "watcherID"
+		c.BadRequest(err)
+		return
+	}
+
+	watcher, err := models.GetWatchersByID(watcherID)
+	if err != nil {
+		reason = "error DB watcher"
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	supervisorIDstr := c.Ctx.Input.Param(":id")
+
+	supervisorID, err := strconv.Atoi(supervisorIDstr)
+	if err != nil {
+		reason = "supervisorID"
+		c.BadRequest(err)
+		return
+	}
+
+	supervisor, err := models.GetSupervisorsByID(supervisorID)
+	if err != nil {
+		reason = "supervisor DB"
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	if supervisor.Worker.Condo.ID != watcher.Worker.Condo.ID {
+		c.BadRequest(err)
+		return
+	}
+
+	//TODO: EnVIAR correo
+
 	c.ServeJSON()
 
 }

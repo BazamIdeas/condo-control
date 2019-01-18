@@ -509,20 +509,20 @@ func (c *ItemsController) MakeCommentExecute() {
 		return
 	}
 
-	watcher, err := models.GetWatchersByID(watcherID)
+	_, err = models.GetWatchersByID(watcherID)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	_, faceFh, err := c.GetFile("faces")
+	/*_, faceFh, err := c.GetFile("faces")
 
 	if err != nil {
 		c.BadRequest(err)
 		return
 	}
 
-	_, ok, err := VerifyWorkerIdentity(watcher.Worker.ID, faceFh)
+	 _, ok, err := VerifyWorkerIdentity(watcher.Worker.ID, faceFh)
 
 	if err != nil {
 		c.BadRequest(err)
@@ -533,7 +533,7 @@ func (c *ItemsController) MakeCommentExecute() {
 		err = errors.New("Identity Verification Failed")
 		c.BadRequest(err)
 		return
-	}
+	} */
 
 	commentToken := c.Ctx.Input.Param(":token")
 	decCommentToken, err := VerifyGeneralToken(commentToken)

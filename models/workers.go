@@ -52,6 +52,13 @@ type Workers struct {
 	ImageMime        string                  `orm:"column(image_mime)" json:"-"`
 	FaceID           string                  `orm:"column(face_id)" json:"-"`
 	Approved         bool                    `orm:"column(approved)" json:"approved"`
+	RUT              string                  `orm:"column(rut);size(255);null" json:"rut,omitempty"`
+	Address          string                  `orm:"column(address);null" json:"address,omitempty"`
+	Phone            string                  `orm:"column(phone);null" json:"phone,omitempty"`
+	Community        string                  `orm:"column(community);null" json:"community,omitempty"`
+	Email            string                  `orm:"column(email);" json:"email,omitempty" valid:"Required"`
+	City             string                  `orm:"column(city);null" json:"city,omitempty"`
+	Country          string                  `orm:"column(country);null" json:"country,omitempty"`
 	TodayAssistances map[string]*Assistances `orm:"-" json:"today_assistances,omitempty"`
 	MonthData        *monthDetail            `orm:"-" json:"month_data,omitempty"`
 	YearData         *yearDetail             `orm:"-" json:"year_data,omitempty"`
@@ -101,6 +108,24 @@ func GetWorkersByID(id int) (v *Workers, err error) {
 	v = &Workers{ID: id}
 
 	err = searchFK(v.TableName(), v.ID).One(v)
+
+	if err != nil {
+		return nil, err
+	}
+
+	v.loadRelations()
+
+	return
+}
+
+// GetWorkersByEmail retrieves Workers by email. Returns error if
+// Id doesn't exist
+func GetWorkersByEmail(email string) (v *Workers, err error) {
+	v = &Workers{Email: email}
+
+	o := orm.NewOrm()
+
+	err = o.Read(v, "Email")
 
 	if err != nil {
 		return nil, err
