@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/validation"
 	"github.com/vjeantet/jodaTime"
 )
@@ -347,7 +348,7 @@ func (c *VerificationsController) NewRoute() {
 		return
 	}
 
-	now := time.Now()
+	now := time.Now().In(orm.DefaultTimeLoc)
 
 	if v.Points == nil {
 

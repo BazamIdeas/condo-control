@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"condo-control/controllers/services/mails"
 	"condo-control/models"
 	"encoding/json"
 	"errors"
@@ -468,7 +469,7 @@ func (c *TasksController) ChangeStatus() {
 	task.Approved = approved
 
 	if task.Approved {
-		task.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
+		task.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now().In(orm.DefaultTimeLoc))
 	} else {
 		task.DateEnd = ""
 	}
@@ -509,22 +510,14 @@ func (c *TasksController) RequestTasks() {
 		return
 	}
 
-	var reason string
-
-	defer func() {
-		fmt.Println(reason)
-	}()
-
 	watcherID, err := strconv.Atoi(decodedToken.UserID)
 	if err != nil {
-		reason = "watcherID"
 		c.BadRequest(err)
 		return
 	}
 
 	watcher, err := models.GetWatchersByID(watcherID)
 	if err != nil {
-		reason = "error DB watcher"
 		c.ServeErrorJSON(err)
 		return
 	}
@@ -533,14 +526,12 @@ func (c *TasksController) RequestTasks() {
 
 	supervisorID, err := strconv.Atoi(supervisorIDstr)
 	if err != nil {
-		reason = "supervisorID"
 		c.BadRequest(err)
 		return
 	}
 
 	supervisor, err := models.GetSupervisorsByID(supervisorID)
 	if err != nil {
-		reason = "supervisor DB"
 		c.ServeErrorJSON(err)
 		return
 	}
@@ -550,7 +541,28 @@ func (c *TasksController) RequestTasks() {
 		return
 	}
 
-	//TODO: EnVIAR correo
+	go func() {
+
+		params := &mails.HTMLParams{
+			WatcherName:    watcher.Worker.FirstName,
+			SupervisorName: supervisor.Worker.FirstName,
+			Date:           jodaTime.Format("Y-M-d HH:mm:ss", time.Now().In(orm.DefaultTimeLoc)),
+		}
+
+		fmt.Println(supervisor.Worker)
+
+		email := &mails.Email{
+			To:         []string{supervisor.Worker.Email},
+			Subject:    "Solicitud de Nueva Tarea",
+			HTMLParams: params,
+		}
+
+		err := mails.SendMail(email, "001")
+
+		if err != nil {
+			fmt.Println(err)
+		}
+	}()
 
 	c.ServeJSON()
 

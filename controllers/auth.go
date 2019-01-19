@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/astaxie/beego/orm"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
@@ -90,7 +91,7 @@ func VerifyTokenByAllUserTypes(ts string) (decodedToken *JwtToken, userType stri
 // GenerateToken =
 func (c *BaseController) GenerateToken(userType string, userID string, condoID string, timeArgs ...int) (token string, err error) {
 
-	now := time.Now()
+	now := time.Now().In(orm.DefaultTimeLoc)
 
 	timeValues := []int{1, 0, 0}
 
@@ -119,7 +120,7 @@ func (c *BaseController) GenerateToken(userType string, userID string, condoID s
 //GenerateGeneralToken ..
 func GenerateGeneralToken(userID string, condoID string, points []*models.Points, assistance *models.Assistances, item *models.Items) (token string, err error) {
 
-	now := time.Now()
+	now := time.Now().In(orm.DefaultTimeLoc)
 
 	// Create the Claims
 	claims := JwtTokenRoute{

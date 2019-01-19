@@ -191,7 +191,7 @@ func DeletePoints(id int, trash bool) (err error) {
 	if trash {
 		_, err = o.Delete(&v)
 	} else {
-		v.DeletedAt = time.Now()
+		v.DeletedAt = time.Now().In(orm.DefaultTimeLoc)
 		_, err = o.Update(&v)
 	}
 

@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/astaxie/beego/orm"
 	"github.com/vjeantet/jodaTime"
 )
 
@@ -333,7 +334,7 @@ func (c *ItemsController) ChangeStatus() {
 	item.Delivered = delivered
 
 	if item.Delivered {
-		item.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
+		item.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now().In(orm.DefaultTimeLoc))
 	} else {
 		item.DateEnd = ""
 	}

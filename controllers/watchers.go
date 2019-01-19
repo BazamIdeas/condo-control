@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"condo-control/controllers/services/mails"
 	"condo-control/models"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -672,6 +674,25 @@ func (c *WatchersController) GenerateChangePasswordToken() {
 		c.BadRequest(err)
 		return
 	}
+
+	go func() {
+		params := &mails.HTMLParams{
+			Token: token,
+			URL:   "condoapp://url",
+		}
+
+		email := &mails.Email{
+			To:         []string{email},
+			Subject:    "Cambio de Contraseña",
+			HTMLParams: params,
+		}
+
+		err := mails.SendMail(email, "002")
+
+		if err != nil {
+			fmt.Println(err)
+		}
+	}()
 
 	watcher.Token = token
 	c.Data["json"] = watcher

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 	"github.com/gorilla/websocket"
 )
 
@@ -37,7 +38,7 @@ var (
 )
 
 func newEvent(ep models.EventType, user string, condoID int, msg string) models.Event {
-	v := models.Event{Type: ep, User: user, Timestamp: int(time.Now().Unix()), Content: msg, CondoID: condoID}
+	v := models.Event{Type: ep, User: user, Timestamp: int(time.Now().In(orm.DefaultTimeLoc).Unix()), Content: msg, CondoID: condoID}
 	return v
 }
 

@@ -15,8 +15,13 @@ import (
 	gomail "gopkg.in/gomail.v2"
 )
 
+// HTMLParams ...
 type HTMLParams struct {
-	Token string
+	Token          string
+	WatcherName    string
+	SupervisorName string
+	Date           string
+	URL            string
 }
 
 //Email ...
@@ -41,7 +46,7 @@ var (
 
 var (
 	rootDir, _     = filepath.Abs(beego.AppConfig.String("assets::jumps"))
-	mailFolderPath = beego.AppConfig.String("assets::mailTemplatePath")
+	mailFolderPath = "controllers/services/mails/templates"
 	mailFolderDir  = rootDir + "/" + mailFolderPath
 )
 

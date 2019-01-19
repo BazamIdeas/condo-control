@@ -255,7 +255,7 @@ func DeleteWorkers(id int, trash bool) (err error) {
 	if trash {
 		_, err = o.Delete(&v)
 	} else {
-		v.DeletedAt = time.Now()
+		v.DeletedAt = time.Now().In(orm.DefaultTimeLoc)
 		_, err = o.Update(&v)
 	}
 
@@ -315,7 +315,7 @@ func GetWorkersByCondosID(condosID int) (workers []*Workers, err error) {
 func (t *Workers) GetTodayAssistances() (err error) {
 
 	o := orm.NewOrm()
-	todayDate := time.Now().Local().Format("2006-01-02")
+	todayDate := time.Now().In(orm.DefaultTimeLoc).Local().Format("2006-01-02")
 	todayAssistances := []*Assistances{}
 
 	qs := o.QueryTable("assistances").Filter("workers_id", t.ID)
@@ -685,7 +685,7 @@ func (t *Workers) GetYearAssistancesData(year int) (err error) {
 func (t *Workers) GetCurrentWorkTimeAssistances() (err error) {
 
 	o := orm.NewOrm()
-	//todayDate := time.Now().Local().Format("2006-01-02")
+	//todayDate := time.Now().In(orm.DefaultTimeLoc).Local().Format("2006-01-02")
 	lastAssistanceEntry := &Assistances{}
 
 	qs := o.QueryTable("assistances").Filter("workers_id", t.ID).Filter("type", "entry")

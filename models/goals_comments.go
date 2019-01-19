@@ -46,7 +46,7 @@ func AddGoalsComments(m *GoalsComments) (id int64, err error) {
 
 	o := orm.NewOrm()
 
-	now := jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
+	now := jodaTime.Format("Y-M-d HH:mm:ss", time.Now().In(orm.DefaultTimeLoc))
 	m.Date = now
 
 	id, err = o.Insert(m)
@@ -113,7 +113,7 @@ func DeleteGoalsComments(id int, trash bool) (err error) {
 	if trash {
 		_, err = o.Delete(&v)
 	} else {
-		v.DeletedAt = time.Now()
+		v.DeletedAt = time.Now().In(orm.DefaultTimeLoc)
 		_, err = o.Update(&v)
 	}
 

@@ -1,0 +1,1 @@
+<div>El Usuario <b>{{.WatcherName}}</b> ha solicitado la asignación de una Nueva Tarea ({{.Date}})</div>

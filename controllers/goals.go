@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/astaxie/beego/orm"
+
 	"github.com/astaxie/beego/validation"
 	"github.com/vjeantet/jodaTime"
 )
@@ -369,7 +371,7 @@ func (c *GoalsController) ChangeStatus() {
 	goal.Completed = completed
 
 	if goal.Completed {
-		goal.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now())
+		goal.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now().In(orm.DefaultTimeLoc).In(orm.DefaultTimeLoc))
 	} else {
 		goal.DateEnd = ""
 	}

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/validation"
 	"github.com/vjeantet/jodaTime"
 )
@@ -67,7 +68,7 @@ func (c *AssistancesController) Post() {
 		return
 	}
 
-	now := time.Now()
+	now := time.Now().In(orm.DefaultTimeLoc)
 
 	date, err := jodaTime.Parse("Y-M-d HH:mm:ss", v.Date)
 

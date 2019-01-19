@@ -873,7 +873,7 @@ func (c *WorkersController) DownloadAssistancesDataByYear() {
 
 	dateString := jodaTime.Format("Y-M", date)
 
-	http.ServeContent(c.Ctx.ResponseWriter, c.Ctx.Request, dateString+" data.csv", time.Now(), bytes.NewReader(buffer.Bytes()))
+	http.ServeContent(c.Ctx.ResponseWriter, c.Ctx.Request, dateString+" data.csv", time.Now().In(orm.DefaultTimeLoc), bytes.NewReader(buffer.Bytes()))
 
 }
 
@@ -981,6 +981,6 @@ func (c *WorkersController) DownloadAssistancesDataByMonth() {
 
 	dateString := jodaTime.Format("Y-M", date)
 
-	http.ServeContent(c.Ctx.ResponseWriter, c.Ctx.Request, dateString+"data.csv", time.Now(), bytes.NewReader(buffer.Bytes()))
+	http.ServeContent(c.Ctx.ResponseWriter, c.Ctx.Request, dateString+"data.csv", time.Now().In(orm.DefaultTimeLoc), bytes.NewReader(buffer.Bytes()))
 
 }
