@@ -595,8 +595,22 @@ func (c *WatchersController) GetWatchersVerificationsByMonth() {
 
 	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
 
-	condo, err := models.GetCondosByID(condoID)
+	_, err = models.GetCondosByID(condoID)
 
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	watcherIDstr := c.Ctx.Input.Param(":id")
+
+	watcherID, err := strconv.Atoi(watcherIDstr)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	watcher, err := models.GetWatchersByID(watcherID)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -604,7 +618,7 @@ func (c *WatchersController) GetWatchersVerificationsByMonth() {
 
 	// worker.MonthAssistances =  map[string]map[string]*models.Assistances{}
 
-	verifications, err := models.GetCondosVerificationsByMonth(condo.ID, year, month)
+	verifications, err := models.GetWatchersVerificationsByMonth(watcher.ID, year, month)
 
 	if err != nil {
 		c.ServeErrorJSON(err)

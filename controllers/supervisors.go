@@ -457,7 +457,7 @@ func (c *SupervisorsController) GenerateChangePasswordToken() {
 // @Title Change Password
 // @Description Change Password
 // @Accept json
-// @Success 200 {object} models.Watchers
+// @Success 200 {object} models.Supervisors
 // @Failure 400 Bad Request
 // @Failure 403 Invalid Token
 // @router /change-password/:token [put]

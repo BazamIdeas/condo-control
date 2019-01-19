@@ -183,7 +183,7 @@ func (c *AssistancesController) NewAssistanceExecute() {
 
 	worker := decAssistanceToken.Assistance.Worker
 
-	_, ok, err := VerifyWorkerIdentity(worker.ID, faceFh)
+	workerData, ok, err := VerifyWorkerIdentity(worker.ID, faceFh)
 
 	if err != nil {
 		c.BadRequest(err)
@@ -210,6 +210,8 @@ func (c *AssistancesController) NewAssistanceExecute() {
 		c.ServeErrorJSON(err)
 		return
 	}
+
+	publish <- newEvent(models.EventMessage, workerData.FirstName, workerData.Condo.ID, assistance.Type)
 
 	c.Data["json"] = assistance
 	c.ServeJSON()

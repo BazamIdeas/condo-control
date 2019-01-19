@@ -72,7 +72,8 @@ func (c *WebSocketController) Test() {
 // @router /join [get]
 func (c *WebSocketController) Join() {
 
-	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiU3VwZXJ2aXNvciIsInVzZXJfaWQiOiIxOCIsImNvbmRvX2lkIjoiMiIsImV4cCI6MTU0Nzc3MjE1NSwiaXNzIjoidGVzdCJ9.z_ewzKB6kRS4Z5iiUrnDAWmvIO4zS02JUecDe5z0Q3k" //c.Ctx.Input.Header("Authorization")
+	token := c.Ctx.Input.Query("token")
+	token = "Bearer " + token //c.Ctx.Input.Header("Authorization")
 
 	decodedToken, err := VerifyToken(token, "Supervisor")
 

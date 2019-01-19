@@ -272,7 +272,7 @@ func GetCondosVerificationsByMonth(condosID int, year int, month time.Month) (Ve
 	monthTarget := time.Date(year, month, 1, 1, 1, 1, 1, time.UTC)
 	monthTargetString := jodaTime.Format("Y-M-d", monthTarget)
 
-	qb.Select("verifications.*").From("verifications, watchers, workers").Where("workers.condos_id = ?").And("watchers.workers_id = workers.id").And("YEAR(verifications.date) = YEAR(?)").And("MONTH(verifications.date) = MONTH(?)").OrderBy("verifications.date").Desc()
+	qb.Select("verifications.*").From("verifications, watchers, workers").Where("workers.condos_id = ?").And("watchers.workers_id = workers.id").And("verifications.watchers_id = watchers.id").And("YEAR(verifications.date) = YEAR(?)").And("MONTH(verifications.date) = MONTH(?)").OrderBy("verifications.date").Desc()
 
 	sql := qb.String()
 
