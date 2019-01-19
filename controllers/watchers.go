@@ -625,7 +625,9 @@ func (c *WatchersController) GetWatchersVerificationsByMonth() {
 		return
 	}
 
-	c.Data["json"] = verifications
+	watcher.Verifications = verifications
+
+	c.Data["json"] = watcher
 	c.ServeJSON()
 }
 
