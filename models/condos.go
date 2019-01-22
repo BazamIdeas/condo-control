@@ -313,6 +313,8 @@ func GetCondosVerificationsByMonth(condosID int, year int, month time.Month) (Ve
 // GetCondosWorkersEmptyAssistancesByDate ...
 func GetCondosWorkersEmptyAssistancesByDate(condosID int, date time.Time) (emptyAssistancesWorkers *EmptyAssistancesWorkers, err error) {
 
+	w := &EmptyAssistancesWorkers{}
+
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	qb.Select("workers.*").From("workers").Where("workers.condos_id = ?").And("workers.id NOT IN(SELECT assistances.workers_id FROM assistances WHERE YEAR(assistances.date) = YEAR(?) AND MONTH(assistances.date) = MONTH(?) AND DAY(assistances.date) = DAY(?) AND assistances.type = ?)").OrderBy("workers.id").Desc()
@@ -337,16 +339,18 @@ func GetCondosWorkersEmptyAssistancesByDate(condosID int, date time.Time) (empty
 
 		switch assistanceType {
 		case "entry":
-			emptyAssistancesWorkers.Entry = workers
+			w.Entry = workers
 		case "break":
-			emptyAssistancesWorkers.Break = workers
+			w.Break = workers
 		case "finish-break":
-			emptyAssistancesWorkers.FinishBreak = workers
+			w.FinishBreak = workers
 		case "exit":
-			emptyAssistancesWorkers.Exit = workers
+			w.Exit = workers
 		}
 
 	}
+
+	emptyAssistancesWorkers = w
 
 	return
 }

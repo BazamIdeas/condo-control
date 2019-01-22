@@ -35,6 +35,7 @@ func (c *WatchersController) URLMapping() {
 	c.Mapping("GetByUsername", c.GetByUsername)
 	c.Mapping("ChangePublicInfo", c.ChangePublicInfo)
 	c.Mapping("ChangePassword", c.ChangePassword)
+	c.Mapping("GenerateChangePasswordToken", c.GenerateChangePasswordToken)
 
 }
 
