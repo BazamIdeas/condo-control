@@ -81,17 +81,17 @@ func init() {
 
 	beego.GlobalControllerRouter["condo-control/controllers:CondosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CondosController"],
 		beego.ControllerComments{
-			Method: "Post",
+			Method: "GetAll",
 			Router: `/`,
-			AllowHTTPMethods: []string{"post"},
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["condo-control/controllers:CondosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CondosController"],
 		beego.ControllerComments{
-			Method: "GetAll",
+			Method: "Post",
 			Router: `/`,
-			AllowHTTPMethods: []string{"get"},
+			AllowHTTPMethods: []string{"post"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -105,6 +105,14 @@ func init() {
 
 	beego.GlobalControllerRouter["condo-control/controllers:CondosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CondosController"],
 		beego.ControllerComments{
+			Method: "Delete",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:CondosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CondosController"],
+		beego.ControllerComments{
 			Method: "Put",
 			Router: `/:id`,
 			AllowHTTPMethods: []string{"put"},
@@ -113,9 +121,9 @@ func init() {
 
 	beego.GlobalControllerRouter["condo-control/controllers:CondosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CondosController"],
 		beego.ControllerComments{
-			Method: "Delete",
-			Router: `/:id`,
-			AllowHTTPMethods: []string{"delete"},
+			Method: "GetSelfEmptyVerificationsWorker",
+			Router: `/:id/empty-verifications/:date/workers`,
+			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 

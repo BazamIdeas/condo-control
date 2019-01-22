@@ -106,6 +106,42 @@ func (c *CondosController) GetOne() {
 	c.ServeJSON()
 }
 
+// GetSelfEmptyVerificationsWorker ...
+// @Title Get Self Empty Verifications Worker
+// @Description Get Self Empty Verifications Worker
+// @router /:id/empty-verifications/:date/workers [get]
+func (c *CondosController) GetSelfEmptyVerificationsWorker() {
+
+	idStr := c.Ctx.Input.Param(":id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condo, err := models.GetCondosByID(id)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	dateString := c.Ctx.Input.Param(":date")
+	date, err := jodaTime.Parse("Y-M-d", dateString)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	workersEmptyAssistances, err := models.GetCondosWorkersEmptyAssistancesByDate(condo.ID, date)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	c.Data["json"] = workersEmptyAssistances
+	c.ServeJSON()
+}
+
 // GetByRUT ...
 // @Title Get By RUT
 // @Description Ge tBy RUT

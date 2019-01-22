@@ -36,6 +36,14 @@ type Condos struct {
 	DeletedAt         time.Time      `orm:"column(deleted_at);type(datetime);null" json:"-"`
 }
 
+// EmptyAssistancesWorkers ...
+type EmptyAssistancesWorkers struct {
+	Entry       []*Workers `json:"entry,omitempty"`
+	Break       []*Workers `json:"break,omitempty"`
+	FinishBreak []*Workers `json:"finish_break,omitempty"`
+	Exit        []*Workers `json:"exit,omitempty"`
+}
+
 //TableName =
 func (t *Condos) TableName() string {
 	return "condos"
@@ -285,14 +293,13 @@ func GetCondosVerificationsByMonth(condosID int, year int, month time.Month) (Ve
 	}
 
 	for _, verification := range Verifications {
-		watcher, errW := GetWatchersByID(verification.Watcher.ID)
 
+		watcher, errW := GetWatchersByID(verification.Watcher.ID)
 		if errW == nil {
 			verification.Watcher = watcher
 		}
 
 		point, errP := GetPointsByID(verification.Point.ID)
-
 		if errP == nil {
 			verification.Point = point
 		}
@@ -301,4 +308,45 @@ func GetCondosVerificationsByMonth(condosID int, year int, month time.Month) (Ve
 
 	return
 
+}
+
+// GetCondosWorkersEmptyAssistancesByDate ...
+func GetCondosWorkersEmptyAssistancesByDate(condosID int, date time.Time) (emptyAssistancesWorkers *EmptyAssistancesWorkers, err error) {
+
+	qb, _ := orm.NewQueryBuilder("mysql")
+
+	qb.Select("workers.*").From("workers").Where("workers.condos_id = ?").And("workers.id NOT IN(SELECT assistances.workers_id FROM assistances WHERE YEAR(assistances.date) = YEAR(?) AND MONTH(assistances.date) = MONTH(?) AND DAY(assistances.date) = DAY(?) AND assistances.type = ?)").OrderBy("workers.id").Desc()
+
+	sql := qb.String()
+
+	assistanceTypes := []string{"entry", "break", "finish-break", "exit"}
+
+	for _, assistanceType := range assistanceTypes {
+
+		o := orm.NewOrm()
+
+		workers := []*Workers{}
+
+		dateStr := date.String()
+
+		_, err = o.Raw(sql, condosID, dateStr, dateStr, dateStr, assistanceType).QueryRows(&workers)
+
+		if err != nil && err != orm.ErrNoRows {
+			return
+		}
+
+		switch assistanceType {
+		case "entry":
+			emptyAssistancesWorkers.Entry = workers
+		case "break":
+			emptyAssistancesWorkers.Break = workers
+		case "finish-break":
+			emptyAssistancesWorkers.FinishBreak = workers
+		case "exit":
+			emptyAssistancesWorkers.Exit = workers
+		}
+
+	}
+
+	return
 }

@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/astaxie/beego/orm"
+
 	"github.com/vjeantet/jodaTime"
 
 	"github.com/astaxie/beego/validation"
@@ -184,7 +186,7 @@ func (c *WatchersController) GetByUsername() {
 	}
 
 	err = v.Worker.GetCurrentWorkTimeAssistances()
-	if err != nil {
+	if err != nil && err != orm.ErrNoRows {
 		c.ServeErrorJSON(err)
 		return
 	}
@@ -644,6 +646,13 @@ func (c *WatchersController) GetWatchersVerificationsByMonth() {
 // @router /:email/change-password/ [post]
 func (c *WatchersController) GenerateChangePasswordToken() {
 
+	url := c.GetString("url")
+	if url == "" {
+		err := errors.New("missing url")
+		c.BadRequest(err)
+		return
+	}
+
 	email := c.Ctx.Input.Param(":email")
 
 	if email == "" {
@@ -678,7 +687,7 @@ func (c *WatchersController) GenerateChangePasswordToken() {
 	go func() {
 		params := &mails.HTMLParams{
 			Token: token,
-			URL:   "condoapp://url",
+			URL:   url,
 		}
 
 		email := &mails.Email{
@@ -687,7 +696,7 @@ func (c *WatchersController) GenerateChangePasswordToken() {
 			HTMLParams: params,
 		}
 
-		err := mails.SendMail(email, "002")
+		err := mails.SendMail(email, "003")
 
 		if err != nil {
 			fmt.Println(err)
