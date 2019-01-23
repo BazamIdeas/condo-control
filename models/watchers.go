@@ -96,6 +96,12 @@ func GetWatchersByUsername(username string) (v *Watchers, err error) {
 		return nil, err
 	}
 
+	err = searchFK(v.Worker.TableName(), v.Worker.ID).One(v.Worker)
+
+	if err != nil {
+		return nil, err
+	}
+
 	v.loadRelations()
 
 	return
