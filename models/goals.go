@@ -90,10 +90,10 @@ func UpdateGoalsByID(m *Goals, ignoreStatus bool) (err error) {
 	}
 
 	m.Date = v.Date
-	m.DateEnd = v.DateEnd
 
 	if ignoreStatus {
 		m.Completed = v.Completed
+		m.DateEnd = v.DateEnd
 	}
 
 	_, err = o.Update(m)

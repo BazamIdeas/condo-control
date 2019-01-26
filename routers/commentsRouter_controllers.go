@@ -79,6 +79,54 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["condo-control/controllers:ChecksController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ChecksController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ChecksController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ChecksController"],
+		beego.ControllerComments{
+			Method: "GetOne",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ChecksController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ChecksController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ChecksController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ChecksController"],
+		beego.ControllerComments{
+			Method: "Delete",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ChecksController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ChecksController"],
+		beego.ControllerComments{
+			Method: "RestoreFromTrash",
+			Router: `/:id/restore`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ChecksController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ChecksController"],
+		beego.ControllerComments{
+			Method: "GetAllFromTrash",
+			Router: `/trashed`,
+			AllowHTTPMethods: []string{"patch"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 	beego.GlobalControllerRouter["condo-control/controllers:CondosController"] = append(beego.GlobalControllerRouter["condo-control/controllers:CondosController"],
 		beego.ControllerComments{
 			Method: "GetAll",
@@ -528,6 +576,102 @@ func init() {
 			Params: nil})
 
 	beego.GlobalControllerRouter["condo-control/controllers:NotificationsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:NotificationsController"],
+		beego.ControllerComments{
+			Method: "GetAllFromTrash",
+			Router: `/trashed`,
+			AllowHTTPMethods: []string{"patch"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"],
+		beego.ControllerComments{
+			Method: "GetOne",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"],
+		beego.ControllerComments{
+			Method: "Delete",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"],
+		beego.ControllerComments{
+			Method: "RestoreFromTrash",
+			Router: `/:id/restore`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ObjectsController"],
+		beego.ControllerComments{
+			Method: "GetAllFromTrash",
+			Router: `/trashed`,
+			AllowHTTPMethods: []string{"patch"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"],
+		beego.ControllerComments{
+			Method: "GetOne",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"],
+		beego.ControllerComments{
+			Method: "Delete",
+			Router: `/:id`,
+			AllowHTTPMethods: []string{"delete"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"],
+		beego.ControllerComments{
+			Method: "RestoreFromTrash",
+			Router: `/:id/restore`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"] = append(beego.GlobalControllerRouter["condo-control/controllers:OccurrencesController"],
 		beego.ControllerComments{
 			Method: "GetAllFromTrash",
 			Router: `/trashed`,

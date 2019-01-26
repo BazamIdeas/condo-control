@@ -29,6 +29,7 @@ type Condos struct {
 	Zones             []*Zones       `orm:"reverse(many)" json:"zone,omitempty"`
 	Workers           []*Workers     `orm:"reverse(many)" json:"workers,omitempty"`
 	Holidays          []*Holidays    `orm:"reverse(many)" json:"holidays,omitempty"`
+	Objects           []*Objects     `orm:"reverse(many);" json:"objects,omitempty"`
 	Watchers          []*Watchers    `orm:"-" json:"watchers,omitempty"`
 	Supervisors       []*Supervisors `orm:"-" json:"supervisors,omitempty"`
 	CreatedAt         time.Time      `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`

@@ -85,10 +85,9 @@ func UpdateItemsByID(m *Items, ignoreStatus bool) (err error) {
 		return
 	}
 
-	m.DateEnd = v.DateEnd
-
 	if ignoreStatus {
 		m.Delivered = v.Delivered
+		m.DateEnd = v.DateEnd
 	}
 
 	_, err = o.Update(m)

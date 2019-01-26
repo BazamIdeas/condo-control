@@ -97,6 +97,21 @@ func init() {
 				&controllers.NotificationsController{},
 			),
 		),
+		beego.NSNamespace("/checks",
+			beego.NSInclude(
+				&controllers.ChecksController{},
+			),
+		),
+		beego.NSNamespace("/occurrences",
+			beego.NSInclude(
+				&controllers.OccurrencesController{},
+			),
+		),
+		beego.NSNamespace("/objects",
+			beego.NSInclude(
+				&controllers.ObjectsController{},
+			),
+		),
 		beego.NSNamespace("/ws",
 			beego.NSInclude(
 				&controllers.WebSocketController{},
