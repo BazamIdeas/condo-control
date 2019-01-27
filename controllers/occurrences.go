@@ -67,7 +67,7 @@ func (c *OccurrencesController) Post() {
 
 	watcherID, _ := strconv.Atoi(decodedToken.UserID)
 
-	watcher, err := models.GetWatchersByID(watcherID)
+	_, err = models.GetWatchersByID(watcherID)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
