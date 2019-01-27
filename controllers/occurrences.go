@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"condo-control/controllers/services/files"
 	"condo-control/models"
 	"encoding/json"
 	"errors"
@@ -20,6 +21,7 @@ func (c *OccurrencesController) URLMapping() {
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("GetAllFromTrash", c.GetAllFromTrash)
 	c.Mapping("RestoreFromTrash", c.RestoreFromTrash)
+	c.Mapping("GetAttachmentByUUID", c.GetAttachmentByUUID)
 }
 
 // Post ...
@@ -114,6 +116,20 @@ func (c *OccurrencesController) Post() {
 		err = errors.New("Identity Verification Failed")
 		c.BadRequest(err)
 		return
+	}
+
+	_, fileFh, err := c.GetFile("files")
+
+	if err == nil {
+		fileUUID, mimeType, err := files.CreateFile(fileFh, "occurrences")
+
+		if err != nil {
+			c.BadRequest(err)
+			return
+		}
+
+		v.ImageUUID = fileUUID
+		v.ImageMime = mimeType
 	}
 
 	_, err = models.AddOccurrences(&v)
@@ -278,5 +294,32 @@ func (c *OccurrencesController) RestoreFromTrash() {
 
 	c.Data["json"] = v
 	c.ServeJSON()
+
+}
+
+// GetAttachmentByUUID ...
+// @Title Get  By UUID
+// @Description Get file By UUID
+// @router /attachment/:uuid [get]
+func (c *OccurrencesController) GetAttachmentByUUID() {
+
+	uuid := c.Ctx.Input.Param(":uuid")
+
+	if uuid == "" {
+		c.Ctx.Output.SetStatus(400)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	imageBytes, mimeType, err := files.GetFile(uuid, "occurrences")
+	if err != nil {
+		c.Ctx.Output.SetStatus(404)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
+	c.Ctx.Output.Header("Content-Type", mimeType)
+	c.Ctx.Output.SetStatus(200)
+	c.Ctx.Output.Body(imageBytes)
 
 }
