@@ -71,8 +71,33 @@ func (c *ChecksController) Post() {
 		return
 	}
 
-	if v.Worker == nil || v.Worker.ID == 0 {
-		err = errors.New("worker data is missing")
+	watcherID, _ := strconv.Atoi(decodedToken.UserID)
+
+	watcher, err := models.GetWatchersByID(watcherID)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	v.Worker = watcher.Worker
+
+	_, faceFh, err := c.GetFile("faces")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, ok, err := VerifyWorkerIdentity(watcher.Worker.ID, faceFh)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if !ok {
+		err = errors.New("Identity Verification Failed")
 		c.BadRequest(err)
 		return
 	}
