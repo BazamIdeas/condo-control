@@ -115,26 +115,6 @@ func (c *OccurrencesController) Post() {
 		return
 	}
 
-	_, faceFh, err := c.GetFile("faces")
-
-	if err != nil {
-		c.BadRequest(err)
-		return
-	}
-
-	_, ok, err := VerifyWorkerIdentity(watcher.Worker.ID, faceFh)
-
-	if err != nil {
-		c.BadRequest(err)
-		return
-	}
-
-	if !ok {
-		err = errors.New("Identity Verification Failed")
-		c.BadRequest(err)
-		return
-	}
-
 	_, fileFh, err := c.GetFile("files")
 
 	if err == nil {
