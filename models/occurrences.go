@@ -13,7 +13,6 @@ import (
 //Occurrences Model
 type Occurrences struct {
 	ID        int       `orm:"column(id);pk" json:"id,omitempty"`
-	Date      string    `orm:"column(date);type(datetime);" json:"date,omitempty" valid:"Required"`
 	Comment   string    `orm:"column(comment);" json:"comment,omitempty" valid:"Required"`
 	ImageUUID string    `orm:"column(image_uuid);" json:"image_uuid,omitempty"`
 	ImageMime string    `orm:"column(image_mime);" json:"image_mime,omitempty"`

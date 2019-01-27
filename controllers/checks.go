@@ -5,8 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"time"
 
+	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/validation"
+	"github.com/vjeantet/jodaTime"
 )
 
 // ChecksController operations for Holidays
@@ -30,6 +33,20 @@ func (c *ChecksController) URLMapping() {
 // @router / [post]
 func (c *ChecksController) Post() {
 
+	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
+
+	if err != nil {
+		c.Ctx.Output.SetStatus(413)
+		c.ServeJSON()
+		return
+	}
+
+	if !c.Ctx.Input.IsUpload() {
+		err := errors.New("Not image file found on request")
+		c.BadRequest(err)
+		return
+	}
+
 	token := c.Ctx.Input.Header("Authorization")
 
 	decodedToken, err := VerifyToken(token, "Watcher")
@@ -51,15 +68,22 @@ func (c *ChecksController) Post() {
 		return
 	}
 
-	var v models.Checks
+	/* 	var v models.Checks
 
-	// Validate empty body
+	   	// Validate empty body
 
-	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	   	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
-	if err != nil {
-		c.BadRequest(err)
-		return
+	   	if err != nil {
+	   		c.BadRequest(err)
+	   		return
+	   	} */
+
+	var r = c.Ctx.Request
+
+	v := models.Checks{
+		Comment: r.FormValue("comment"),
+		Date:    jodaTime.Format("Y-M-d HH:mm:ss", time.Now().In(orm.DefaultTimeLoc)),
 	}
 
 	valid := validation.Validation{}

@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
-
-	"github.com/astaxie/beego/validation"
 )
 
 // OccurrencesController operations for Holidays
@@ -30,6 +28,20 @@ func (c *OccurrencesController) URLMapping() {
 // @router / [post]
 func (c *OccurrencesController) Post() {
 
+	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
+
+	if err != nil {
+		c.Ctx.Output.SetStatus(413)
+		c.ServeJSON()
+		return
+	}
+
+	if !c.Ctx.Input.IsUpload() {
+		err := errors.New("Not image file found on request")
+		c.BadRequest(err)
+		return
+	}
+
 	token := c.Ctx.Input.Header("Authorization")
 
 	decodedToken, err := VerifyToken(token, "Watcher")
@@ -51,23 +63,24 @@ func (c *OccurrencesController) Post() {
 		return
 	}
 
-	var v models.Occurrences
+	watcherID, _ := strconv.Atoi(decodedToken.UserID)
 
-	// Validate empty body
-
-	err = json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	watcher, err := models.GetWatchersByID(watcherID)
 
 	if err != nil {
-		c.BadRequest(err)
+		c.ServeErrorJSON(err)
 		return
 	}
 
-	valid := validation.Validation{}
+	var r = c.Ctx.Request
 
-	b, _ := valid.Valid(&v)
+	v := models.Occurrences{
+		Comment: r.FormValue("comment"),
+	}
 
-	if !b {
-		c.BadRequestErrors(valid.Errors, v.TableName())
+	if v.Comment == "" {
+		err = errors.New("Comment data is missing")
+		c.BadRequest(err)
 		return
 	}
 
@@ -79,6 +92,26 @@ func (c *OccurrencesController) Post() {
 
 	if v.Check == nil || v.Check.ID == 0 {
 		err = errors.New("check data is missing")
+		c.BadRequest(err)
+		return
+	}
+
+	_, faceFh, err := c.GetFile("faces")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, ok, err := VerifyWorkerIdentity(watcher.Worker.ID, faceFh)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if !ok {
+		err = errors.New("Identity Verification Failed")
 		c.BadRequest(err)
 		return
 	}
