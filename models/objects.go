@@ -28,7 +28,7 @@ func (t *Objects) loadRelations() {
 
 	o := orm.NewOrm()
 
-	relations := []string{}
+	relations := []string{"Occurrences"}
 
 	for _, relation := range relations {
 		o.LoadRelated(t, relation)
