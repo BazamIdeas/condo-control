@@ -86,6 +86,23 @@ func (c *OccurrencesController) Post() {
 		return
 	}
 
+	var object models.Objects
+	err = json.Unmarshal([]byte(r.FormValue("objects")), &object)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	var check models.Checks
+	err = json.Unmarshal([]byte(r.FormValue("checks")), &check)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	v.Check = &check
+	v.Object = &object
+
 	if v.Object == nil || v.Object.ID == 0 {
 		err = errors.New("object data is missing")
 		c.BadRequest(err)
