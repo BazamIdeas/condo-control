@@ -13,6 +13,8 @@ import (
 
 	"github.com/vjeantet/jodaTime"
 
+	b64 "encoding/base64"
+
 	"github.com/astaxie/beego/validation"
 )
 
@@ -35,6 +37,7 @@ func (c *WatchersController) URLMapping() {
 	c.Mapping("GetByUsername", c.GetByUsername)
 	c.Mapping("ChangePublicInfo", c.ChangePublicInfo)
 	c.Mapping("ChangePassword", c.ChangePassword)
+	c.Mapping("RedirectChangePassword", c.RedirectChangePassword)
 	c.Mapping("GenerateChangePasswordToken", c.GenerateChangePasswordToken)
 
 }
@@ -687,8 +690,9 @@ func (c *WatchersController) GenerateChangePasswordToken() {
 
 	go func() {
 		params := &mails.HTMLParams{
-			Token: token,
-			URL:   url,
+			Token:  token,
+			URL:    c.URLFor("RedirectChangePassword"),
+			Base64: b64.URLEncoding.EncodeToString([]byte(url)),
 		}
 
 		email := &mails.Email{
@@ -707,6 +711,29 @@ func (c *WatchersController) GenerateChangePasswordToken() {
 	watcher.Token = token
 	c.Data["json"] = watcher
 	c.ServeJSON()
+
+}
+
+//RedirectChangePassword ..
+// @Title Redirect Change Password
+// @Description Redirect Change Password
+// @Accept json
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @router /change-password/redirect [get]
+func (c *WatchersController) RedirectChangePassword() {
+
+	token := c.GetString("token")
+	base64 := c.GetString("base64")
+
+	urlBytes, err := b64.URLEncoding.DecodeString(base64)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	c.Redirect(string(urlBytes)+"/"+token, 301)
 
 }
 

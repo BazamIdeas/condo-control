@@ -29,6 +29,8 @@ func (c *CondosController) URLMapping() {
 	c.Mapping("GetSupervisorsByCondosID", c.GetSupervisorsByCondosID)
 	c.Mapping("GetByRUT", c.GetByRUT)
 	c.Mapping("GetSelfVerificationsByMonth", c.GetSelfVerificationsByMonth)
+	c.Mapping("GetSelfChecksByDate", c.GetSelfChecksByDate)
+	c.Mapping("GetSelfChecksByMonth", c.GetSelfChecksByMonth)
 }
 
 // Post ...
@@ -590,5 +592,104 @@ func (c *CondosController) GetSelfVerificationsByMonth() {
 	}
 
 	c.Data["json"] = v
+	c.ServeJSON()
+}
+
+//GetSelfChecksByMonth ..
+// @Title Get Self Checks By Month
+// @Description Get Self Checks By Month
+// @Accept json
+// @Param   Authorization     header   string true       "Supervisor's Token"
+// @Param   year     path   int true       "year's Date"
+// @Param   month     path   int true       "month's Date"
+// @Success 200 {array} models.Checks
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Month without Data
+// @router /checks/:year/:month [get]
+func (c *CondosController) GetSelfChecksByMonth() {
+
+	yearString := c.Ctx.Input.Param(":year")
+	monthSring := c.Ctx.Input.Param(":month")
+
+	date, err := jodaTime.Parse("Y-M", yearString+"-"+monthSring)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	year, month, _ := date.Date()
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Supervisor")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	condo, err := models.GetCondosByID(condoID)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	checks, err := models.GetCondosChecksByMonth(condo.ID, year, month)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = checks
+	c.ServeJSON()
+}
+
+//GetSelfChecksByDate ..
+// @Title Get Self Checks By Date
+// @Description Get Self Checks By Date
+// @Accept json
+// @Param   Authorization     header   string true       "Supervisor's Token"
+// @Success 200 {array} models.Checks
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Month without Data
+// @router /checks/:date [get]
+func (c *CondosController) GetSelfChecksByDate() {
+
+	dateString := c.Ctx.Input.Param(":date")
+	date, err := jodaTime.Parse("Y-M-d", dateString)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decAuthToken, err := VerifyToken(authToken, "Supervisor")
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+
+	condo, err := models.GetCondosByID(condoID)
+
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	checks, err := models.GetCondosChecksByDate(condo.ID, date)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	}
+
+	c.Data["json"] = checks
 	c.ServeJSON()
 }

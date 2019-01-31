@@ -22,6 +22,7 @@ type HTMLParams struct {
 	SupervisorName string
 	Date           string
 	URL            string
+	Base64         string
 }
 
 //Email ...

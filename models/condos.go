@@ -355,3 +355,52 @@ func GetCondosWorkersEmptyAssistancesByDate(condosID int, date time.Time) (empty
 
 	return
 }
+
+func GetCondosChecksByDate(condoID int, date time.Time) (checks []*Checks, err error) {
+
+	qb, _ := orm.NewQueryBuilder("mysql")
+
+	qb.Select("checks.*").From("checks", "workers").Where("workers.condos_id = ?").And("workers.id = checks.workers_id").And("checks.date = ?").OrderBy("checks.id").Desc()
+
+	sql := qb.String()
+
+	v := []*Checks{}
+
+	o := orm.NewOrm()
+
+	_, err = o.Raw(sql, condoID, date.String()).QueryRows(&v)
+
+	if err != nil {
+		return
+	}
+
+	checks = v
+
+	return
+}
+
+func GetCondosChecksByMonth(condoID int, year int, month time.Month) (checks []*Checks, err error) {
+
+	qb, _ := orm.NewQueryBuilder("mysql")
+
+	qb.Select("checks.*").From("checks", "workers").Where("workers.condos_id = ?").And("workers.id = checks.workers_id").And("YEAR(checks.date) = YEAR(?)").And("MONTH(checks.date) = MONTH(?)").OrderBy("checks.id").Desc()
+
+	sql := qb.String()
+
+	v := []*Checks{}
+
+	o := orm.NewOrm()
+
+	monthTarget := time.Date(year, month, 1, 1, 1, 1, 1, time.UTC)
+	monthTargetString := jodaTime.Format("Y-M-d", monthTarget)
+
+	_, err = o.Raw(sql, condoID, monthTargetString, monthTargetString).QueryRows(&v)
+
+	if err != nil {
+		return
+	}
+
+	checks = v
+
+	return
+}

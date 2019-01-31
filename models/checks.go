@@ -221,14 +221,3 @@ func GetChecksFromTrash() (checks []*Checks, err error) {
 	return
 
 }
-
-//AddManyChecks ...
-func AddManyChecks(checks []*Checks) (err error) {
-
-	o := orm.NewOrm()
-
-	_, err = o.InsertMulti(200, &checks)
-
-	return
-
-}
