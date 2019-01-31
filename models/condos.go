@@ -374,6 +374,10 @@ func GetCondosChecksByDate(condoID int, date time.Time) (checks []*Checks, err e
 		return
 	}
 
+	for _, check := range v {
+		searchFK(check.TableName(), check.ID).One(check)
+	}
+
 	checks = v
 
 	return
@@ -398,6 +402,10 @@ func GetCondosChecksByMonth(condoID int, year int, month time.Month) (checks []*
 
 	if err != nil {
 		return
+	}
+
+	for _, check := range v {
+		searchFK(check.TableName(), check.ID).One(check)
 	}
 
 	checks = v
