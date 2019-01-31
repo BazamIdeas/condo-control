@@ -729,11 +729,16 @@ func (c *WatchersController) RedirectChangePassword() {
 	urlBytes, err := b64.URLEncoding.DecodeString(base64)
 
 	if err != nil {
-		c.BadRequest(err)
 		return
 	}
 
-	c.Redirect(string(urlBytes)+"/"+token, 301)
+	c.Ctx.Output.Body([]byte(`<div>
+			<a style="color: white; text-decoration: none;" href="` + string(urlBytes) + `/` + token + `">
+				<button style="backround-color: #ee7203; border: none; border-radius: 3px; padding: 7px 14px; font-size: 16px; color:  white;">CAMBIAR CONTRASEÑA</button>
+			</a>
+		</div>`))
+
+	//c.Redirect(string(urlBytes)+"/"+token, 301)
 
 }
 
