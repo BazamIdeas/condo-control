@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/astaxie/beego/orm"
 	"condo-control/models"
 	"encoding/json"
 	"strconv"
@@ -235,4 +236,49 @@ func (c *ObjectsController) RestoreFromTrash() {
 	c.Data["json"] = v
 	c.ServeJSON()
 
+}
+
+
+
+// GetSelf ...
+// @Title Get Self
+// @Description Get Self
+// @Accept json
+// @Param   Authorization     header   string true       "Watcher's Token or Supervisor's Token"
+// @Success 200 {array} models.Objects
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @Failure 404 Objects Don't Exists
+// @router /self [get]
+func (c *ObjectsController) GetSelf() {
+
+	token := c.Ctx.Input.Header("Authorization")
+
+	decodedToken, _, err := VerifyTokenByAllUserTypes(token)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, err := strconv.Atoi(decodedToken.CondoID)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condos, err := models.GetCondosByID(condoID)
+	if err != nil {
+		c.BadRequestDontExists("Condos")
+		return
+	}
+
+	if condos.Objects == nil || count(condos.Objects) == 0 {
+		err = orm.ErrNoRows
+		c.ServeErrorJSON(err)
+		return
+	}
+
+
+	c.Data["json"] = condos.Objects
+	c.ServeJSON()
 }
