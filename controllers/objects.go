@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego/orm"
 	"condo-control/models"
 	"encoding/json"
 	"strconv"
+
+	"github.com/astaxie/beego/orm"
 
 	"github.com/astaxie/beego/validation"
 )
@@ -238,8 +239,6 @@ func (c *ObjectsController) RestoreFromTrash() {
 
 }
 
-
-
 // GetSelf ...
 // @Title Get Self
 // @Description Get Self
@@ -272,12 +271,11 @@ func (c *ObjectsController) GetSelf() {
 		return
 	}
 
-	if condos.Objects == nil || count(condos.Objects) == 0 {
+	if condos.Objects == nil || len(condos.Objects) == 0 {
 		err = orm.ErrNoRows
 		c.ServeErrorJSON(err)
 		return
 	}
-
 
 	c.Data["json"] = condos.Objects
 	c.ServeJSON()
