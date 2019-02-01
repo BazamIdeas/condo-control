@@ -378,6 +378,14 @@ func GetCondosChecksByDate(condoID int, date time.Time) (checks []*Checks, err e
 		searchFK(check.TableName(), check.ID).One(check)
 
 		check.loadRelations()
+
+		if check.Occurrences == nil || len(check.Occurrences) == 0 {
+			continue
+		}
+
+		for _, occurrence := range check.Occurrences {
+			searchFK(occurrence.TableName(), occurrence.ID).One(occurrence)
+		}
 	}
 
 	checks = v
@@ -410,6 +418,14 @@ func GetCondosChecksByMonth(condoID int, year int, month time.Month) (checks []*
 		searchFK(check.TableName(), check.ID).One(check)
 
 		check.loadRelations()
+
+		if check.Occurrences == nil || len(check.Occurrences) == 0 {
+			continue
+		}
+
+		for _, occurrence := range check.Occurrences {
+			searchFK(occurrence.TableName(), occurrence.ID).One(occurrence)
+		}
 	}
 
 	checks = v
