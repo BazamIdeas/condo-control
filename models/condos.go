@@ -376,6 +376,8 @@ func GetCondosChecksByDate(condoID int, date time.Time) (checks []*Checks, err e
 
 	for _, check := range v {
 		searchFK(check.TableName(), check.ID).One(check)
+
+		check.loadRelations()
 	}
 
 	checks = v
@@ -406,6 +408,8 @@ func GetCondosChecksByMonth(condoID int, year int, month time.Month) (checks []*
 
 	for _, check := range v {
 		searchFK(check.TableName(), check.ID).One(check)
+
+		check.loadRelations()
 	}
 
 	checks = v
