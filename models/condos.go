@@ -29,7 +29,9 @@ type Condos struct {
 	Zones             []*Zones       `orm:"reverse(many)" json:"zone,omitempty"`
 	Workers           []*Workers     `orm:"reverse(many)" json:"workers,omitempty"`
 	Holidays          []*Holidays    `orm:"reverse(many)" json:"holidays,omitempty"`
-	Objects           []*Objects     `orm:"reverse(many);" json:"objects,omitempty"`
+	Objects           []*Objects     `orm:"reverse(many)" json:"objects,omitempty"`
+	Residents         []*Residents   `orm:"reverse(many)" json:"residents,omitempty"`
+	Questions         []*Questions   `orm:"reverse(many)" json:"questions,omitempty"`
 	Watchers          []*Watchers    `orm:"-" json:"watchers,omitempty"`
 	Supervisors       []*Supervisors `orm:"-" json:"supervisors,omitempty"`
 	CreatedAt         time.Time      `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
@@ -54,7 +56,7 @@ func (t *Condos) loadRelations() {
 
 	o := orm.NewOrm()
 
-	relations := []string{"Zones", "Workers", "Holidays", "Objects"}
+	relations := []string{"Zones", "Workers", "Holidays", "Objects", "Residents"}
 
 	for _, relation := range relations {
 		o.LoadRelated(t, relation)
@@ -356,6 +358,7 @@ func GetCondosWorkersEmptyAssistancesByDate(condosID int, date time.Time) (empty
 	return
 }
 
+// GetCondosChecksByDate ...
 func GetCondosChecksByDate(condoID int, date time.Time) (checks []*Checks, err error) {
 
 	qb, _ := orm.NewQueryBuilder("mysql")
@@ -393,6 +396,7 @@ func GetCondosChecksByDate(condoID int, date time.Time) (checks []*Checks, err e
 	return
 }
 
+//GetCondosChecksByMonth ...
 func GetCondosChecksByMonth(condoID int, year int, month time.Month) (checks []*Checks, err error) {
 
 	qb, _ := orm.NewQueryBuilder("mysql")

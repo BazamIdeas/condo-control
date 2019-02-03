@@ -36,7 +36,7 @@ type JwtTokenRoute struct {
 var hmacSecret = []byte("bazam")
 
 //UserTypes array
-var UserTypes = []string{"Admin", "Watcher", "Supervisor"}
+var UserTypes = []string{"Admin", "Watcher", "Supervisor", "Resident"}
 
 //VerifyToken =
 func VerifyToken(tokenString string, userType string) (decodedToken *JwtToken, err error) {

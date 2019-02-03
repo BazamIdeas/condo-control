@@ -112,6 +112,26 @@ func init() {
 				&controllers.ObjectsController{},
 			),
 		),
+		beego.NSNamespace("/residents",
+			beego.NSInclude(
+				&controllers.ResidentsController{},
+			),
+		),
+		beego.NSNamespace("/questions",
+			beego.NSInclude(
+				&controllers.QuestionsController{},
+			),
+		),
+		beego.NSNamespace("/votes",
+			beego.NSInclude(
+				&controllers.VotesController{},
+			),
+		),
+		beego.NSNamespace("/questions-attachments",
+			beego.NSInclude(
+				&controllers.QuestionsAttachmentsController{},
+			),
+		),
 		beego.NSNamespace("/ws",
 			beego.NSInclude(
 				&controllers.WebSocketController{},
