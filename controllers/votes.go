@@ -38,11 +38,42 @@ func (c *VotesController) URLMapping() {
 // @Failure 409 Condo's Zone Limit reached
 // @router / [post]
 func (c *VotesController) Post() {
+
+	err := c.Ctx.Input.ParseFormOrMulitForm(128 << 20)
+	if err != nil {
+		c.Ctx.Output.SetStatus(413)
+		c.ServeJSON()
+		return
+	}
+
+	if !c.Ctx.Input.IsUpload() {
+		err := errors.New("Not image file found on request")
+		c.BadRequest(err)
+		return
+	}
+
+	authToken := c.Ctx.Input.Header("Authorization")
+	decodedToken, err := VerifyToken(authToken, "Resident")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	condoID, _ := strconv.Atoi(decodedToken.CondoID)
+
+	_, err = models.GetCondosByID(condoID)
+	if err != nil {
+		c.BadRequestDontExists("Condos")
+		return
+	}
+
+	var r = c.Ctx.Request
 	var v models.Votes
 
 	// Validate empty body
 
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	err = json.Unmarshal([]byte(r.FormValue("data")), &v)
 
 	if err != nil {
 		c.BadRequest(err)
@@ -66,26 +97,32 @@ func (c *VotesController) Post() {
 		return
 	}
 
-	if v.Resident == nil || v.Resident.ID == 0 {
-		err = errors.New("Resident data is missing")
-		c.BadRequest(err)
-		return
-	}
+	residentID, _ := strconv.Atoi(decodedToken.UserID)
 
-	authToken := c.Ctx.Input.Header("Authorization")
-	decAuthToken, err := VerifyToken(authToken, "Supervisor")
-
-	if err != nil {
-		c.BadRequest(err)
-		return
-	}
-
-	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
-
-	_, err = models.GetCondosByID(condoID)
+	resident, err := models.GetResidentsByID(residentID)
 
 	if err != nil {
 		c.ServeErrorJSON(err)
+		return
+	}
+
+	_, faceFh, err := c.GetFile("faces")
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	_, ok, err := VerifyResidentIdentity(resident.ID, faceFh)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if !ok {
+		err = errors.New("Identity Verification Failed")
+		c.BadRequest(err)
 		return
 	}
 

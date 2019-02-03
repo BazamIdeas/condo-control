@@ -7,11 +7,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"mime/multipart"
 	"strconv"
 	"strings"
 
 	b64 "encoding/base64"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
 )
 
@@ -748,4 +750,49 @@ func (c *ResidentsController) GetByEmail() {
 
 	c.Data["json"] = v
 	c.ServeJSON()
+}
+
+//VerifyResidentIdentity ...
+func VerifyResidentIdentity(residentID int, newFaceFh *multipart.FileHeader) (resident *models.Residents, ok bool, err error) {
+
+	resident, err = models.GetResidentsByID(residentID)
+
+	if err != nil {
+		return
+	}
+
+	oldImageUUID := resident.ImageUUID
+	if oldImageUUID == "" {
+		err = errors.New("Resident lack registered Face")
+		return
+	}
+
+	facesDebug, _ := beego.AppConfig.Bool("faces::debug")
+
+	if facesDebug {
+		ok = true
+		return
+	}
+
+	newImageUUID, _, err := faces.CreateFaceFile(newFaceFh)
+
+	if err != nil {
+		return
+	}
+
+	defer faces.DeleteFaceFile(newImageUUID)
+
+	newFaceID, err := faces.CreateFaceID(newImageUUID)
+	if err != nil {
+		return
+	}
+
+	oldFaceID, err := faces.CreateFaceID(oldImageUUID)
+	if err != nil {
+		return
+	}
+
+	ok, err = faces.CompareFacesIDs(oldFaceID, newFaceID)
+
+	return
 }
