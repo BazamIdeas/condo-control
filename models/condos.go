@@ -56,7 +56,7 @@ func (t *Condos) loadRelations() {
 
 	o := orm.NewOrm()
 
-	relations := []string{"Zones", "Workers", "Holidays", "Objects", "Residents"}
+	relations := []string{"Zones", "Workers", "Holidays", "Objects", "Residents", "Questions"}
 
 	for _, relation := range relations {
 		o.LoadRelated(t, relation)
