@@ -19,6 +19,7 @@ type Questions struct {
 	Approved             bool                    `orm:"column(approved);" json:"approved,omitempty" `
 	Description          string                  `orm:"column(description);" json:"description,omitempty"`
 	CommitteeOnly        bool                    `orm:"column(committee_only);" json:"committee_only,omitempty"`
+	Price                float32                 `orm:"column(price);null" json:"price,omitempty"`
 	Condo                *Condos                 `orm:"rel(fk);column(condos_id)" json:"condos,omitempty"`
 	Votes                []*Votes                `orm:"reverse(many)" json:"votes,omitempty"`
 	QuestionsAttachments []*QuestionsAttachments `orm:"reverse(many)" json:"attachments,omitempty"`
@@ -36,7 +37,7 @@ func (t *Questions) loadRelations() {
 
 	o := orm.NewOrm()
 
-	relations := []string{"Votes"}
+	relations := []string{"Votes", "QuestionsAttachments"}
 
 	for _, relation := range relations {
 		o.LoadRelated(t, relation)

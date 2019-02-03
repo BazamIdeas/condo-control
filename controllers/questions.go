@@ -178,6 +178,12 @@ func (c *QuestionsController) GetSelf() {
 		return
 	}
 
+	if v.Questions == nil || len(v.Questions) == 0 {
+		err = orm.ErrNoRows
+		c.BadRequest(err)
+		return
+	}
+
 	c.Data["json"] = v.Questions
 	c.ServeJSON()
 }
