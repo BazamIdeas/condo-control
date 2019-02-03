@@ -239,6 +239,10 @@ func GetQuestionsByCondosID(condoID int) (questions []*Questions, err error) {
 		return
 	}
 
+	for _, question := range v {
+		question.loadRelations()
+	}
+
 	questions = v
 
 	return
