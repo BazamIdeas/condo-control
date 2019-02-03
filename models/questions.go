@@ -225,3 +225,23 @@ func GetQuestionsFromTrash() (questions []*Questions, err error) {
 	return
 
 }
+
+
+//GetQuestionsByCondosID return Questions by condo's id
+func GetQuestionsByCondosID(condoID int) (questions []*Questions, err error) {
+
+	o := orm.NewOrm()
+
+	var v []*Questions
+
+	_, err = o.QueryTable("questions").Filter("deleted_at__isnull", false).Filter("condos_id", condoID).All(&v)
+
+	if err != nil {
+		return
+	}
+
+	questions = v
+
+	return
+
+}

@@ -172,19 +172,13 @@ func (c *QuestionsController) GetSelf() {
 		return
 	}
 	//TODO: use another function, filter by deleted needed
-	v, err := models.GetCondosByID(id)
+	v, err := models.GetQuestionsByCondosID(id)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	if v.Questions == nil || len(v.Questions) == 0 {
-		err = orm.ErrNoRows
-		c.BadRequest(err)
-		return
-	}
-
-	c.Data["json"] = v.Questions
+	c.Data["json"] = v
 	c.ServeJSON()
 }
 
