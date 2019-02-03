@@ -3,9 +3,14 @@ package controllers
 import (
 	"condo-control/models"
 	"encoding/json"
+	"errors"
 	"strconv"
+	"time"
 
+	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/validation"
+
+	"github.com/vjeantet/jodaTime"
 )
 
 // QuestionsController operations for Questions
@@ -61,14 +66,14 @@ func (c *QuestionsController) Post() {
 	}
 
 	authToken := c.Ctx.Input.Header("Authorization")
-	decAuthToken, err := VerifyToken(authToken, "Resident")
+	decodedToken, userType, err := VerifyTokenByAllUserTypes(authToken)
 
 	if err != nil {
 		c.BadRequest(err)
 		return
 	}
 
-	condoID, _ := strconv.Atoi(decAuthToken.CondoID)
+	condoID, _ := strconv.Atoi(decodedToken.CondoID)
 
 	condo, err := models.GetCondosByID(condoID)
 
@@ -79,20 +84,35 @@ func (c *QuestionsController) Post() {
 
 	v.Condo = &models.Condos{ID: condo.ID}
 
-	residentID, _ := strconv.Atoi(decAuthToken.UserID)
+	userID, _ := strconv.Atoi(decodedToken.UserID)
 
-	resident, err := models.GetResidentsByID(residentID)
+	if userType == "Resident" {
 
-	if err != nil {
-		c.ServeErrorJSON(err)
-		return
+		resident, err := models.GetResidentsByID(userID)
+
+		if err != nil {
+			c.ServeErrorJSON(err)
+			return
+		}
+
+		if resident.Committee {
+			v.Approved = true
+		} else {
+			v.Approved = false
+			v.CommitteeOnly = false
+		}
 	}
 
-	if resident.Committee {
-		v.Approved = true
-	} else {
-		v.Approved = false
-		v.CommitteeOnly = false
+	now := time.Now().In(orm.DefaultTimeLoc)
+
+	v.Date = jodaTime.Format("Y-M-d HH:mm:ss", now)
+
+	_, err = jodaTime.Parse("Y-M-d", v.DateEnd)
+
+	if err != nil {
+		err = errors.New("invalid date format")
+		c.BadRequest(err)
+		return
 	}
 
 	_, err = models.AddQuestions(&v)
