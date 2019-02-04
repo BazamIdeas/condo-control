@@ -436,3 +436,22 @@ func GetCondosChecksByMonth(condoID int, year int, month time.Month) (checks []*
 
 	return
 }
+
+func GetCondosWithoutLimit() (condos []*Condos, err error) {
+
+	o := orm.NewOrm()
+
+	var v []*Condos
+
+	_, err = o.QueryTable("condos").Filter("deleted_at__isnull", true).RelatedSel().All(&v)
+
+	if err != nil {
+		return
+	}
+
+	condos = v
+
+	return
+
+	return
+}

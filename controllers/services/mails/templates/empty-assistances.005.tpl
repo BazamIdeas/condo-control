@@ -1,0 +1,130 @@
+<div>Se presenta un resumen de las asistencias faltantes:</div>
+<br>
+
+<h4>Inasistencias (Entradas):</h4>
+<table>
+    <thead>   
+        <tr>
+            <td>
+                Nombre
+            </td>
+            <td>
+                Email
+            </td>
+            <td>
+                RUT
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .Entry }}
+        <tr>
+            <td>
+                {{.FirstName}}
+            </td>
+            <td>
+                {{.Email}}
+            </td>
+            <td>
+                {{.RUT}}
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+<br>
+<h4>Inasistencias (Colación):</h4>
+<table>
+    <thead>   
+        <tr>
+            <td>
+                Nombre
+            </td>
+            <td>
+                Email
+            </td>
+            <td>
+                RUT
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .Break }}
+        <tr>
+            <td>
+                {{.FirstName}}
+            </td>
+            <td>
+                {{.Email}}
+            </td>
+            <td>
+                {{.RUT}}
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+<br>
+<h4>Inasistencias (Fin de Colación):</h4>
+<table>
+    <thead>   
+        <tr>
+            <td>
+                Nombre
+            </td>
+            <td>
+                Email
+            </td>
+            <td>
+                RUT
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .FinishBreak }}
+        <tr>
+            <td>
+                {{.FirstName}}
+            </td>
+            <td>
+                {{.Email}}
+            </td>
+            <td>
+                {{.RUT}}
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+<br>
+<h4>Inasistencias (Salida):</h4>
+<table>
+    <thead>   
+        <tr>
+            <td>
+                Nombre
+            </td>
+            <td>
+                Email
+            </td>
+            <td>
+                RUT
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .Exit }}
+        <tr>
+            <td>
+                {{.FirstName}}
+            </td>
+            <td>
+                {{.Email}}
+            </td>
+            <td>
+                {{.RUT}}
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>

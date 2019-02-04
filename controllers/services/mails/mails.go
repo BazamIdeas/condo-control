@@ -2,6 +2,7 @@ package mails
 
 import (
 	"bytes"
+	"condo-control/models"
 	"errors"
 	"fmt"
 	"html/template"
@@ -17,12 +18,13 @@ import (
 
 // HTMLParams ...
 type HTMLParams struct {
-	Token          string
-	WatcherName    string
-	SupervisorName string
-	Date           string
-	URL            string
-	Base64         string
+	Token                   string
+	WatcherName             string
+	SupervisorName          string
+	Date                    string
+	URL                     string
+	Base64                  string
+	EmptyAssistancesWorkers *models.EmptyAssistancesWorkers
 }
 
 //Email ...
