@@ -126,7 +126,7 @@ func (c *VotesController) Post() {
 		return
 	}
 
-	//v.Condo = &models.Condos{ID: condo.ID}
+	v.Resident = resident
 
 	_, err = models.AddVotes(&v)
 

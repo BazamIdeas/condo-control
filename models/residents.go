@@ -19,9 +19,9 @@ type Residents struct {
 	Phone       string    `orm:"column(phone);size(255)" json:"phone,omitempty"`
 	Committee   bool      `orm:"column(committee);" json:"committee,omitempty"`
 	RUT         string    `orm:"column(rut);" json:"rut,omitempty"`
-	Password    string    `orm:"column(password);size(255)" json:"password,omitempty"`
+	Password    string    `orm:"column(password);size(255)" json:"password,omitempty" valid:"Required"`
 	ImageUUID   string    `orm:"column(image_uuid)" json:"image_uuid,omitempty"`
-	ImageMime   string    `orm:"column(image_mime)" json:"ImageMime,omitempty"`
+	ImageMime   string    `orm:"column(image_mime)" json:"image_mime,omitempty"`
 	Departament string    `orm:"column(departament)" json:"departament,omitempty"`
 	Percentage  float32   `orm:"column(percentage)" json:"percentage,omitempty"`
 	Votes       []*Votes  `orm:"reverse(many)" json:"votes,omitempty"`
