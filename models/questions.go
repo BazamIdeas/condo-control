@@ -240,7 +240,13 @@ func GetQuestionsByCondosID(condoID int) (questions []*Questions, err error) {
 	}
 
 	for _, question := range v {
+		
 		question.loadRelations()
+
+		for _, vote := range question.Votes {
+			searchFK(vote.TableName(), vote.ID).One(vote)
+		}
+
 	}
 
 	questions = v
