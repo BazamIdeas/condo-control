@@ -55,6 +55,8 @@ func (t *Residents) loadRelations() {
 func AddResidents(m *Residents) (id int64, err error) {
 	o := orm.NewOrm()
 
+	m.Password = GetMD5Hash(m.Password)
+
 	id, err = o.Insert(m)
 	if err != nil {
 		return
