@@ -537,6 +537,8 @@ func (c *CondosController) AddResidentsToCondosByRUT() {
 		return
 	}
 
+	v.Approved = false
+
 	valid := validation.Validation{}
 	b, _ := valid.Valid(&v)
 

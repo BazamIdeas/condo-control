@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "condo-control/routers"
+	_ "condo-control/tasks"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"

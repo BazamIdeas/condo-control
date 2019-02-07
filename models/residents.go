@@ -24,6 +24,7 @@ type Residents struct {
 	ImageMime   string    `orm:"column(image_mime)" json:"image_mime,omitempty"`
 	Departament string    `orm:"column(departament)" json:"departament,omitempty"`
 	Percentage  float32   `orm:"column(percentage)" json:"percentage,omitempty"`
+	Approved    bool      `orm:"column(approved)" json:"approved"`
 	Votes       []*Votes  `orm:"reverse(many)" json:"votes,omitempty"`
 	Token       string    `orm:"-" json:"token,omitempty"`
 	CreatedAt   time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`

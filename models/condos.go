@@ -25,6 +25,8 @@ type Condos struct {
 	RoutesMod         bool           `orm:"column(routes_mod)" json:"routes_mod" valid:"Required"`
 	DeliveryMod       bool           `orm:"column(delivery_mod)" json:"delivery_mod" valid:"Required"`
 	TasksMod          bool           `orm:"column(tasks_mod)" json:"tasks_mod" valid:"Required"`
+	ChecksMod         bool           `orm:"column(checks_mod)" json:"checks_mod" valid:"Required"`
+	SurveysMod        bool           `orm:"column(surveys_mod)" json:"surveys_mod" valid:"Required"`
 	AlertsTime        string         `orm:"column(alerts_time);type(alerts_time);null" json:"alerts_time,omitempty"`
 	Zones             []*Zones       `orm:"reverse(many)" json:"zone,omitempty"`
 	Workers           []*Workers     `orm:"reverse(many)" json:"workers,omitempty"`

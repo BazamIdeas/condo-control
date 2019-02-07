@@ -87,6 +87,8 @@ func (c *ResidentsController) Post() {
 		return
 	}
 
+	v.Approved = true
+
 	// Validate context body
 	valid := validation.Validation{}
 
@@ -402,6 +404,12 @@ func (c *ResidentsController) Login() {
 
 	if err != nil {
 		c.ServeErrorJSON(err)
+		return
+	}
+
+	if !v.Approved {
+		err = errors.New("Resident no approved")
+		c.BadRequest(err)
 		return
 	}
 
