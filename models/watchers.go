@@ -21,6 +21,7 @@ type Watchers struct {
 	RoutesMod      bool             `orm:"column(routes_mod)" json:"routes_mod"`
 	DeliveryMod    bool             `orm:"column(delivery_mod)" json:"delivery_mod"`
 	TasksMod       bool             `orm:"column(tasks_mod)" json:"tasks_mod"`
+	ChecksMod       bool             `orm:"column(checks_mod)" json:"checks_mod"`
 	Token          string           `orm:"-" json:"token,omitempty"`
 	Worker         *Workers         `orm:"rel(fk);column(workers_id)" json:"worker,omitempty"`
 	Verifications  []*Verifications `orm:"reverse(many);" json:"verifications,omitempty"`
