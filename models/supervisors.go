@@ -266,6 +266,10 @@ func GetSupervisorsByCondosID(condosID int) (supervisors []*Supervisors, err err
 		return
 	}
 
+	if len(w) == 0 {
+		return nil, orm.ErrNoRows
+	}
+
 	workersIDs := []interface{}{}
 
 	for _, worker := range w {
@@ -276,6 +280,10 @@ func GetSupervisorsByCondosID(condosID int) (supervisors []*Supervisors, err err
 
 	if err != nil {
 		return
+	}
+
+	if len(v) == 0 {
+		return nil, orm.ErrNoRows
 	}
 
 	supervisors = v
