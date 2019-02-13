@@ -689,9 +689,12 @@ func (c *WatchersController) GenerateChangePasswordToken() {
 	}
 
 	go func() {
+
+		urlToRoute := c.Ctx.Input.Site() + ":" + strconv.Itoa(c.Ctx.Input.Port()) + c.URLFor("WatchersController.RedirectChangePassword")
+
 		params := &mails.HTMLParams{
 			Token:  token,
-			URL:    c.URLFor("RedirectChangePassword"),
+			URL:    urlToRoute,
 			Base64: b64.URLEncoding.EncodeToString([]byte(url)),
 		}
 
@@ -734,7 +737,7 @@ func (c *WatchersController) RedirectChangePassword() {
 
 	c.Ctx.Output.Body([]byte(`<div>
 			<a style="color: white; text-decoration: none;" href="` + string(urlBytes) + `/` + token + `">
-				<button style="backround-color: #ee7203; border: none; border-radius: 3px; padding: 7px 14px; font-size: 16px; color:  white;">CAMBIAR CONTRASEÑA</button>
+				<button style="display:block; margin:auto;background-color: #ee7203; border: none; border-radius: 3px; padding: 7px 14px; font-size: 16px; color:  white;">CONTINUAR</button>
 			</a>
 		</div>`))
 

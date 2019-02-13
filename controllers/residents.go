@@ -500,9 +500,12 @@ func (c *ResidentsController) GenerateChangePasswordToken() {
 	}
 
 	go func() {
+
+		urlToRoute := c.Ctx.Input.Site() + ":" + strconv.Itoa(c.Ctx.Input.Port()) + c.URLFor("ResidentsController.RedirectChangePassword")
+
 		params := &mails.HTMLParams{
 			Token:  token,
-			URL:    c.URLFor("RedirectChangePassword"),
+			URL:    urlToRoute,
 			Base64: b64.URLEncoding.EncodeToString([]byte(url)),
 		}
 
