@@ -120,7 +120,7 @@ func (c *BaseController) GenerateToken(userType string, userID string, condoID s
 //GenerateGeneralToken ..
 func GenerateGeneralToken(userID string, condoID string, points []*models.Points, assistance *models.Assistances, item *models.Items) (token string, err error) {
 
-	now := time.Now().In(orm.DefaultTimeLoc)
+	now := time.Now()
 
 	// Create the Claims
 	claims := JwtTokenRoute{

@@ -455,5 +455,4 @@ func GetCondosWithoutLimit() (condos []*Condos, err error) {
 
 	return
 
-	return
 }
