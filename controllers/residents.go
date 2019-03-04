@@ -58,9 +58,15 @@ func (c *ResidentsController) Post() {
 
 	token := c.Ctx.Input.Header("Authorization")
 
-	decodedToken, err := VerifyToken(token, "Supervisor")
+	decodedToken, userType, err := VerifyTokenByAllUserTypes(token)
 
 	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if userType != "Supervisor" && userType != "Resident" {
+		err = errors.New("Invalid user's type")
 		c.BadRequest(err)
 		return
 	}
