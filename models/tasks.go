@@ -90,10 +90,11 @@ func UpdateTasksByID(m *Tasks, ignoreStatus bool) (err error) {
 	}
 
 	m.Date = v.Date
-	m.DateEnd = v.DateEnd
+	
 
 	if ignoreStatus {
 		m.Approved = v.Approved
+		m.DateEnd = v.DateEnd
 	}
 
 	_, err = o.Update(m)
