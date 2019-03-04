@@ -372,6 +372,35 @@ func (c *GoalsController) ChangeStatus() {
 
 	if goal.Completed {
 		goal.DateEnd = jodaTime.Format("Y-M-d HH:mm:ss", time.Now().In(orm.DefaultTimeLoc).In(orm.DefaultTimeLoc))
+
+		task, err := models.GetTasksByID(goal.Task.ID)
+
+		if err != nil {
+			c.ServeErrorJSON(err)
+			return
+		}
+
+		taskCompleted := true
+
+		for _, g := range task.Goals {
+
+			if g.ID == goal.ID {
+				continue
+			}
+
+			if !g.Completed {
+				taskCompleted = false
+				break
+			}
+		}
+
+		if taskCompleted {
+			task.Approved = true
+			task.DateEnd = goal.DateEnd
+
+			models.UpdateTasksByID(task, false)
+		}
+
 	} else {
 		goal.DateEnd = ""
 	}
