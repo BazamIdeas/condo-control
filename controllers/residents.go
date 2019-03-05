@@ -444,7 +444,18 @@ func (c *ResidentsController) GetSelf() {
 
 	token := c.Ctx.Input.Header("Authorization")
 
-	decodedToken, _ := VerifyToken(token, "Supervisor")
+	decodedToken, userType, err := VerifyTokenByAllUserTypes(token)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	if userType != "Supervisor" && userType != "Resident" {
+		err = errors.New("Invalid user's type")
+		c.BadRequest(err)
+		return
+	}
 
 	//Disclamer, token already verified
 	id, err := strconv.Atoi(decodedToken.CondoID)
