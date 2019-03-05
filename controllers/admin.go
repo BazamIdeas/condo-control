@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"os"
 
 	"github.com/astaxie/beego"
 )
@@ -9,6 +11,11 @@ import (
 // AdminController operations for Admin
 type AdminController struct {
 	BaseController
+}
+
+type adminStruct struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 //URLMapping ...
@@ -22,10 +29,7 @@ func (c *AdminController) URLMapping() {
 // @router /login [post]
 func (c *AdminController) Login() {
 
-	var v struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+	var v adminStruct
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if err != nil {
@@ -33,13 +37,7 @@ func (c *AdminController) Login() {
 		return
 	}
 
-	email := beego.AppConfig.String("admin::email")
-	password := beego.AppConfig.String("admin::password")
-
-	if email == "" || password == "" {
-		email = "admin"
-		password = "admin"
-	}
+	email, password, _ := getAdminData()
 
 	if v.Email != email || v.Password != password {
 		c.BadRequestDontExists("Admin")
@@ -57,4 +55,91 @@ func (c *AdminController) Login() {
 		Token string `json:"token"`
 	}{Token: token}
 	c.ServeJSON()
+}
+
+//Update ...
+// @Title Update
+// @Description Update Admin
+// @router / [put]
+func (c *AdminController) Update() {
+
+	var v adminStruct
+
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	err = changeAdminData(v.Email, v.Password)
+
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	c.ServeJSON()
+}
+
+func getAdminData() (email, password string, jsonFile bool) {
+
+	email = beego.AppConfig.String("admin::email")
+	password = beego.AppConfig.String("admin::password")
+
+	if email == "" || password == "" {
+		email = "admin"
+		password = "admin"
+	}
+
+	file, err := os.Open("admin.json")
+
+	if err != nil {
+		return
+	}
+
+	defer file.Close()
+
+	fileBytes, err := ioutil.ReadAll(file)
+
+	if err != nil {
+		return
+	}
+
+	var v adminStruct
+
+	err = json.Unmarshal(fileBytes, &v)
+
+	if err != nil {
+		return
+	}
+
+	email = v.Email
+	password = v.Password
+	jsonFile = true
+
+	return
+
+}
+
+func changeAdminData(email, password string) (err error) {
+
+	os.Remove("admin.json")
+
+	v := adminStruct{
+		Email:    email,
+		Password: password,
+	}
+
+	jsonData, err := json.Marshal(&v)
+
+	if err != nil {
+		return
+	}
+
+	err = ioutil.WriteFile("admin.json", jsonData, 0644)
+
+	if err != nil {
+		return
+	}
+
 }
