@@ -142,4 +142,6 @@ func changeAdminData(email, password string) (err error) {
 		return
 	}
 
+	return
+
 }
