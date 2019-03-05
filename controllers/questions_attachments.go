@@ -90,7 +90,7 @@ func (c *QuestionsAttachmentsController) Post() {
 	_, fileFh, err := c.GetFile("files")
 
 	if err == nil {
-		fileUUID, mimeType, err := files.CreateFile(fileFh, "questions-attachments")
+		fileUUID, mimeType, err := files.CreateFile(fileFh, "questions-attachments", true)
 
 		if err != nil {
 			c.BadRequest(err)
@@ -327,7 +327,6 @@ func (c *QuestionsAttachmentsController) RestoreFromTrash() {
 	c.ServeJSON()
 
 }
-
 
 // GetAttachmentByUUID ...
 // @Title Get  By UUID

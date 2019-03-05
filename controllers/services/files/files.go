@@ -43,7 +43,7 @@ func getFilePath(folderName string, fileName string) (filePath string, err error
 }
 
 //CreateFile create a image File
-func CreateFile(fh *multipart.FileHeader, groupName string) (fileUUID string, mimeType string, err error) {
+func CreateFile(fh *multipart.FileHeader, groupName string, ignoreMime ...bool) (fileUUID string, mimeType string, err error) {
 
 	file, err := fh.Open()
 
@@ -60,7 +60,7 @@ func CreateFile(fh *multipart.FileHeader, groupName string) (fileUUID string, mi
 
 	mimeType = http.DetectContentType(fileBytes)
 
-	if mimeType != "image/png" && mimeType != "image/jpeg" {
+	if !(len(ignoreMime) > 0 && ignoreMime[0]) && mimeType != "image/png" && mimeType != "image/jpeg" {
 		err = errors.New("Bad mime-type")
 		return
 	}
