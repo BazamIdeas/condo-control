@@ -110,7 +110,7 @@ func CreateFaceID(imageUUID string) (faceID string, err error) {
 
 	// Create the Http client
 	client := &http.Client{
-		Timeout: time.Second * 2,
+		Timeout: time.Second * 60,
 	}
 
 	imageURL := baseImageURL + "/" + imageUUID
@@ -177,7 +177,7 @@ func CompareFacesIDs(oldFaceID string, newFaceID string) (ok bool, err error) {
 
 	// Create the Http client
 	client := &http.Client{
-		Timeout: time.Second * 2,
+		Timeout: time.Second * 60,
 	}
 
 	requestBody := map[string]string{"faceId1": oldFaceID, "faceId2": newFaceID}
