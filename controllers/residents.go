@@ -712,6 +712,7 @@ func (c *ResidentsController) AddImage() {
 
 	Resident.ImageUUID = newImageUUID
 	Resident.ImageMime = mimeType
+	Resident.Password = "" 
 
 	err = models.UpdateResidentsByID(Resident)
 
