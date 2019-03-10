@@ -365,7 +365,7 @@ func GetCondosChecksByDate(condoID int, date time.Time) (checks []*Checks, err e
 
 	qb, _ := orm.NewQueryBuilder("mysql")
 
-	qb.Select("checks.*").From("checks", "workers").Where("workers.condos_id = ?").And("workers.id = checks.workers_id").And("checks.date = ?").OrderBy("checks.id").Desc()
+	qb.Select("checks.*").From("checks", "workers").Where("workers.condos_id = ?").And("workers.id = checks.workers_id").And("DATEDIFF(checks.date, ?) = 0").OrderBy("checks.id").Desc()
 
 	sql := qb.String()
 
