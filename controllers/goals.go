@@ -395,7 +395,7 @@ func (c *GoalsController) ChangeStatus() {
 		}
 
 		if taskCompleted {
-			task.Approved = true
+			//task.Approved = true
 			task.DateEnd = goal.DateEnd
 
 			models.UpdateTasksByID(task, false)
