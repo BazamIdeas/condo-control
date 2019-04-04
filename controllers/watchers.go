@@ -647,7 +647,7 @@ func (c *WatchersController) GetWatchersVerificationsByMonth() {
 // @Failure 400 Bad Request
 // @Failure 403 Invalid Token
 // @Failure 404 email without Data
-// @router /:email/change-password/ [post]
+// @router /:username/change-password/ [post]
 func (c *WatchersController) GenerateChangePasswordToken() {
 
 	url := c.GetString("url")
@@ -657,22 +657,30 @@ func (c *WatchersController) GenerateChangePasswordToken() {
 		return
 	}
 
-	email := c.Ctx.Input.Param(":email")
+	username := c.Ctx.Input.Param(":username")
 
-	if email == "" {
-		err := errors.New("missing email")
+	if username == "" {
+		err := errors.New("missing username")
 		c.BadRequest(err)
 		return
 	}
 
-	worker, err := models.GetWorkersByEmail(email)
+	/* worker, err := models.GetWorkersByEmail(email)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	} */
+
+	watcher, err := models.GetWatchersByUsername(username)
+
+	//watcher, err := models.GetWatchersByWorkersID(worker.ID)
+
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	watcher, err := models.GetWatchersByWorkersID(worker.ID)
-
+	worker, err := models.GetWorkersByID(watcher.Worker.ID)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -699,7 +707,7 @@ func (c *WatchersController) GenerateChangePasswordToken() {
 		}
 
 		email := &mails.Email{
-			To:         []string{email},
+			To:         []string{worker.Email},
 			Subject:    "Cambio de Contraseña",
 			HTMLParams: params,
 		}

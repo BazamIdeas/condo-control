@@ -291,3 +291,27 @@ func GetSupervisorsByCondosID(condosID int) (supervisors []*Supervisors, err err
 	return
 
 }
+
+// GetSupervisorsByUsername retrieves Supervisors by username. Returns error if
+// Id doesn't exist
+func GetSupervisorsByUsername(username string) (v *Supervisors, err error) {
+	v = &Supervisors{Username: username}
+
+	o := orm.NewOrm()
+
+	err = o.Read(v, "Username")
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = searchFK(v.Worker.TableName(), v.Worker.ID).One(v.Worker)
+
+	if err != nil {
+		return nil, err
+	}
+
+	v.loadRelations()
+
+	return
+}

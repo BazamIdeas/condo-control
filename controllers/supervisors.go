@@ -412,7 +412,7 @@ func (c *SupervisorsController) Login() {
 // @Failure 400 Bad Request
 // @Failure 403 Invalid Token
 // @Failure 404 email without Data
-// @router /:email/change-password/ [post]
+// @router /:username/change-password/ [post]
 func (c *SupervisorsController) GenerateChangePasswordToken() {
 
 	url := c.GetString("url")
@@ -422,21 +422,26 @@ func (c *SupervisorsController) GenerateChangePasswordToken() {
 		return
 	}
 
-	email := c.Ctx.Input.Param(":email")
-	if email == "" {
-		err := errors.New("missing email")
+	username := c.Ctx.Input.Param(":username")
+	if username == "" {
+		err := errors.New("missing username")
 		c.BadRequest(err)
 		return
 	}
 
-	worker, err := models.GetWorkersByEmail(email)
+	/* worker, err := models.GetWorkersByEmail(email)
+	if err != nil {
+		c.ServeErrorJSON(err)
+		return
+	} */
+
+	supervisor, err := models.GetSupervisorsByUsername(username)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
 	}
 
-	supervisor, err := models.GetSupervisorsByWorkersID(worker.ID)
-
+	worker, err := models.GetWorkersByID(supervisor.Worker.ID)
 	if err != nil {
 		c.ServeErrorJSON(err)
 		return
@@ -459,7 +464,7 @@ func (c *SupervisorsController) GenerateChangePasswordToken() {
 		}
 
 		email := &mails.Email{
-			To:         []string{email},
+			To:         []string{worker.Email},
 			Subject:    "Cambio de Contraseña",
 			HTMLParams: params,
 		}
