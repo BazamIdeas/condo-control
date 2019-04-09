@@ -71,7 +71,7 @@ func (c *AdminController) Update() {
 		return
 	}
 
-	err = changeAdminData(v.Email, v.Password)
+	err = changeAdminData(v.Password)
 
 	if err != nil {
 		c.BadRequest(err)
@@ -113,7 +113,6 @@ func getAdminData() (email, password string, jsonFile bool) {
 		return
 	}
 
-	email = v.Email
 	password = v.Password
 	jsonFile = true
 
@@ -121,12 +120,11 @@ func getAdminData() (email, password string, jsonFile bool) {
 
 }
 
-func changeAdminData(email, password string) (err error) {
+func changeAdminData(password string) (err error) {
 
 	os.Remove("admin.json")
 
 	v := adminStruct{
-		Email:    email,
 		Password: password,
 	}
 
