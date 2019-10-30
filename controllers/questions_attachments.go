@@ -20,6 +20,7 @@ func (c *QuestionsAttachmentsController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	/* c.Mapping("GetOne", c.GetOne) */
 	/* c.Mapping("GetAll", c.GetAll) */
+	c.Mapping("GetAttachmentByUUID", c.GetAttachmentByUUID)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("GetAllFromTrash", c.GetAllFromTrash)
@@ -124,6 +125,7 @@ func (c *QuestionsAttachmentsController) Post() {
 	if err != nil {
 		c.BadRequest(err)
 		return
+		
 	}
 
 	v, err := models.GetQuestionsAttachmentsByID(id)
