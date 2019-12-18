@@ -7,7 +7,7 @@ import (
 	"errors"
 	"strconv"
 	"time"
-
+	"fmt"
 	"github.com/astaxie/beego/orm"
 	"github.com/vjeantet/jodaTime"
 )
@@ -81,7 +81,7 @@ func (c *ItemsController) Post() {
 		c.ServeErrorJSON(err)
 		return
 	}
-
+	fmt.Println("post data >>>> ",v )
 	_, err = models.AddItems(&v)
 
 	if err != nil {
@@ -90,6 +90,7 @@ func (c *ItemsController) Post() {
 	}
 
 	c.Ctx.Output.SetStatus(201)
+
 	c.Data["json"] = v
 
 	c.ServeJSON()
@@ -157,9 +158,9 @@ func (c *ItemsController) Put() {
 		c.ServeErrorJSON(err)
 		return
 	}
-
+	
 	c.Data["json"] = MessageResponse{
-		Message:       "Updated element",
+		Message: "Updated Element"		,
 		PrettyMessage: "Elemento Actualizado",
 	}
 
