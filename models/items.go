@@ -11,6 +11,10 @@ type Items struct {
 	ID          int         `orm:"column(id);pk" json:"id"`
 	Address     string      `orm:"column(address);" json:"address,omitempty" valid:"Required"`
 	Description string      `orm:"column(description);" json:"description,omitempty" valid:"Required"`
+	Street_number string  `orm:"column(street_number);" json:"street_number,omitempty" `
+	Office_department string `orm:"column(office_department);" json:"office_department,omitempty" `
+	Addressee string `orm:"column(addressee);" json:"addressee,omitempty" `
+	Code string `orm:"column(code);" json:"code,omitempty" `
 	Delivered   bool        `orm:"column(delivered);" json:"delivered" `
 	DateEnd     string      `orm:"column(date_end);type(string);" json:"date_end,omitempty"`
 	Comment     string      `orm:"column(comment);null" json:"comment,omitempty"`
