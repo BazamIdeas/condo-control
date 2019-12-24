@@ -2,7 +2,7 @@ package models
 
 import (
 	"time"
-
+	"fmt"
 	"github.com/astaxie/beego/orm"
 )
 
@@ -52,7 +52,7 @@ func AddItems(m *Items) (id int64, err error) {
 	o := orm.NewOrm()
 
 	id, err = o.Insert(m)
-
+	fmt.Println("post data in model >>>> ",m )
 	if err != nil {
 		return
 	}
