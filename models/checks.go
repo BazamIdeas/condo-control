@@ -13,6 +13,7 @@ import (
 //Checks Model
 type Checks struct {
 	ID          int            `orm:"column(id);pk" json:"id,omitempty"`
+	Shift_Change int   		   `orm:"column(shift_change_id);null" json:"shift_change_id,omitempty"`
 	Date        string         `orm:"column(date);type(datetime);" json:"date,omitempty" valid:"Required"`
 	Comment     string         `orm:"column(comment);null" json:"comment,omitempty"`
 	Worker      *Workers       `orm:"rel(fk);column(workers_id)" json:"workers,omitempty"`
