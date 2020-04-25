@@ -17,6 +17,7 @@ type mysqlConnData struct {
 	pass   string
 	ip     string
 	dbName string
+	host   string
 }
 
 func init() {
@@ -33,10 +34,10 @@ func init() {
 	mysqlConnData.user = beego.AppConfig.String(RunMode + "::mysqluser")
 	mysqlConnData.pass = beego.AppConfig.String(RunMode + "::mysqlpass")
 	mysqlConnData.dbName = beego.AppConfig.String(RunMode + "::mysqldb")
-
+	mysqlConnData.host = beego.AppConfig.String(RunMode + "::ServerHost")
+	// println("activo >>>   " + mysqlConnData.user + ":" + mysqlConnData.pass + "@tcp(" + mysqlConnData.host + ")/" + mysqlConnData.dbName + "?charset=utf8")
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", mysqlConnData.user+":"+mysqlConnData.pass+"@/"+mysqlConnData.dbName+"?charset=utf8")
-
+	orm.RegisterDataBase("default", "mysql", mysqlConnData.user+":"+mysqlConnData.pass+"@tcp("+mysqlConnData.host+")/"+mysqlConnData.dbName+"?charset=utf8")
 	orm.RegisterModel(new(Assistances), new(Condos), new(Holidays), new(Points), new(Supervisors), new(Verifications), new(Watchers), new(Workers), new(Zones), new(Tasks), new(Goals), new(GoalsComments), new(Deliveries), new(Items), new(Notifications), new(Objects), new(Occurrences), new(Checks), new(Residents), new(Votes), new(Questions), new(QuestionsAttachments))
 
 	local, err := time.LoadLocation(beego.AppConfig.String("timezone::zone"))
