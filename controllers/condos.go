@@ -630,13 +630,13 @@ func (c *CondosController) GetSelfVerificationsByMonth() {
 
 	for _, verification := range verifications {
 
-		if c.Ctx.Input.Query("supervisor-comment") == "true" && verification.SupervisorComment == "" {
-			continue
-		}
+		/* 		if c.Ctx.Input.Query("supervisor-comment") == "true" && verification.SupervisorComment == "" {
+		   			continue
+		   		}
 
-		if c.Ctx.Input.Query("watcher-comment") == "true" && verification.WatcherComment == "" {
-			continue
-		}
+		   		if c.Ctx.Input.Query("watcher-comment") == "true" && verification.WatcherComment == "" {
+		   			continue
+		   		} */
 
 		v = append(v, verification)
 	}
