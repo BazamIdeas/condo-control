@@ -33,10 +33,44 @@ func (c *ResidentsController) URLMapping() {
 	c.Mapping("GetSelf", c.GetSelf)
 	c.Mapping("ChangePublicInfo", c.ChangePublicInfo)
 	c.Mapping("ChangePassword", c.ChangePassword)
+	c.Mapping("CheckEmail", c.CheckEmail)
 	c.Mapping("RedirectChangePassword", c.RedirectChangePassword)
 	c.Mapping("GenerateChangePasswordToken", c.GenerateChangePasswordToken)
 	c.Mapping("AddImage", c.AddImage)
 
+}
+
+//CheckEmail ..
+// @Title Check Email
+// @Description CheckEmail only verify if email exist
+// @Accept json
+// @Success 200 {object} models.Supervisors
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @router /check-email [post]
+func (c *ResidentsController) CheckEmail() {
+	var email map[string]string
+	var res string
+	json.Unmarshal(c.Ctx.Input.RequestBody, &email)
+	if email["email"] == "" {
+		res = "Email not received"
+		c.Ctx.Output.SetStatus(400)
+		c.Data["json"] = res
+		c.ServeJSON()
+		return
+	}
+	v := models.Residents{Email: email["email"]}
+	res, err := models.EmailExist(&v)
+	if err != nil {
+		c.Ctx.Output.SetStatus(404)
+		c.Data["json"] = MessageResponse{Message: res}
+		c.ServeJSON()
+	}
+
+	println(res)
+	c.Data["json"] = MessageResponse{Message: res}
+
+	c.ServeJSON()
 }
 
 // Post ...
@@ -712,7 +746,7 @@ func (c *ResidentsController) AddImage() {
 
 	Resident.ImageUUID = newImageUUID
 	Resident.ImageMime = mimeType
-	Resident.Password = "" 
+	Resident.Password = ""
 
 	err = models.UpdateResidentsByID(Resident)
 
