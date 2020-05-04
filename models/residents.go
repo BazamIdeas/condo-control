@@ -51,6 +51,27 @@ func (t *Residents) loadRelations() {
 
 }
 
+// EmailExist verify if email exist into database and returns
+// last inserted Id on success.
+func EmailExist(m *Residents) (res string, err error) {
+	o := orm.NewOrm()
+	v := Residents{Email: m.Email}
+
+	// verifiy if email exists in the database
+	err = o.Read(&v, "email")
+
+	if err == orm.ErrNoRows {
+		res = "email not exist"
+		return
+	}
+	if err != nil && err != orm.ErrNoRows {
+		res = err.Error()
+		return
+	}
+	res = "Email already exist"
+	return
+}
+
 // AddResidents insert a new Residents into database and returns
 // last inserted Id on success.
 func AddResidents(m *Residents) (id int64, err error) {

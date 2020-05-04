@@ -990,18 +990,18 @@ func init() {
 
     beego.GlobalControllerRouter["condo-control/controllers:ResidentsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ResidentsController"],
         beego.ControllerComments{
-            Method: "GetAll",
+            Method: "Post",
             Router: `/`,
-            AllowHTTPMethods: []string{"get"},
+            AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
 
     beego.GlobalControllerRouter["condo-control/controllers:ResidentsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ResidentsController"],
         beego.ControllerComments{
-            Method: "Post",
+            Method: "GetAll",
             Router: `/`,
-            AllowHTTPMethods: []string{"post"},
+            AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
@@ -1083,6 +1083,15 @@ func init() {
             Method: "ChangePublicInfo",
             Router: `/change-public-info`,
             AllowHTTPMethods: []string{"put"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["condo-control/controllers:ResidentsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:ResidentsController"],
+        beego.ControllerComments{
+            Method: "CheckEmail",
+            Router: `/check-email`,
+            AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
