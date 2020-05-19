@@ -50,7 +50,7 @@ func (c *VerificationsController) SetStatus() {
 		c.BadRequest(err)
 		return
 	}
-	v := models.Verifications{ID: id, Viewed: true}
+	v := models.Verifications{ID: id}
 	models.SetStatus(&v)
 	println(res)
 	c.Data["json"] = MessageResponse{Message: res}

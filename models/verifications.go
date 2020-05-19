@@ -25,7 +25,7 @@ type Verifications struct {
 	CreatedAt         time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt         time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
 	DeletedAt         time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
-	Viewed            bool      `orm:"column(viewed);" json:"viewed"`
+	Viewed            bool      `orm:"column(viewed);"`
 }
 
 //TableName =
@@ -52,17 +52,13 @@ func (t *Verifications) loadRelations() {
 func SetStatus(m *Verifications) (res string, err error) {
 	o := orm.NewOrm()
 	v := Verifications{ID: m.ID}
-	// ascertain id exists in the database
-	err = o.Read(&v)
-	if err != nil {
-		return
+	if o.Read(&v) == nil {
+		v.Viewed = true
+		if num, err := o.Update(&v); err == nil {
+			beego.Debug("Number of records set viewed true in database:", num)
+		}
 	}
-	var id int64
-	id, err = o.Update(m)
-	beego.Debug("Number of records set viewed true in database:", id)
-	if err != nil {
-		return
-	}
+
 	res = "Status Updated!"
 	return
 }
@@ -72,6 +68,7 @@ func SetStatus(m *Verifications) (res string, err error) {
 func AddVerifications(m *Verifications) (id int64, err error) {
 	o := orm.NewOrm()
 	//m.Slug = GenerateSlug(m.TableName(), m.Name)
+	m.Viewed = false
 	id, err = o.Insert(m)
 
 	if err != nil {
