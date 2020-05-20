@@ -25,7 +25,7 @@ type Verifications struct {
 	CreatedAt         time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt         time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
 	DeletedAt         time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
-	Viewed            bool      `orm:"column(viewed);" json:"viewed,omitempty"`
+	Viewed            bool      `orm:"column(viewed);" json:"viewed"`
 }
 
 //TableName =
@@ -68,7 +68,6 @@ func SetStatus(m *Verifications) (res string, err error) {
 func AddVerifications(m *Verifications) (id int64, err error) {
 	o := orm.NewOrm()
 	//m.Slug = GenerateSlug(m.TableName(), m.Name)
-	m.Viewed = false
 	id, err = o.Insert(m)
 
 	if err != nil {
