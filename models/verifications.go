@@ -25,6 +25,7 @@ type Verifications struct {
 	CreatedAt         time.Time `orm:"column(created_at);type(datetime);null;auto_now_add" json:"-"`
 	UpdatedAt         time.Time `orm:"column(updated_at);type(datetime);null" json:"-"`
 	DeletedAt         time.Time `orm:"column(deleted_at);type(datetime);null" json:"-"`
+	Viewed            bool      `orm:"column(viewed);" json:"viewed"`
 }
 
 //TableName =
@@ -44,6 +45,22 @@ func (t *Verifications) loadRelations() {
 
 	return
 
+}
+
+// SetStatus set viewed to true
+// last inserted Id on success.
+func SetStatus(m *Verifications) (res string, err error) {
+	o := orm.NewOrm()
+	v := Verifications{ID: m.ID}
+	if o.Read(&v) == nil {
+		v.Viewed = true
+		if num, err := o.Update(&v); err == nil {
+			beego.Debug("Number of records set viewed true in database:", num)
+		}
+	}
+
+	res = "Status Updated!"
+	return
 }
 
 // AddVerifications insert a new Verifications into database and returns

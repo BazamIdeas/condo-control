@@ -1431,6 +1431,15 @@ func init() {
 
     beego.GlobalControllerRouter["condo-control/controllers:VerificationsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:VerificationsController"],
         beego.ControllerComments{
+            Method: "SetStatus",
+            Router: `/set-status/:id`,
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["condo-control/controllers:VerificationsController"] = append(beego.GlobalControllerRouter["condo-control/controllers:VerificationsController"],
+        beego.ControllerComments{
             Method: "GetAllFromTrash",
             Router: `/trashed`,
             AllowHTTPMethods: []string{"patch"},

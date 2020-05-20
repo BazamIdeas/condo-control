@@ -31,6 +31,31 @@ func (c *VerificationsController) URLMapping() {
 	c.Mapping("GetImagesByUUID", c.GetImagesByUUID)
 	c.Mapping("AddImage", c.AddImage)
 	c.Mapping("Comment", c.Comment)
+	c.Mapping("SetStatus", c.SetStatus)
+}
+
+//SetStatus ..
+// @Title Set Status
+// @Description SetStatus only set viewed to true
+// @Accept json
+// @Success 200 Retrieve records affected
+// @Failure 400 Bad Request
+// @Failure 403 Invalid Token
+// @router /set-status/:id [get]
+func (c *VerificationsController) SetStatus() {
+	idStr := c.Ctx.Input.Param(":id")
+	var res string
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.BadRequest(err)
+		return
+	}
+	v := models.Verifications{ID: id}
+	models.SetStatus(&v)
+	println(res)
+	c.Data["json"] = MessageResponse{Message: res}
+
+	c.ServeJSON()
 }
 
 // Post ...
